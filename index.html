@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>calma</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.0.0/dist/tabler-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0efe8; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 2rem 1rem; }
+  .phone { width: 340px; min-height: 640px; background: #fff; border-radius: 32px; border: 1px solid #e0dfd8; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 4px 32px rgba(0,0,0,0.08); }
+  .screen { display: none; flex-direction: column; flex: 1; }
+  .screen.active { display: flex; }
+  .status-bar { padding: 12px 20px 6px; display: flex; justify-content: space-between; }
+  .status-bar span { font-size: 11px; color: #888; }
+  .top-bar { padding: 4px 20px 12px; display: flex; align-items: center; justify-content: space-between; border-bottom: 0.5px solid #e8e7e0; }
+  .app-name { font-size: 13px; font-weight: 500; color: #888; letter-spacing: 0.1em; }
+  .top-bar button { background: none; border: none; cursor: pointer; color: #aaa; font-size: 18px; padding: 4px; }
+  .content { flex: 1; overflow-y: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 14px; }
+  .greeting { font-size: 20px; font-weight: 500; color: #1a1a1a; line-height: 1.3; }
+  .greeting span { font-size: 13px; color: #888; font-weight: 400; display: block; margin-top: 3px; }
+  .streak-card { background: #f7f6f0; border-radius: 14px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; }
+  .streak-num { font-size: 40px; font-weight: 300; color: #1a1a1a; line-height: 1; }
+  .streak-info .label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: #aaa; }
+  .streak-info .sublabel { font-size: 12px; color: #888; margin-top: 3px; }
+  .progress-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .prog-card { background: #f7f6f0; border-radius: 10px; padding: 10px 12px; }
+  .prog-label { font-size: 10px; color: #aaa; text-transform: uppercase; letter-spacing: 0.06em; }
+  .prog-val { font-size: 18px; font-weight: 500; color: #1a1a1a; margin-top: 2px; }
+  .prog-bar { height: 3px; background: #e0dfd8; border-radius: 2px; margin-top: 7px; }
+  .prog-fill { height: 100%; border-radius: 2px; background: #1D9E75; }
+  .section-title { font-size: 10px; font-weight: 500; color: #aaa; text-transform: uppercase; letter-spacing: 0.1em; }
+  .action-btn { background: #fff; border: 0.5px solid #e8e7e0; border-radius: 10px; padding: 12px 14px; text-align: left; cursor: pointer; display: flex; align-items: center; gap: 10px; font-family: inherit; width: 100%; transition: background 0.12s; }
+  .action-btn:hover { background: #f7f6f0; }
+  .btn-icon { font-size: 18px; color: #aaa; width: 22px; text-align: center; }
+  .btn-text { font-size: 13px; color: #1a1a1a; }
+  .btn-sub { font-size: 11px; color: #aaa; }
+  .btn-arrow { margin-left: auto; font-size: 14px; color: #ccc; }
+  .sos-btn { background: #04342C; color: #9FE1CB; border: none; border-radius: 12px; padding: 15px; font-size: 14px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: inherit; letter-spacing: 0.02em; width: 100%; transition: background 0.12s; }
+  .sos-btn:hover { background: #085041; }
+  .bottom-nav { border-top: 0.5px solid #e8e7e0; padding: 8px 0 12px; display: grid; grid-template-columns: repeat(5, 1fr); }
+  .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; background: none; border: none; cursor: pointer; padding: 4px 0; }
+  .nav-item i { font-size: 19px; color: #ccc; }
+  .nav-item span { font-size: 9px; color: #ccc; }
+  .nav-item.active i, .nav-item.active span { color: #0F6E56; }
+  /* Emergency */
+  .emergency-bg { background: #04342C; flex: 1; display: flex; flex-direction: column; }
+  .emer-header { padding: 16px 20px 8px; display: flex; align-items: center; gap: 10px; }
+  .emer-header button { background: none; border: none; cursor: pointer; color: #5DCAA5; font-size: 18px; }
+  .emer-title { font-size: 13px; font-weight: 500; color: #9FE1CB; letter-spacing: 0.06em; }
+  .emer-content { flex: 1; padding: 8px 20px 20px; display: flex; flex-direction: column; gap: 10px; }
+  .emer-timer { text-align: center; padding: 4px 0 10px; }
+  .timer-num { font-size: 52px; font-weight: 200; color: #fff; letter-spacing: -2px; line-height: 1; }
+  .timer-label { font-size: 10px; color: #5DCAA5; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; }
+  .emer-step { background: rgba(255,255,255,0.05); border: 0.5px solid rgba(93,202,165,0.2); border-radius: 10px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: background 0.12s; }
+  .emer-step:hover { background: rgba(255,255,255,0.09); }
+  .emer-step.done { border-color: rgba(93,202,165,0.5); }
+  .step-num { width: 26px; height: 26px; border-radius: 50%; border: 1px solid rgba(93,202,165,0.4); display: flex; align-items: center; justify-content: center; font-size: 12px; color: #5DCAA5; flex-shrink: 0; }
+  .emer-step.done .step-num { background: #1D9E75; border-color: #1D9E75; color: #fff; }
+  .step-text { font-size: 13px; color: #9FE1CB; }
+  .step-sub { font-size: 11px; color: #5DCAA5; margin-top: 2px; }
+  /* Trigger */
+  .emotion-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .emo-btn { background: #f7f6f0; border: 0.5px solid #e8e7e0; border-radius: 8px; padding: 8px 4px; font-size: 12px; color: #666; cursor: pointer; font-family: inherit; text-align: center; transition: all 0.1s; }
+  .emo-btn.selected { background: #E1F5EE; border-color: #5DCAA5; color: #0F6E56; }
+  .input-group { display: flex; flex-direction: column; gap: 7px; }
+  .input-group label { font-size: 10px; color: #aaa; text-transform: uppercase; letter-spacing: 0.08em; }
+  .save-btn { background: #1a1a1a; color: #fff; border: none; border-radius: 10px; padding: 13px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit; width: 100%; }
+  input[type=range] { width: 100%; accent-color: #1D9E75; }
+  textarea { width: 100%; border: 0.5px solid #e8e7e0; border-radius: 8px; padding: 10px 12px; font-size: 13px; font-family: inherit; color: #1a1a1a; background: #fff; resize: none; height: 72px; outline: none; }
+  textarea:focus { border-color: #5DCAA5; }
+  /* Patterns */
+  .pattern-card { border: 0.5px solid #e8e7e0; border-radius: 10px; padding: 12px 14px; }
+  .pat-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .pat-tag { font-size: 10px; background: #f7f6f0; border-radius: 4px; padding: 2px 8px; color: #888; }
+  .pat-title { font-size: 13px; font-weight: 500; color: #1a1a1a; }
+  .pat-desc { font-size: 12px; color: #888; margin-top: 3px; line-height: 1.5; }
+  .pat-pills { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 9px; }
+  .pat-pill { font-size: 10px; border: 0.5px solid #e8e7e0; border-radius: 20px; padding: 2px 9px; color: #999; }
+  /* Identity */
+  .identity-card { border: 0.5px solid #e8e7e0; border-radius: 14px; padding: 16px; }
+  .identity-card .quote { font-size: 15px; color: #1a1a1a; line-height: 1.55; font-style: italic; }
+  .identity-card .quote-author { font-size: 11px; color: #aaa; margin-top: 8px; }
+  .value-list { display: flex; flex-direction: column; gap: 8px; }
+  .value-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: #f7f6f0; border-radius: 9px; }
+  .value-item i { font-size: 16px; color: #1D9E75; }
+  .value-item span { font-size: 13px; color: #1a1a1a; }
+  .reminder-card { background: #f7f6f0; border-radius: 12px; padding: 14px 16px; font-size: 13px; color: #666; line-height: 1.55; }
+  /* Diary */
+  .diary-entry-card { border: 0.5px solid #e8e7e0; border-radius: 10px; padding: 12px 14px; cursor: pointer; transition: background 0.1s; margin-bottom: 8px; }
+  .diary-entry-card:hover { background: #f7f6f0; }
+  .diary-entry-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+  .diary-date { font-size: 10px; color: #aaa; text-transform: uppercase; letter-spacing: 0.06em; }
+  .diary-mood { font-size: 11px; padding: 2px 8px; border-radius: 20px; border: 0.5px solid #e8e7e0; color: #888; }
+  .diary-preview { font-size: 13px; color: #555; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .new-entry-btn { background: #fff; border: 0.5px dashed #c8c7c0; border-radius: 10px; padding: 13px 14px; font-size: 13px; color: #aaa; cursor: pointer; display: flex; align-items: center; gap: 8px; font-family: inherit; width: 100%; transition: all 0.12s; }
+  .new-entry-btn:hover { border-color: #1D9E75; color: #1D9E75; background: #f7fdf9; }
+  .compose-header { padding: 4px 20px 12px; display: flex; align-items: center; justify-content: space-between; border-bottom: 0.5px solid #e8e7e0; }
+  .compose-header button { background: none; border: none; cursor: pointer; color: #aaa; font-size: 18px; padding: 4px; }
+  .compose-date { font-size: 11px; color: #aaa; }
+  .compose-area { flex: 1; padding: 16px 20px; display: flex; flex-direction: column; gap: 12px; }
+  .compose-title-input { font-size: 18px; font-weight: 500; color: #1a1a1a; border: none; outline: none; font-family: inherit; width: 100%; background: transparent; }
+  .compose-title-input::placeholder { color: #ccc; }
+  .compose-body { flex: 1; font-size: 14px; color: #333; border: none; outline: none; font-family: inherit; resize: none; line-height: 1.7; background: transparent; min-height: 220px; }
+  .compose-body::placeholder { color: #ccc; }
+  .compose-mood-row { display: flex; gap: 6px; flex-wrap: wrap; padding: 0 20px 12px; }
+  .mood-chip { background: #f7f6f0; border: 0.5px solid #e8e7e0; border-radius: 20px; padding: 5px 12px; font-size: 11px; color: #888; cursor: pointer; font-family: inherit; transition: all 0.1s; }
+  .mood-chip.selected { background: #E1F5EE; border-color: #5DCAA5; color: #0F6E56; }
+  .compose-save-btn { background: #1D9E75; color: #fff; border: none; border-radius: 10px; padding: 13px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit; margin: 0 20px 16px; transition: background 0.12s; }
+  .compose-save-btn:hover { background: #0F6E56; }
+  .detail-content { flex: 1; padding: 16px 20px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; }
+  .detail-title { font-size: 18px; font-weight: 500; color: #1a1a1a; line-height: 1.3; }
+  .detail-meta { font-size: 11px; color: #aaa; }
+  .detail-body { font-size: 14px; color: #333; line-height: 1.75; white-space: pre-wrap; }
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1a1a1a; color: #fff; padding: 10px 20px; border-radius: 20px; font-size: 13px; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 999; }
+  .toast.show { opacity: 1; }
+  .loading-text { font-size: 12px; color: #aaa; text-align: center; padding: 20px 0; }
+</style>
+</head>
+<body>
+<div class="phone">
+
+  <!-- HOME -->
+  <div class="screen active" id="screen-home">
+    <div class="status-bar"><span id="current-time">--:--</span><span>calma</span></div>
+    <div class="top-bar">
+      <span class="app-name">calma</span>
+      <button aria-label="Ajustes"><i class="ti ti-lock"></i></button>
+    </div>
+    <div class="content">
+      <div class="greeting" id="home-greeting">Hola<span id="home-subgreeting">Cargando...</span></div>
+      <div class="streak-card">
+        <div class="streak-num" id="streak-num">—</div>
+        <div class="streak-info">
+          <div class="label">días en control</div>
+          <div class="sublabel" id="streak-sub">Calculando racha...</div>
+        </div>
+      </div>
+      <div class="progress-grid">
+        <div class="prog-card">
+          <div class="prog-label">Entradas diario</div>
+          <div class="prog-val" id="stat-diary">—</div>
+          <div class="prog-bar"><div class="prog-fill" id="bar-diary" style="width:0%"></div></div>
+        </div>
+        <div class="prog-card">
+          <div class="prog-label">Detonantes log</div>
+          <div class="prog-val" id="stat-triggers">—</div>
+          <div class="prog-bar"><div class="prog-fill" id="bar-triggers" style="width:0%"></div></div>
+        </div>
+        <div class="prog-card">
+          <div class="prog-label">Esta semana</div>
+          <div class="prog-val" id="stat-week">—</div>
+          <div class="prog-bar"><div class="prog-fill" id="bar-week" style="width:0%"></div></div>
+        </div>
+        <div class="prog-card">
+          <div class="prog-label">Emergencias</div>
+          <div class="prog-val" id="stat-sos">—</div>
+          <div class="prog-bar"><div class="prog-fill" id="bar-sos" style="width:0%"></div></div>
+        </div>
+      </div>
+      <div class="section-title">acciones rápidas</div>
+      <button class="action-btn" onclick="goTo('screen-trigger')">
+        <span class="btn-icon"><i class="ti ti-mood-nervous"></i></span>
+        <div><div class="btn-text">Registrar detonante</div><div class="btn-sub">Anota qué pasó</div></div>
+        <span class="btn-arrow"><i class="ti ti-chevron-right"></i></span>
+      </button>
+      <button class="action-btn" onclick="goTo('screen-patterns')">
+        <span class="btn-icon"><i class="ti ti-chart-dots-3"></i></span>
+        <div><div class="btn-text">Ver mis patrones</div><div class="btn-sub">Análisis de registros</div></div>
+        <span class="btn-arrow"><i class="ti ti-chevron-right"></i></span>
+      </button>
+      <button class="action-btn" onclick="goTo('screen-identity')">
+        <span class="btn-icon"><i class="ti ti-heart"></i></span>
+        <div><div class="btn-text">Mi propósito</div><div class="btn-sub">Por qué quiero cambiar</div></div>
+        <span class="btn-arrow"><i class="ti ti-chevron-right"></i></span>
+      </button>
+      <button class="sos-btn" onclick="goTo('screen-emergency')">
+        <i class="ti ti-bolt"></i> Plan de emergencia
+      </button>
+    </div>
+    <nav class="bottom-nav">
+      <button class="nav-item active" onclick="goTo('screen-home')"><i class="ti ti-home"></i><span>Inicio</span></button>
+      <button class="nav-item" onclick="goTo('screen-patterns')"><i class="ti ti-chart-dots-3"></i><span>Patrones</span></button>
+      <button class="nav-item" onclick="goTo('screen-trigger')"><i class="ti ti-edit"></i><span>Registrar</span></button>
+      <button class="nav-item" onclick="goTo('screen-diary')"><i class="ti ti-notebook"></i><span>Diario</span></button>
+      <button class="nav-item" onclick="goTo('screen-identity')"><i class="ti ti-heart"></i><span>Identidad</span></button>
+    </nav>
+  </div>
+
+  <!-- EMERGENCY -->
+  <div class="screen emergency-bg" id="screen-emergency">
+    <div class="status-bar" style="background:transparent;"><span style="color:#5DCAA5;" id="emer-time">--:--</span><span style="color:#5DCAA5;">calma</span></div>
+    <div class="emer-header">
+      <button onclick="goTo('screen-home')" aria-label="Volver"><i class="ti ti-arrow-left"></i></button>
+      <span class="emer-title">plan de emergencia</span>
+    </div>
+    <div class="emer-content">
+      <div class="emer-timer">
+        <div class="timer-num" id="timer-display">60</div>
+        <div class="timer-label">segundos · respira</div>
+      </div>
+      <div class="emer-step" id="step1" onclick="markStep('step1',1)">
+        <div class="step-num" id="step1-num">1</div>
+        <div><div class="step-text">Respira despacio</div><div class="step-sub">4 seg adentro · 4 seg afuera</div></div>
+      </div>
+      <div class="emer-step" id="step2" onclick="markStep('step2',2)">
+        <div class="step-num" id="step2-num">2</div>
+        <div><div class="step-text">Sal del lugar ahora</div><div class="step-sub">Levántate y muévete</div></div>
+      </div>
+      <div class="emer-step" id="step3" onclick="markStep('step3',3)">
+        <div class="step-num" id="step3-num">3</div>
+        <div><div class="step-text">Bloquear acceso</div><div class="step-sub">15 minutos automáticos</div></div>
+      </div>
+      <div class="emer-step" id="step4" onclick="markStep('step4',4)">
+        <div class="step-num" id="step4-num">4</div>
+        <div><div class="step-text">Acción física corta</div><div class="step-sub">10 sentadillas o camina</div></div>
+      </div>
+      <div class="emer-step" id="step5" onclick="markStep('step5',5)">
+        <div class="step-num" id="step5-num">5</div>
+        <div><div class="step-text">Anota qué lo detonó</div><div class="step-sub">Sin juicio — solo datos</div></div>
+      </div>
+      <button onclick="saveEmergencySession()" style="background:rgba(255,255,255,0.1);border:0.5px solid rgba(93,202,165,0.3);border-radius:10px;padding:12px;color:#9FE1CB;font-size:13px;font-family:inherit;cursor:pointer;margin-top:4px;">Guardar sesión completada</button>
+    </div>
+  </div>
+
+  <!-- TRIGGER -->
+  <div class="screen" id="screen-trigger">
+    <div class="status-bar"><span>Registrar</span><span>calma</span></div>
+    <div class="top-bar">
+      <button onclick="goTo('screen-home')" aria-label="Volver"><i class="ti ti-arrow-left"></i></button>
+      <span class="app-name">registrar momento</span>
+      <span style="width:24px;"></span>
+    </div>
+    <div class="content">
+      <div class="section-title">¿qué emoción había?</div>
+      <div class="emotion-grid" id="emotion-grid">
+        <button class="emo-btn" onclick="selectEmo(this,'emotion')">Aburrimiento</button>
+        <button class="emo-btn" onclick="selectEmo(this,'emotion')">Ansiedad</button>
+        <button class="emo-btn" onclick="selectEmo(this,'emotion')">Soledad</button>
+        <button class="emo-btn" onclick="selectEmo(this,'emotion')">Estrés</button>
+        <button class="emo-btn" onclick="selectEmo(this,'emotion')">Cansancio</button>
+        <button class="emo-btn" onclick="selectEmo(this,'emotion')">Frustración</button>
+      </div>
+      <div class="input-group">
+        <label>nivel de cansancio (1–5)</label>
+        <input type="range" min="1" max="5" value="3" step="1" id="tiredness-slider">
+      </div>
+      <div class="input-group">
+        <label>¿dónde estabas?</label>
+        <div class="emotion-grid">
+          <button class="emo-btn" onclick="selectEmo(this,'location')">Cuarto</button>
+          <button class="emo-btn" onclick="selectEmo(this,'location')">Baño</button>
+          <button class="emo-btn" onclick="selectEmo(this,'location')">Sala</button>
+        </div>
+      </div>
+      <div class="input-group">
+        <label>¿qué pasó antes?</label>
+        <textarea id="trigger-notes" placeholder="Breve nota — sin censura"></textarea>
+      </div>
+      <button class="save-btn" onclick="saveTriggerLog()">Guardar registro</button>
+    </div>
+    <nav class="bottom-nav">
+      <button class="nav-item" onclick="goTo('screen-home')"><i class="ti ti-home"></i><span>Inicio</span></button>
+      <button class="nav-item" onclick="goTo('screen-patterns')"><i class="ti ti-chart-dots-3"></i><span>Patrones</span></button>
+      <button class="nav-item active"><i class="ti ti-edit"></i><span>Registrar</span></button>
+      <button class="nav-item" onclick="goTo('screen-diary')"><i class="ti ti-notebook"></i><span>Diario</span></button>
+      <button class="nav-item" onclick="goTo('screen-identity')"><i class="ti ti-heart"></i><span>Identidad</span></button>
+    </nav>
+  </div>
+
+  <!-- PATTERNS -->
+  <div class="screen" id="screen-patterns">
+    <div class="status-bar"><span>Patrones</span><span>calma</span></div>
+    <div class="top-bar">
+      <button onclick="goTo('screen-home')" aria-label="Volver"><i class="ti ti-arrow-left"></i></button>
+      <span class="app-name">mis patrones</span>
+      <span style="width:24px;"></span>
+    </div>
+    <div class="content" id="patterns-content">
+      <div class="loading-text">Cargando patrones...</div>
+    </div>
+    <nav class="bottom-nav">
+      <button class="nav-item" onclick="goTo('screen-home')"><i class="ti ti-home"></i><span>Inicio</span></button>
+      <button class="nav-item active"><i class="ti ti-chart-dots-3"></i><span>Patrones</span></button>
+      <button class="nav-item" onclick="goTo('screen-trigger')"><i class="ti ti-edit"></i><span>Registrar</span></button>
+      <button class="nav-item" onclick="goTo('screen-diary')"><i class="ti ti-notebook"></i><span>Diario</span></button>
+      <button class="nav-item" onclick="goTo('screen-identity')"><i class="ti ti-heart"></i><span>Identidad</span></button>
+    </nav>
+  </div>
+
+  <!-- DIARY LIST -->
+  <div class="screen" id="screen-diary">
+    <div class="status-bar"><span>Diario</span><span>calma</span></div>
+    <div class="top-bar">
+      <span class="app-name">mi diario</span>
+      <button onclick="goTo('screen-compose')" aria-label="Nueva entrada"><i class="ti ti-pencil-plus"></i></button>
+    </div>
+    <div class="content">
+      <button class="new-entry-btn" onclick="goTo('screen-compose')">
+        <i class="ti ti-plus" style="font-size:16px;"></i> Escribir entrada de hoy
+      </button>
+      <div class="section-title">entradas anteriores</div>
+      <div id="diary-list"><div class="loading-text">Cargando entradas...</div></div>
+    </div>
+    <nav class="bottom-nav">
+      <button class="nav-item" onclick="goTo('screen-home')"><i class="ti ti-home"></i><span>Inicio</span></button>
+      <button class="nav-item" onclick="goTo('screen-patterns')"><i class="ti ti-chart-dots-3"></i><span>Patrones</span></button>
+      <button class="nav-item" onclick="goTo('screen-trigger')"><i class="ti ti-edit"></i><span>Registrar</span></button>
+      <button class="nav-item active"><i class="ti ti-notebook"></i><span>Diario</span></button>
+      <button class="nav-item" onclick="goTo('screen-identity')"><i class="ti ti-heart"></i><span>Identidad</span></button>
+    </nav>
+  </div>
+
+  <!-- DIARY COMPOSE -->
+  <div class="screen" id="screen-compose">
+    <div class="status-bar"><span>Nueva entrada</span><span>calma</span></div>
+    <div class="compose-header">
+      <button onclick="goTo('screen-diary')" aria-label="Volver"><i class="ti ti-arrow-left"></i></button>
+      <span class="compose-date" id="compose-date-label"></span>
+      <span style="width:28px;"></span>
+    </div>
+    <div class="compose-mood-row">
+      <button class="mood-chip" onclick="selectMood(this)">Tranquilo</button>
+      <button class="mood-chip" onclick="selectMood(this)">Ansioso</button>
+      <button class="mood-chip" onclick="selectMood(this)">Agradecido</button>
+      <button class="mood-chip" onclick="selectMood(this)">Cansado</button>
+      <button class="mood-chip" onclick="selectMood(this)">Motivado</button>
+    </div>
+    <div class="compose-area">
+      <input class="compose-title-input" id="compose-title" type="text" placeholder="Título (opcional)">
+      <hr style="border:none;border-top:0.5px solid #e8e7e0;">
+      <textarea class="compose-body" id="compose-body" placeholder="Escribe lo que sientes hoy. Sin juicio, sin censura. Este espacio es solo tuyo."></textarea>
+    </div>
+    <button class="compose-save-btn" onclick="saveDiaryEntry()">Guardar entrada</button>
+  </div>
+
+  <!-- DIARY DETAIL -->
+  <div class="screen" id="screen-diary-detail">
+    <div class="status-bar"><span>Entrada</span><span>calma</span></div>
+    <div class="top-bar">
+      <button onclick="goTo('screen-diary')" aria-label="Volver"><i class="ti ti-arrow-left"></i></button>
+      <span class="app-name">entrada</span>
+      <span style="width:28px;"></span>
+    </div>
+    <div class="detail-content">
+      <div class="detail-meta" id="detail-meta"></div>
+      <div class="detail-title" id="detail-title"></div>
+      <div class="detail-body" id="detail-body"></div>
+    </div>
+    <nav class="bottom-nav">
+      <button class="nav-item" onclick="goTo('screen-home')"><i class="ti ti-home"></i><span>Inicio</span></button>
+      <button class="nav-item" onclick="goTo('screen-patterns')"><i class="ti ti-chart-dots-3"></i><span>Patrones</span></button>
+      <button class="nav-item" onclick="goTo('screen-trigger')"><i class="ti ti-edit"></i><span>Registrar</span></button>
+      <button class="nav-item active"><i class="ti ti-notebook"></i><span>Diario</span></button>
+      <button class="nav-item" onclick="goTo('screen-identity')"><i class="ti ti-heart"></i><span>Identidad</span></button>
+    </nav>
+  </div>
+
+  <!-- IDENTITY -->
+  <div class="screen" id="screen-identity">
+    <div class="status-bar"><span>Propósito</span><span>calma</span></div>
+    <div class="top-bar">
+      <button onclick="goTo('screen-home')" aria-label="Volver"><i class="ti ti-arrow-left"></i></button>
+      <span class="app-name">mi propósito</span>
+      <span style="width:24px;"></span>
+    </div>
+    <div class="content">
+      <div class="identity-card">
+        <div class="quote">"Quiero ser alguien que toma decisiones desde la claridad, no desde el impulso."</div>
+        <div class="quote-author">Tu razón profunda</div>
+      </div>
+      <div class="section-title">mis valores</div>
+      <div class="value-list">
+        <div class="value-item"><i class="ti ti-users"></i><span>Presencia en mis relaciones</span></div>
+        <div class="value-item"><i class="ti ti-brain"></i><span>Claridad mental y foco</span></div>
+        <div class="value-item"><i class="ti ti-run"></i><span>Energía y salud física</span></div>
+        <div class="value-item"><i class="ti ti-shield-check"></i><span>Respeto por mí mismo</span></div>
+      </div>
+      <div class="section-title">cuando llegue el impulso, recuerda</div>
+      <div class="reminder-card">El impulso dura menos de 20 minutos.<br>Lo que construyes dura años.</div>
+    </div>
+    <nav class="bottom-nav">
+      <button class="nav-item" onclick="goTo('screen-home')"><i class="ti ti-home"></i><span>Inicio</span></button>
+      <button class="nav-item" onclick="goTo('screen-patterns')"><i class="ti ti-chart-dots-3"></i><span>Patrones</span></button>
+      <button class="nav-item" onclick="goTo('screen-trigger')"><i class="ti ti-edit"></i><span>Registrar</span></button>
+      <button class="nav-item" onclick="goTo('screen-diary')"><i class="ti ti-notebook"></i><span>Diario</span></button>
+      <button class="nav-item active"><i class="ti ti-heart"></i><span>Identidad</span></button>
+    </nav>
+  </div>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Supabase init ──────────────────────────────────────────────
+const SUPABASE_URL = 'https://svwkqiodblrokvsbtizg.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN2d2txaW9kYmxyb2t2c2J0aXpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTgyNTIsImV4cCI6MjA5NTM5NDI1Mn0.MbwQgtZpJqu2-_jXNdgUFOdUWhCJfYFkGCIOpMSEBqQ';
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ── Time ───────────────────────────────────────────────────────
+function updateTime() {
+  const t = new Date().toLocaleTimeString('es-CL', { hour:'2-digit', minute:'2-digit' });
+  document.getElementById('current-time').textContent = t;
+  document.getElementById('emer-time').textContent = t;
+}
+updateTime(); setInterval(updateTime, 30000);
+
+// ── Greeting ───────────────────────────────────────────────────
+function setGreeting() {
+  const h = new Date().getHours();
+  const greet = h < 12 ? 'Buenos días' : h < 19 ? 'Buenas tardes' : 'Buenas noches';
+  const days = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  document.getElementById('home-greeting').firstChild.textContent = greet;
+  document.getElementById('home-subgreeting').textContent =
+    days[new Date().getDay()] + ' · cargando datos...';
+}
+setGreeting();
+
+// ── Navigation ─────────────────────────────────────────────────
+function goTo(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (id === 'screen-emergency') startTimer();
+  if (id === 'screen-diary') loadDiaryList();
+  if (id === 'screen-patterns') loadPatterns();
+  if (id === 'screen-home') loadHomeStats();
+  if (id === 'screen-compose') {
+    const now = new Date();
+    document.getElementById('compose-date-label').textContent =
+      now.toLocaleDateString('es-CL', { weekday:'long', day:'numeric', month:'long' });
+    document.getElementById('compose-title').value = '';
+    document.getElementById('compose-body').value = '';
+    document.querySelectorAll('.mood-chip').forEach(c => c.classList.remove('selected'));
+    selectedMood = '';
+  }
+}
+
+// ── Toast ──────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── Home stats ─────────────────────────────────────────────────
+async function loadHomeStats() {
+  const [{ count: diaryCount }, { count: triggerCount }, { count: sosCount }] = await Promise.all([
+    db.from('diary_entries').select('*', { count:'exact', head:true }),
+    db.from('trigger_logs').select('*', { count:'exact', head:true }),
+    db.from('emergency_sessions').select('*', { count:'exact', head:true }),
+  ]);
+
+  const weekAgo = new Date(Date.now() - 7*86400000).toISOString();
+  const { count: weekCount } = await db.from('diary_entries')
+    .select('*', { count:'exact', head:true })
+    .gte('created_at', weekAgo);
+
+  document.getElementById('stat-diary').textContent = diaryCount ?? 0;
+  document.getElementById('stat-triggers').textContent = triggerCount ?? 0;
+  document.getElementById('stat-sos').textContent = sosCount ?? 0;
+  document.getElementById('stat-week').textContent = (weekCount ?? 0) + ' entradas';
+
+  const maxD = Math.max(diaryCount, 10);
+  document.getElementById('bar-diary').style.width = Math.min(100, (diaryCount/maxD)*100) + '%';
+  document.getElementById('bar-triggers').style.width = Math.min(100, ((triggerCount??0)/Math.max(triggerCount,10))*100) + '%';
+  document.getElementById('bar-sos').style.width = Math.min(100, ((sosCount??0)/Math.max(sosCount,5))*100) + '%';
+  document.getElementById('bar-week').style.width = Math.min(100, ((weekCount??0)/7)*100) + '%';
+
+  // Streak: days since last trigger log
+  const { data: lastTrigger } = await db.from('trigger_logs')
+    .select('created_at').order('created_at', { ascending:false }).limit(1);
+  if (lastTrigger && lastTrigger.length > 0) {
+    const daysSince = Math.floor((Date.now() - new Date(lastTrigger[0].created_at)) / 86400000);
+    document.getElementById('streak-num').textContent = daysSince;
+    document.getElementById('streak-sub').textContent = daysSince === 1 ? 'Último impulso: ayer' : `Último impulso: hace ${daysSince} días`;
+  } else {
+    document.getElementById('streak-num').textContent = '∞';
+    document.getElementById('streak-sub').textContent = 'Sin impulsos registrados aún';
+  }
+  document.getElementById('home-subgreeting').textContent =
+    new Date().toLocaleDateString('es-CL', {weekday:'long', day:'numeric', month:'long'});
+}
+
+// ── Emergency ──────────────────────────────────────────────────
+let timerInterval = null;
+let stepsCompleted = 0;
+function startTimer() {
+  clearInterval(timerInterval);
+  stepsCompleted = 0;
+  let t = 60;
+  document.getElementById('timer-display').textContent = t;
+  [1,2,3,4,5].forEach(n => {
+    document.getElementById('step'+n).classList.remove('done');
+    document.getElementById('step'+n+'-num').textContent = n;
+  });
+  timerInterval = setInterval(() => {
+    t--; document.getElementById('timer-display').textContent = t;
+    if (t <= 0) clearInterval(timerInterval);
+  }, 1000);
+}
+function markStep(id, num) {
+  const step = document.getElementById(id);
+  const numEl = document.getElementById(id + '-num');
+  step.classList.toggle('done');
+  if (step.classList.contains('done')) {
+    numEl.innerHTML = '<i class="ti ti-check" style="font-size:11px;color:#fff;"></i>';
+    stepsCompleted++;
+  } else {
+    numEl.textContent = num;
+    stepsCompleted = Math.max(0, stepsCompleted - 1);
+  }
+}
+async function saveEmergencySession() {
+  await db.from('emergency_sessions').insert({ steps_completed: stepsCompleted });
+  showToast('Sesión guardada ✓');
+  goTo('screen-home');
+}
+
+// ── Trigger log ────────────────────────────────────────────────
+let selectedEmotion = '', selectedLocation = '';
+function selectEmo(btn, type) {
+  const grid = btn.closest('.emotion-grid');
+  grid.querySelectorAll('.emo-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  if (type === 'emotion') selectedEmotion = btn.textContent;
+  if (type === 'location') selectedLocation = btn.textContent;
+}
+async function saveTriggerLog() {
+  const notes = document.getElementById('trigger-notes').value.trim();
+  const tiredness = parseInt(document.getElementById('tiredness-slider').value);
+  await db.from('trigger_logs').insert({
+    emotion: selectedEmotion || null,
+    location: selectedLocation || null,
+    tiredness_level: tiredness,
+    notes: notes || null
+  });
+  // Reset
+  document.querySelectorAll('#screen-trigger .emo-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('trigger-notes').value = '';
+  selectedEmotion = ''; selectedLocation = '';
+  showToast('Detonante registrado ✓');
+  goTo('screen-home');
+}
+
+// ── Diary ──────────────────────────────────────────────────────
+let selectedMood = '';
+function selectMood(btn) {
+  document.querySelectorAll('.mood-chip').forEach(c => c.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedMood = btn.textContent;
+}
+
+async function loadDiaryList() {
+  const list = document.getElementById('diary-list');
+  list.innerHTML = '<div class="loading-text">Cargando entradas...</div>';
+  const { data, error } = await db.from('diary_entries')
+    .select('*').order('created_at', { ascending: false }).limit(30);
+  if (error || !data || data.length === 0) {
+    list.innerHTML = '<p style="font-size:13px;color:#aaa;text-align:center;padding:20px 0;">Aún no hay entradas.<br>Escribe tu primera hoy.</p>';
+    return;
+  }
+  list.innerHTML = data.map(e => {
+    const d = new Date(e.created_at);
+    const dateStr = d.toLocaleDateString('es-CL', {weekday:'short', day:'numeric', month:'short'});
+    return `<div class="diary-entry-card" onclick="openEntry(${JSON.stringify(e).replace(/"/g,'&quot;')})">
+      <div class="diary-entry-header">
+        <span class="diary-date">${dateStr}</span>
+        ${e.mood ? `<span class="diary-mood">${e.mood}</span>` : ''}
+      </div>
+      ${e.title ? `<div style="font-size:13px;font-weight:500;color:#1a1a1a;margin-bottom:4px;">${e.title}</div>` : ''}
+      <div class="diary-preview">${e.body}</div>
+    </div>`;
+  }).join('');
+}
+
+function openEntry(entryStr) {
+  const e = typeof entryStr === 'string' ? JSON.parse(entryStr.replace(/&quot;/g,'"')) : entryStr;
+  const d = new Date(e.created_at);
+  document.getElementById('detail-meta').textContent =
+    d.toLocaleDateString('es-CL', {weekday:'long', day:'numeric', month:'long', year:'numeric'})
+    + (e.mood ? ' · ' + e.mood : '');
+  document.getElementById('detail-title').textContent = e.title || '';
+  document.getElementById('detail-body').textContent = e.body;
+  goTo('screen-diary-detail');
+}
+
+async function saveDiaryEntry() {
+  const title = document.getElementById('compose-title').value.trim();
+  const body = document.getElementById('compose-body').value.trim();
+  if (!body) { showToast('Escribe algo primero'); return; }
+  const { error } = await db.from('diary_entries').insert({
+    title: title || null, body, mood: selectedMood || null
+  });
+  if (error) { showToast('Error al guardar'); return; }
+  showToast('Entrada guardada ✓');
+  goTo('screen-diary');
+}
+
+// ── Patterns (from real trigger data) ─────────────────────────
+async function loadPatterns() {
+  const content = document.getElementById('patterns-content');
+  const { data } = await db.from('trigger_logs').select('*').order('created_at', { ascending:false });
+
+  if (!data || data.length === 0) {
+    content.innerHTML = `
+      <div class="section-title">sin datos aún</div>
+      <div class="pattern-card">
+        <div class="pat-title">Empieza a registrar</div>
+        <div class="pat-desc">Cuando registres detonantes, aquí aparecerán tus patrones detectados automáticamente.</div>
+      </div>`;
+    return;
+  }
+
+  // Analyze emotions
+  const emotions = {}, locations = {}, hours = {};
+  data.forEach(t => {
+    if (t.emotion) emotions[t.emotion] = (emotions[t.emotion]||0)+1;
+    if (t.location) locations[t.location] = (locations[t.location]||0)+1;
+    const h = new Date(t.created_at).getHours();
+    const bucket = h >= 22 || h < 6 ? 'Noche (22h–6h)' : h < 12 ? 'Mañana' : h < 19 ? 'Tarde' : 'Noche temprana';
+    hours[bucket] = (hours[bucket]||0)+1;
+  });
+
+  const topEmo = Object.entries(emotions).sort((a,b)=>b[1]-a[1])[0];
+  const topLoc = Object.entries(locations).sort((a,b)=>b[1]-a[1])[0];
+  const topHour = Object.entries(hours).sort((a,b)=>b[1]-a[1])[0];
+  const total = data.length;
+
+  content.innerHTML = `
+    <div class="section-title">basado en tus ${total} registros</div>
+    ${topHour ? `<div class="pattern-card">
+      <div class="pat-header"><span class="pat-tag">Horario crítico</span><i class="ti ti-clock" style="font-size:14px;color:#ccc;"></i></div>
+      <div class="pat-title">${topHour[0]}</div>
+      <div class="pat-desc">${Math.round((topHour[1]/total)*100)}% de tus impulsos ocurren en este horario.</div>
+    </div>` : ''}
+    ${topEmo ? `<div class="pattern-card">
+      <div class="pat-header"><span class="pat-tag">Emoción frecuente</span><i class="ti ti-mood-nervous" style="font-size:14px;color:#ccc;"></i></div>
+      <div class="pat-title">${topEmo[0]}</div>
+      <div class="pat-desc">Aparece en ${topEmo[1]} de ${total} registros (${Math.round((topEmo[1]/total)*100)}%).</div>
+      <div class="pat-pills">${Object.keys(emotions).map(e=>`<span class="pat-pill">${e}</span>`).join('')}</div>
+    </div>` : ''}
+    ${topLoc ? `<div class="pattern-card">
+      <div class="pat-header"><span class="pat-tag">Lugar de riesgo</span><i class="ti ti-map-pin" style="font-size:14px;color:#ccc;"></i></div>
+      <div class="pat-title">${topLoc[0]}</div>
+      <div class="pat-desc">El lugar más frecuente en tus registros (${topLoc[1]} veces).</div>
+      <div class="pat-pills">${Object.keys(locations).map(l=>`<span class="pat-pill">${l}</span>`).join('')}</div>
+    </div>` : ''}`;
+}
+
+// ── Init ───────────────────────────────────────────────────────
+loadHomeStats();
+</script>
+</body>
+</html>

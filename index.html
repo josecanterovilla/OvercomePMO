@@ -4,321 +4,479 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>calma</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.0.0/dist/tabler-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0efe8; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 2rem 1rem; }
-  .phone { width: 340px; min-height: 640px; background: #fff; border-radius: 32px; border: 1px solid #e0dfd8; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 4px 32px rgba(0,0,0,0.08); }
-  .screen { display: none; flex-direction: column; flex: 1; }
-  .screen.active { display: flex; }
-  .status-bar { padding: 12px 20px 6px; display: flex; justify-content: space-between; }
-  .status-bar span { font-size: 11px; color: #888; }
-  .top-bar { padding: 4px 20px 12px; display: flex; align-items: center; justify-content: space-between; border-bottom: 0.5px solid #e8e7e0; }
-  .app-name { font-size: 13px; font-weight: 500; color: #888; letter-spacing: 0.1em; }
-  .top-bar button { background: none; border: none; cursor: pointer; color: #aaa; font-size: 18px; padding: 4px; }
-  .content { flex: 1; overflow-y: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 14px; }
-  .greeting { font-size: 20px; font-weight: 500; color: #1a1a1a; line-height: 1.3; }
-  .greeting span { font-size: 13px; color: #888; font-weight: 400; display: block; margin-top: 3px; }
-  .streak-card { background: #f7f6f0; border-radius: 14px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; }
-  .streak-num { font-size: 40px; font-weight: 300; color: #1a1a1a; line-height: 1; }
-  .streak-info .label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: #aaa; }
-  .streak-info .sublabel { font-size: 12px; color: #888; margin-top: 3px; }
-  .progress-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .prog-card { background: #f7f6f0; border-radius: 10px; padding: 10px 12px; }
-  .prog-label { font-size: 10px; color: #aaa; text-transform: uppercase; letter-spacing: 0.06em; }
-  .prog-val { font-size: 18px; font-weight: 500; color: #1a1a1a; margin-top: 2px; }
-  .prog-bar { height: 3px; background: #e0dfd8; border-radius: 2px; margin-top: 7px; }
-  .prog-fill { height: 100%; border-radius: 2px; background: #1D9E75; }
-  .section-title { font-size: 10px; font-weight: 500; color: #aaa; text-transform: uppercase; letter-spacing: 0.1em; }
-  .action-btn { background: #fff; border: 0.5px solid #e8e7e0; border-radius: 10px; padding: 12px 14px; text-align: left; cursor: pointer; display: flex; align-items: center; gap: 10px; font-family: inherit; width: 100%; transition: background 0.12s; }
-  .action-btn:hover { background: #f7f6f0; }
-  .btn-icon { font-size: 18px; color: #aaa; width: 22px; text-align: center; }
-  .btn-text { font-size: 13px; color: #1a1a1a; }
-  .btn-sub { font-size: 11px; color: #aaa; }
-  .btn-arrow { margin-left: auto; font-size: 14px; color: #ccc; }
-  .sos-btn { background: #04342C; color: #9FE1CB; border: none; border-radius: 12px; padding: 15px; font-size: 14px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: inherit; letter-spacing: 0.02em; width: 100%; transition: background 0.12s; }
-  .sos-btn:hover { background: #085041; }
-  .bottom-nav { border-top: 0.5px solid #e8e7e0; padding: 8px 0 12px; display: grid; grid-template-columns: repeat(5, 1fr); }
-  .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; background: none; border: none; cursor: pointer; padding: 4px 0; }
-  .nav-item i { font-size: 19px; color: #ccc; }
-  .nav-item span { font-size: 9px; color: #ccc; }
-  .nav-item.active i, .nav-item.active span { color: #0F6E56; }
-  /* Emergency */
-  .emergency-bg { background: #04342C; flex: 1; display: flex; flex-direction: column; }
-  .emer-header { padding: 16px 20px 8px; display: flex; align-items: center; gap: 10px; }
-  .emer-header button { background: none; border: none; cursor: pointer; color: #5DCAA5; font-size: 18px; }
-  .emer-title { font-size: 13px; font-weight: 500; color: #9FE1CB; letter-spacing: 0.06em; }
-  .emer-content { flex: 1; padding: 8px 20px 20px; display: flex; flex-direction: column; gap: 10px; }
-  .emer-timer { text-align: center; padding: 4px 0 10px; }
-  .timer-num { font-size: 52px; font-weight: 200; color: #fff; letter-spacing: -2px; line-height: 1; }
-  .timer-label { font-size: 10px; color: #5DCAA5; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; }
-  .emer-step { background: rgba(255,255,255,0.05); border: 0.5px solid rgba(93,202,165,0.2); border-radius: 10px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: background 0.12s; }
-  .emer-step:hover { background: rgba(255,255,255,0.09); }
-  .emer-step.done { border-color: rgba(93,202,165,0.5); }
-  .step-num { width: 26px; height: 26px; border-radius: 50%; border: 1px solid rgba(93,202,165,0.4); display: flex; align-items: center; justify-content: center; font-size: 12px; color: #5DCAA5; flex-shrink: 0; }
-  .emer-step.done .step-num { background: #1D9E75; border-color: #1D9E75; color: #fff; }
-  .step-text { font-size: 13px; color: #9FE1CB; }
-  .step-sub { font-size: 11px; color: #5DCAA5; margin-top: 2px; }
-  /* Trigger */
-  .emotion-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-  .emo-btn { background: #f7f6f0; border: 0.5px solid #e8e7e0; border-radius: 8px; padding: 8px 4px; font-size: 12px; color: #666; cursor: pointer; font-family: inherit; text-align: center; transition: all 0.1s; }
-  .emo-btn.selected { background: #E1F5EE; border-color: #5DCAA5; color: #0F6E56; }
-  .input-group { display: flex; flex-direction: column; gap: 7px; }
-  .input-group label { font-size: 10px; color: #aaa; text-transform: uppercase; letter-spacing: 0.08em; }
-  .save-btn { background: #1a1a1a; color: #fff; border: none; border-radius: 10px; padding: 13px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit; width: 100%; }
-  input[type=range] { width: 100%; accent-color: #1D9E75; }
-  textarea { width: 100%; border: 0.5px solid #e8e7e0; border-radius: 8px; padding: 10px 12px; font-size: 13px; font-family: inherit; color: #1a1a1a; background: #fff; resize: none; height: 72px; outline: none; }
-  textarea:focus { border-color: #5DCAA5; }
-  /* Patterns */
-  .pattern-card { border: 0.5px solid #e8e7e0; border-radius: 10px; padding: 12px 14px; }
-  .pat-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-  .pat-tag { font-size: 10px; background: #f7f6f0; border-radius: 4px; padding: 2px 8px; color: #888; }
-  .pat-title { font-size: 13px; font-weight: 500; color: #1a1a1a; }
-  .pat-desc { font-size: 12px; color: #888; margin-top: 3px; line-height: 1.5; }
-  .pat-pills { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 9px; }
-  .pat-pill { font-size: 10px; border: 0.5px solid #e8e7e0; border-radius: 20px; padding: 2px 9px; color: #999; }
-  /* Identity */
-  .identity-card { border: 0.5px solid #e8e7e0; border-radius: 14px; padding: 16px; }
-  .identity-card .quote { font-size: 15px; color: #1a1a1a; line-height: 1.55; font-style: italic; }
-  .identity-card .quote-author { font-size: 11px; color: #aaa; margin-top: 8px; }
-  .value-list { display: flex; flex-direction: column; gap: 8px; }
-  .value-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: #f7f6f0; border-radius: 9px; }
-  .value-item i { font-size: 16px; color: #1D9E75; }
-  .value-item span { font-size: 13px; color: #1a1a1a; }
-  .reminder-card { background: #f7f6f0; border-radius: 12px; padding: 14px 16px; font-size: 13px; color: #666; line-height: 1.55; }
-  /* Diary */
-  .diary-entry-card { border: 0.5px solid #e8e7e0; border-radius: 10px; padding: 12px 14px; cursor: pointer; transition: background 0.1s; margin-bottom: 8px; }
-  .diary-entry-card:hover { background: #f7f6f0; }
-  .diary-entry-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
-  .diary-date { font-size: 10px; color: #aaa; text-transform: uppercase; letter-spacing: 0.06em; }
-  .diary-mood { font-size: 11px; padding: 2px 8px; border-radius: 20px; border: 0.5px solid #e8e7e0; color: #888; }
-  .diary-preview { font-size: 13px; color: #555; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-  .new-entry-btn { background: #fff; border: 0.5px dashed #c8c7c0; border-radius: 10px; padding: 13px 14px; font-size: 13px; color: #aaa; cursor: pointer; display: flex; align-items: center; gap: 8px; font-family: inherit; width: 100%; transition: all 0.12s; }
-  .new-entry-btn:hover { border-color: #1D9E75; color: #1D9E75; background: #f7fdf9; }
-  .compose-header { padding: 4px 20px 12px; display: flex; align-items: center; justify-content: space-between; border-bottom: 0.5px solid #e8e7e0; }
-  .compose-header button { background: none; border: none; cursor: pointer; color: #aaa; font-size: 18px; padding: 4px; }
-  .compose-date { font-size: 11px; color: #aaa; }
-  .compose-area { flex: 1; padding: 16px 20px; display: flex; flex-direction: column; gap: 12px; }
-  .compose-title-input { font-size: 18px; font-weight: 500; color: #1a1a1a; border: none; outline: none; font-family: inherit; width: 100%; background: transparent; }
-  .compose-title-input::placeholder { color: #ccc; }
-  .compose-body { flex: 1; font-size: 14px; color: #333; border: none; outline: none; font-family: inherit; resize: none; line-height: 1.7; background: transparent; min-height: 220px; }
-  .compose-body::placeholder { color: #ccc; }
-  .compose-mood-row { display: flex; gap: 6px; flex-wrap: wrap; padding: 0 20px 12px; }
-  .mood-chip { background: #f7f6f0; border: 0.5px solid #e8e7e0; border-radius: 20px; padding: 5px 12px; font-size: 11px; color: #888; cursor: pointer; font-family: inherit; transition: all 0.1s; }
-  .mood-chip.selected { background: #E1F5EE; border-color: #5DCAA5; color: #0F6E56; }
-  .compose-save-btn { background: #1D9E75; color: #fff; border: none; border-radius: 10px; padding: 13px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit; margin: 0 20px 16px; transition: background 0.12s; }
-  .compose-save-btn:hover { background: #0F6E56; }
-  .detail-content { flex: 1; padding: 16px 20px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; }
-  .detail-title { font-size: 18px; font-weight: 500; color: #1a1a1a; line-height: 1.3; }
-  .detail-meta { font-size: 11px; color: #aaa; }
-  .detail-body { font-size: 14px; color: #333; line-height: 1.75; white-space: pre-wrap; }
-  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1a1a1a; color: #fff; padding: 10px 20px; border-radius: 20px; font-size: 13px; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 999; }
-  .toast.show { opacity: 1; }
-  .loading-text { font-size: 12px; color: #aaa; text-align: center; padding: 20px 0; }
+:root {
+  --bg: #FAFAF8; --surface: #F3F2EE; --border: #E6E5E0;
+  --text: #1A1A18; --text2: #6B6B68; --text3: #ADADAA;
+  --green: #1D9E75; --green-dark: #0F6E56; --green-bg: #E1F5EE;
+  --emer-bg: #04342C; --emer-accent: #5DCAA5; --emer-light: #9FE1CB;
+  --radius: 12px; --radius-sm: 8px;
+  --font-ui: 'DM Sans', sans-serif;
+  --font-diary: 'Playfair Display', serif;
+}
+body.night {
+  --bg: #0F1117; --surface: #181C24; --border: #2A2E38;
+  --text: #E8E8E6; --text2: #8A8A88; --text3: #555553;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-ui); background: #E8E7E0; display: flex; justify-content: center; min-height: 100vh; padding: 2rem 1rem; transition: background 0.3s; }
+body.night { background: #0A0C10; }
+
+.phone { width: 340px; min-height: 660px; background: var(--bg); border-radius: 32px; border: 1px solid var(--border); overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 8px 40px rgba(0,0,0,0.12); transition: background 0.3s, border-color 0.3s; }
+.screen { display: none; flex-direction: column; flex: 1; }
+.screen.active { display: flex; }
+
+/* ── Bars ── */
+.status-bar { padding: 12px 20px 4px; display: flex; justify-content: space-between; align-items: center; }
+.status-bar span { font-size: 11px; color: var(--text3); }
+.top-bar { padding: 4px 20px 12px; display: flex; align-items: center; justify-content: space-between; border-bottom: 0.5px solid var(--border); }
+.app-name { font-size: 13px; font-weight: 500; color: var(--text2); letter-spacing: 0.1em; }
+.top-bar button { background: none; border: none; cursor: pointer; color: var(--text3); font-size: 18px; padding: 4px; }
+.content { flex: 1; overflow-y: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 14px; }
+
+/* ── Nav ── */
+.bottom-nav { border-top: 0.5px solid var(--border); padding: 8px 0 12px; display: grid; grid-template-columns: repeat(5, 1fr); background: var(--bg); }
+.nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; background: none; border: none; cursor: pointer; padding: 4px 0; }
+.nav-item i { font-size: 19px; color: var(--text3); }
+.nav-item span { font-size: 9px; color: var(--text3); }
+.nav-item.active i, .nav-item.active span { color: var(--green); }
+
+/* ── Auth ── */
+.auth-wrap { flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 40px 28px 32px; }
+.auth-logo { font-family: var(--font-diary); font-size: 42px; color: var(--text); font-weight: 400; }
+.auth-tagline { font-size: 14px; color: var(--text2); margin-top: 8px; line-height: 1.6; }
+.auth-buttons { display: flex; flex-direction: column; gap: 10px; }
+.auth-btn { display: flex; align-items: center; gap: 12px; padding: 13px 16px; border-radius: var(--radius); border: 0.5px solid var(--border); background: var(--bg); cursor: pointer; font-family: var(--font-ui); font-size: 14px; color: var(--text); transition: background 0.12s; width: 100%; }
+.auth-btn:hover { background: var(--surface); }
+.auth-btn .auth-btn-icon { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+.auth-btn .auth-btn-label { flex: 1; text-align: left; font-size: 13px; }
+.auth-divider { display: flex; align-items: center; gap: 10px; }
+.auth-divider span { font-size: 11px; color: var(--text3); white-space: nowrap; }
+.auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 0.5px; background: var(--border); }
+.auth-footer { font-size: 11px; color: var(--text3); text-align: center; line-height: 1.6; }
+
+/* ── Phone auth ── */
+.phone-auth-wrap { flex: 1; padding: 24px 24px 32px; display: flex; flex-direction: column; gap: 20px; }
+.phone-input-row { display: flex; gap: 8px; align-items: center; }
+.flag-select { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-sm); padding: 11px 12px; font-size: 13px; color: var(--text); font-family: var(--font-ui); cursor: pointer; white-space: nowrap; }
+.phone-field { flex: 1; background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-sm); padding: 11px 14px; font-size: 14px; color: var(--text); font-family: var(--font-ui); outline: none; }
+.phone-field:focus { border-color: var(--green); }
+.otp-row { display: flex; gap: 8px; justify-content: center; }
+.otp-digit { width: 44px; height: 52px; background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-sm); text-align: center; font-size: 22px; font-weight: 500; color: var(--text); font-family: var(--font-ui); outline: none; }
+.otp-digit:focus { border-color: var(--green); background: var(--bg); }
+.primary-btn { background: var(--text); color: var(--bg); border: none; border-radius: var(--radius); padding: 14px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: var(--font-ui); width: 100%; transition: opacity 0.12s; }
+.primary-btn:hover { opacity: 0.85; }
+.secondary-btn { background: none; border: 0.5px solid var(--border); border-radius: var(--radius); padding: 12px; font-size: 13px; color: var(--text2); cursor: pointer; font-family: var(--font-ui); width: 100%; }
+
+/* ── Home ── */
+.greeting { font-size: 20px; font-weight: 500; color: var(--text); line-height: 1.3; }
+.greeting span { font-size: 13px; color: var(--text2); font-weight: 400; display: block; margin-top: 3px; }
+.streak-card { background: var(--emer-bg); border-radius: 16px; padding: 16px 18px; display: flex; align-items: center; gap: 16px; }
+.streak-num { font-size: 44px; font-weight: 300; color: white; line-height: 1; font-family: var(--font-diary); }
+.streak-info .label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--emer-accent); }
+.streak-info .sublabel { font-size: 12px; color: var(--emer-light); margin-top: 3px; }
+.progress-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.prog-card { background: var(--surface); border-radius: var(--radius-sm); padding: 10px 12px; }
+.prog-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; }
+.prog-val { font-size: 18px; font-weight: 500; color: var(--text); margin-top: 2px; }
+.prog-bar { height: 3px; background: var(--border); border-radius: 2px; margin-top: 7px; }
+.prog-fill { height: 100%; border-radius: 2px; background: var(--green); }
+.section-title { font-size: 10px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; }
+.action-btn { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px; text-align: left; cursor: pointer; display: flex; align-items: center; gap: 10px; font-family: var(--font-ui); width: 100%; transition: background 0.12s; }
+.action-btn:hover { background: var(--surface); }
+.btn-icon { font-size: 18px; color: var(--text3); width: 22px; text-align: center; }
+.btn-text { font-size: 13px; color: var(--text); }
+.btn-sub { font-size: 11px; color: var(--text3); }
+.btn-arrow { margin-left: auto; font-size: 14px; color: var(--text3); }
+.sos-btn { background: var(--emer-bg); color: var(--emer-light); border: none; border-radius: var(--radius); padding: 15px; font-size: 14px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: var(--font-ui); width: 100%; transition: opacity 0.12s; }
+.sos-btn:hover { opacity: 0.9; }
+
+/* ── Emergency ── */
+.emergency-bg { background: var(--emer-bg); flex: 1; display: flex; flex-direction: column; }
+.emer-header { padding: 16px 20px 8px; display: flex; align-items: center; gap: 10px; }
+.emer-header button { background: none; border: none; cursor: pointer; color: var(--emer-accent); font-size: 18px; }
+.emer-title { font-size: 13px; font-weight: 500; color: var(--emer-light); letter-spacing: 0.06em; }
+.emer-content { flex: 1; padding: 8px 20px 20px; display: flex; flex-direction: column; gap: 10px; }
+.emer-timer { text-align: center; padding: 4px 0 10px; }
+.timer-num { font-size: 52px; font-weight: 200; color: white; letter-spacing: -2px; line-height: 1; font-family: var(--font-diary); }
+.timer-label { font-size: 10px; color: var(--emer-accent); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; }
+.emer-step { background: rgba(255,255,255,0.05); border: 0.5px solid rgba(93,202,165,0.2); border-radius: 10px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: background 0.12s; }
+.emer-step:hover { background: rgba(255,255,255,0.09); }
+.emer-step.done { border-color: rgba(93,202,165,0.5); }
+.step-num { width: 26px; height: 26px; border-radius: 50%; border: 1px solid rgba(93,202,165,0.4); display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--emer-accent); flex-shrink: 0; }
+.emer-step.done .step-num { background: var(--green); border-color: var(--green); color: #fff; }
+.step-text { font-size: 13px; color: var(--emer-light); }
+.step-sub { font-size: 11px; color: var(--emer-accent); margin-top: 2px; }
+.emer-save-btn { background: rgba(255,255,255,0.1); border: 0.5px solid rgba(93,202,165,0.3); border-radius: 10px; padding: 12px; color: var(--emer-light); font-size: 13px; font-family: var(--font-ui); cursor: pointer; margin-top: 4px; transition: background 0.12s; }
+.emer-save-btn:hover { background: rgba(255,255,255,0.15); }
+
+/* ── Trigger / Emotion ── */
+.emotion-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.emo-btn { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-sm); padding: 8px 4px; font-size: 12px; color: var(--text2); cursor: pointer; font-family: var(--font-ui); text-align: center; transition: all 0.1s; }
+.emo-btn.selected { background: var(--green-bg); border-color: var(--emer-accent); color: var(--green-dark); }
+.input-group { display: flex; flex-direction: column; gap: 7px; }
+.input-group label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; }
+.save-btn { background: var(--text); color: var(--bg); border: none; border-radius: var(--radius); padding: 13px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: var(--font-ui); width: 100%; }
+input[type=range] { width: 100%; accent-color: var(--green); }
+textarea { width: 100%; border: 0.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; font-size: 13px; font-family: var(--font-ui); color: var(--text); background: var(--bg); resize: none; height: 72px; outline: none; }
+textarea:focus { border-color: var(--emer-accent); }
+
+/* ── Diary ── */
+.diary-month-header { font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; padding: 4px 0; margin-top: 4px; }
+.diary-card { border-radius: var(--radius); border: 0.5px solid var(--border); padding: 0; margin-bottom: 10px; overflow: hidden; cursor: pointer; transition: box-shadow 0.12s; background: var(--bg); }
+.diary-card:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+.diary-card-accent { height: 4px; width: 100%; }
+.diary-card-body { padding: 12px 14px 14px; }
+.diary-card-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.diary-card-date { display: flex; align-items: baseline; gap: 5px; }
+.diary-day-name { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); }
+.diary-day-num { font-size: 22px; font-weight: 400; color: var(--text); font-family: var(--font-diary); line-height: 1; }
+.diary-month-name { font-size: 11px; color: var(--text3); }
+.diary-mood-pill { font-size: 10px; padding: 3px 10px; border-radius: 20px; border: 0.5px solid var(--border); color: var(--text2); background: var(--surface); }
+.diary-entry-title { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 4px; font-family: var(--font-diary); }
+.diary-preview { font-size: 12px; color: var(--text2); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.new-entry-btn { background: var(--bg); border: 0.5px dashed var(--border); border-radius: var(--radius); padding: 14px; font-size: 13px; color: var(--text3); cursor: pointer; display: flex; align-items: center; gap: 8px; font-family: var(--font-ui); width: 100%; transition: all 0.12s; }
+.new-entry-btn:hover { border-color: var(--green); color: var(--green); }
+.mini-cal { background: var(--surface); border-radius: var(--radius); padding: 12px; }
+.mini-cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.mini-cal-title { font-size: 12px; font-weight: 500; color: var(--text); }
+.mini-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+.cal-day-name { font-size: 9px; color: var(--text3); text-align: center; padding-bottom: 4px; text-transform: uppercase; }
+.cal-day { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--text2); margin: auto; }
+.cal-day.has-entry { background: var(--green-bg); color: var(--green-dark); font-weight: 500; }
+.cal-day.today { border: 1.5px solid var(--green); color: var(--green); }
+.cal-day.empty { color: transparent; }
+
+/* ── Compose (diary write) ── */
+.compose-wrap { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.compose-date-header { padding: 20px 24px 12px; border-bottom: 0.5px solid var(--border); background: var(--bg); }
+.compose-day-word { font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text3); }
+.compose-day-number { font-family: var(--font-diary); font-size: 52px; font-weight: 400; color: var(--text); line-height: 1; margin: 2px 0; }
+.compose-month-year { font-size: 13px; color: var(--text2); }
+.compose-mood-row { display: flex; gap: 6px; padding: 12px 20px; border-bottom: 0.5px solid var(--border); overflow-x: auto; scrollbar-width: none; }
+.compose-mood-row::-webkit-scrollbar { display: none; }
+.mood-chip { background: var(--surface); border: 0.5px solid var(--border); border-radius: 20px; padding: 5px 14px; font-size: 11px; color: var(--text2); cursor: pointer; font-family: var(--font-ui); transition: all 0.1s; white-space: nowrap; }
+.mood-chip.selected { background: var(--green-bg); border-color: var(--emer-accent); color: var(--green-dark); }
+.compose-area { flex: 1; padding: 16px 24px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
+.compose-title-input { font-size: 18px; font-weight: 500; color: var(--text); border: none; outline: none; font-family: var(--font-diary); width: 100%; background: transparent; }
+.compose-title-input::placeholder { color: var(--border); }
+.compose-divider { height: 0.5px; background: var(--border); }
+.compose-body-input { flex: 1; font-size: 14px; color: var(--text); border: none; outline: none; font-family: var(--font-ui); resize: none; line-height: 1.8; background: transparent; min-height: 200px; }
+.compose-body-input::placeholder { color: var(--text3); }
+.compose-footer { padding: 12px 20px 16px; border-top: 0.5px solid var(--border); }
+.compose-save { background: var(--green); color: white; border: none; border-radius: var(--radius); padding: 13px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: var(--font-ui); width: 100%; transition: background 0.12s; }
+.compose-save:hover { background: var(--green-dark); }
+
+/* ── Diary detail ── */
+.detail-wrap { flex: 1; overflow-y: auto; }
+.detail-date-header { padding: 20px 24px 16px; border-bottom: 0.5px solid var(--border); }
+.detail-body-wrap { padding: 20px 24px; }
+.detail-title-text { font-family: var(--font-diary); font-size: 22px; color: var(--text); margin-bottom: 12px; line-height: 1.4; }
+.detail-body-text { font-size: 14px; color: var(--text2); line-height: 1.85; white-space: pre-wrap; }
+
+/* ── Patterns ── */
+.pattern-card { border: 0.5px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px; background: var(--bg); }
+.pat-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.pat-tag { font-size: 10px; background: var(--surface); border-radius: 4px; padding: 2px 8px; color: var(--text2); }
+.pat-title { font-size: 13px; font-weight: 500; color: var(--text); }
+.pat-desc { font-size: 12px; color: var(--text2); margin-top: 3px; line-height: 1.5; }
+.pat-pills { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 9px; }
+.pat-pill { font-size: 10px; border: 0.5px solid var(--border); border-radius: 20px; padding: 2px 9px; color: var(--text3); }
+
+/* ── Relapse ── */
+.relapse-wrap { flex: 1; padding: 0 20px 20px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; }
+.relapse-intro { background: var(--surface); border-radius: var(--radius); padding: 14px 16px; }
+.relapse-intro p { font-size: 14px; color: var(--text); line-height: 1.6; }
+.relapse-intro span { color: var(--text2); font-size: 13px; }
+.relapse-step { display: flex; flex-direction: column; gap: 7px; }
+.relapse-step label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; }
+.relapse-textarea { width: 100%; border: 0.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; font-size: 13px; font-family: var(--font-ui); color: var(--text); background: var(--bg); resize: none; height: 64px; outline: none; }
+.relapse-textarea:focus { border-color: var(--emer-accent); }
+
+/* ── Coach (AI) ── */
+.coach-wrap { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.coach-messages { flex: 1; padding: 16px 16px 8px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; }
+.msg { max-width: 82%; display: flex; flex-direction: column; gap: 3px; }
+.msg.user { align-self: flex-end; }
+.msg.assistant { align-self: flex-start; }
+.msg-bubble { padding: 10px 13px; border-radius: 16px; font-size: 13px; line-height: 1.55; }
+.msg.user .msg-bubble { background: var(--emer-bg); color: var(--emer-light); border-bottom-right-radius: 4px; }
+.msg.assistant .msg-bubble { background: var(--surface); color: var(--text); border-bottom-left-radius: 4px; }
+.msg-time { font-size: 10px; color: var(--text3); }
+.msg.user .msg-time { text-align: right; }
+.coach-input-row { padding: 10px 16px 14px; border-top: 0.5px solid var(--border); display: flex; gap: 8px; align-items: flex-end; background: var(--bg); }
+.coach-input { flex: 1; border: 0.5px solid var(--border); border-radius: 20px; padding: 9px 14px; font-size: 13px; font-family: var(--font-ui); color: var(--text); background: var(--surface); outline: none; resize: none; max-height: 100px; overflow-y: auto; line-height: 1.5; }
+.coach-input:focus { border-color: var(--emer-accent); }
+.coach-send { width: 36px; height: 36px; background: var(--emer-bg); border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: opacity 0.12s; }
+.coach-send:hover { opacity: 0.85; }
+.coach-send i { font-size: 16px; color: var(--emer-accent); }
+.coach-typing { display: flex; gap: 4px; padding: 10px 13px; }
+.coach-typing span { width: 6px; height: 6px; background: var(--text3); border-radius: 50%; animation: bounce 1s infinite; }
+.coach-typing span:nth-child(2) { animation-delay: 0.15s; }
+.coach-typing span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
+
+/* ── Identity ── */
+.identity-card { border: 0.5px solid var(--border); border-radius: var(--radius); padding: 16px; background: var(--bg); }
+.identity-card .quote { font-size: 15px; color: var(--text); line-height: 1.6; font-family: var(--font-diary); font-style: italic; }
+.identity-card .quote-author { font-size: 11px; color: var(--text3); margin-top: 8px; }
+.value-list { display: flex; flex-direction: column; gap: 8px; }
+.value-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--surface); border-radius: var(--radius-sm); }
+.value-item i { font-size: 16px; color: var(--green); }
+.value-item span { font-size: 13px; color: var(--text); }
+.reminder-card { background: var(--surface); border-radius: var(--radius); padding: 14px 16px; font-size: 14px; color: var(--text2); line-height: 1.65; font-family: var(--font-diary); font-style: italic; }
+
+/* ── Toast ── */
+.toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); background: var(--text); color: var(--bg); padding: 10px 20px; border-radius: 20px; font-size: 13px; opacity: 0; transition: opacity 0.25s; pointer-events: none; z-index: 999; white-space: nowrap; }
+.toast.show { opacity: 1; }
+.loading-text { font-size: 12px; color: var(--text3); text-align: center; padding: 20px 0; }
+
+/* ── Mood colors ── */
+.mood-tranquilo .diary-card-accent { background: #5DCAA5; }
+.mood-ansioso .diary-card-accent { background: #F0A500; }
+.mood-agradecido .diary-card-accent { background: #4CAF50; }
+.mood-cansado .diary-card-accent { background: #9C27B0; }
+.mood-motivado .diary-card-accent { background: #2196F3; }
+.mood-triste .diary-card-accent { background: #E91E63; }
+.mood-enojado .diary-card-accent { background: #F44336; }
+.mood-default .diary-card-accent { background: var(--border); }
 </style>
 </head>
 <body>
 <div class="phone">
 
-  <!-- HOME -->
-  <div class="screen active" id="screen-home">
-    <div class="status-bar"><span id="current-time">--:--</span><span>calma</span></div>
-    <div class="top-bar">
-      <span class="app-name">calma</span>
-      <button aria-label="Ajustes"><i class="ti ti-lock"></i></button>
+<!-- ════ AUTH MAIN ════ -->
+<div class="screen active" id="screen-auth">
+  <div class="auth-wrap">
+    <div>
+      <div class="auth-logo">calma</div>
+      <p class="auth-tagline">Tu espacio privado para cambiar hábitos,<br>entender patrones y crecer sin juicio.</p>
     </div>
-    <div class="content">
-      <div class="greeting" id="home-greeting">Hola<span id="home-subgreeting">Cargando...</span></div>
-      <div class="streak-card">
-        <div class="streak-num" id="streak-num">—</div>
-        <div class="streak-info">
-          <div class="label">días en control</div>
-          <div class="sublabel" id="streak-sub">Calculando racha...</div>
-        </div>
-      </div>
-      <div class="progress-grid">
-        <div class="prog-card">
-          <div class="prog-label">Entradas diario</div>
-          <div class="prog-val" id="stat-diary">—</div>
-          <div class="prog-bar"><div class="prog-fill" id="bar-diary" style="width:0%"></div></div>
-        </div>
-        <div class="prog-card">
-          <div class="prog-label">Detonantes log</div>
-          <div class="prog-val" id="stat-triggers">—</div>
-          <div class="prog-bar"><div class="prog-fill" id="bar-triggers" style="width:0%"></div></div>
-        </div>
-        <div class="prog-card">
-          <div class="prog-label">Esta semana</div>
-          <div class="prog-val" id="stat-week">—</div>
-          <div class="prog-bar"><div class="prog-fill" id="bar-week" style="width:0%"></div></div>
-        </div>
-        <div class="prog-card">
-          <div class="prog-label">Emergencias</div>
-          <div class="prog-val" id="stat-sos">—</div>
-          <div class="prog-bar"><div class="prog-fill" id="bar-sos" style="width:0%"></div></div>
-        </div>
-      </div>
-      <div class="section-title">acciones rápidas</div>
-      <button class="action-btn" onclick="goTo('screen-trigger')">
-        <span class="btn-icon"><i class="ti ti-mood-nervous"></i></span>
-        <div><div class="btn-text">Registrar detonante</div><div class="btn-sub">Anota qué pasó</div></div>
-        <span class="btn-arrow"><i class="ti ti-chevron-right"></i></span>
+    <div class="auth-buttons">
+      <button class="auth-btn" onclick="loginWith('google')">
+        <span class="auth-btn-icon"><svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg></span>
+        <span class="auth-btn-label">Continuar con Google</span>
+        <i class="ti ti-chevron-right" style="font-size:14px;color:var(--text3);"></i>
       </button>
-      <button class="action-btn" onclick="goTo('screen-patterns')">
-        <span class="btn-icon"><i class="ti ti-chart-dots-3"></i></span>
-        <div><div class="btn-text">Ver mis patrones</div><div class="btn-sub">Análisis de registros</div></div>
-        <span class="btn-arrow"><i class="ti ti-chevron-right"></i></span>
+      <button class="auth-btn" onclick="loginWith('facebook')">
+        <span class="auth-btn-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></span>
+        <span class="auth-btn-label">Continuar con Facebook</span>
+        <i class="ti ti-chevron-right" style="font-size:14px;color:var(--text3);"></i>
       </button>
-      <button class="action-btn" onclick="goTo('screen-identity')">
-        <span class="btn-icon"><i class="ti ti-heart"></i></span>
-        <div><div class="btn-text">Mi propósito</div><div class="btn-sub">Por qué quiero cambiar</div></div>
-        <span class="btn-arrow"><i class="ti ti-chevron-right"></i></span>
+      <button class="auth-btn" onclick="loginWith('apple')">
+        <span class="auth-btn-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="var(--text)"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg></span>
+        <span class="auth-btn-label">Continuar con Apple</span>
+        <i class="ti ti-chevron-right" style="font-size:14px;color:var(--text3);"></i>
       </button>
-      <button class="sos-btn" onclick="goTo('screen-emergency')">
-        <i class="ti ti-bolt"></i> Plan de emergencia
+      <div class="auth-divider"><span>o</span></div>
+      <button class="auth-btn" onclick="goTo('screen-phone-auth')">
+        <span class="auth-btn-icon"><i class="ti ti-device-mobile" style="font-size:18px;color:var(--text2);"></i></span>
+        <span class="auth-btn-label">Continuar con teléfono</span>
+        <i class="ti ti-chevron-right" style="font-size:14px;color:var(--text3);"></i>
       </button>
     </div>
-    <nav class="bottom-nav">
-      <button class="nav-item active" onclick="goTo('screen-home')"><i class="ti ti-home"></i><span>Inicio</span></button>
-      <button class="nav-item" onclick="goTo('screen-patterns')"><i class="ti ti-chart-dots-3"></i><span>Patrones</span></button>
-      <button class="nav-item" onclick="goTo('screen-trigger')"><i class="ti ti-edit"></i><span>Registrar</span></button>
-      <button class="nav-item" onclick="goTo('screen-diary')"><i class="ti ti-notebook"></i><span>Diario</span></button>
-      <button class="nav-item" onclick="goTo('screen-identity')"><i class="ti ti-heart"></i><span>Identidad</span></button>
-    </nav>
+    <p class="auth-footer">Al continuar, aceptas que tus datos son privados<br>y no se comparten con terceros.</p>
   </div>
+</div>
 
-  <!-- EMERGENCY -->
-  <div class="screen emergency-bg" id="screen-emergency">
-    <div class="status-bar" style="background:transparent;"><span style="color:#5DCAA5;" id="emer-time">--:--</span><span style="color:#5DCAA5;">calma</span></div>
-    <div class="emer-header">
-      <button onclick="goTo('screen-home')" aria-label="Volver"><i class="ti ti-arrow-left"></i></button>
-      <span class="emer-title">plan de emergencia</span>
-    </div>
-    <div class="emer-content">
-      <div class="emer-timer">
-        <div class="timer-num" id="timer-display">60</div>
-        <div class="timer-label">segundos · respira</div>
-      </div>
-      <div class="emer-step" id="step1" onclick="markStep('step1',1)">
-        <div class="step-num" id="step1-num">1</div>
-        <div><div class="step-text">Respira despacio</div><div class="step-sub">4 seg adentro · 4 seg afuera</div></div>
-      </div>
-      <div class="emer-step" id="step2" onclick="markStep('step2',2)">
-        <div class="step-num" id="step2-num">2</div>
-        <div><div class="step-text">Sal del lugar ahora</div><div class="step-sub">Levántate y muévete</div></div>
-      </div>
-      <div class="emer-step" id="step3" onclick="markStep('step3',3)">
-        <div class="step-num" id="step3-num">3</div>
-        <div><div class="step-text">Bloquear acceso</div><div class="step-sub">15 minutos automáticos</div></div>
-      </div>
-      <div class="emer-step" id="step4" onclick="markStep('step4',4)">
-        <div class="step-num" id="step4-num">4</div>
-        <div><div class="step-text">Acción física corta</div><div class="step-sub">10 sentadillas o camina</div></div>
-      </div>
-      <div class="emer-step" id="step5" onclick="markStep('step5',5)">
-        <div class="step-num" id="step5-num">5</div>
-        <div><div class="step-text">Anota qué lo detonó</div><div class="step-sub">Sin juicio — solo datos</div></div>
-      </div>
-      <button onclick="saveEmergencySession()" style="background:rgba(255,255,255,0.1);border:0.5px solid rgba(93,202,165,0.3);border-radius:10px;padding:12px;color:#9FE1CB;font-size:13px;font-family:inherit;cursor:pointer;margin-top:4px;">Guardar sesión completada</button>
-    </div>
+<!-- ════ AUTH PHONE ════ -->
+<div class="screen" id="screen-phone-auth">
+  <div class="status-bar"><span></span></div>
+  <div class="top-bar">
+    <button onclick="goTo('screen-auth')" aria-label="Volver"><i class="ti ti-arrow-left"></i></button>
+    <span class="app-name">tu número</span>
+    <span style="width:24px;"></span>
   </div>
-
-  <!-- TRIGGER -->
-  <div class="screen" id="screen-trigger">
-    <div class="status-bar"><span>Registrar</span><span>calma</span></div>
-    <div class="top-bar">
-      <button onclick="goTo('screen-home')" aria-label="Volver"><i class="ti ti-arrow-left"></i></button>
-      <span class="app-name">registrar momento</span>
-      <span style="width:24px;"></span>
-    </div>
-    <div class="content">
-      <div class="section-title">¿qué emoción había?</div>
-      <div class="emotion-grid" id="emotion-grid">
-        <button class="emo-btn" onclick="selectEmo(this,'emotion')">Aburrimiento</button>
-        <button class="emo-btn" onclick="selectEmo(this,'emotion')">Ansiedad</button>
-        <button class="emo-btn" onclick="selectEmo(this,'emotion')">Soledad</button>
-        <button class="emo-btn" onclick="selectEmo(this,'emotion')">Estrés</button>
-        <button class="emo-btn" onclick="selectEmo(this,'emotion')">Cansancio</button>
-        <button class="emo-btn" onclick="selectEmo(this,'emotion')">Frustración</button>
-      </div>
-      <div class="input-group">
-        <label>nivel de cansancio (1–5)</label>
-        <input type="range" min="1" max="5" value="3" step="1" id="tiredness-slider">
-      </div>
-      <div class="input-group">
-        <label>¿dónde estabas?</label>
-        <div class="emotion-grid">
-          <button class="emo-btn" onclick="selectEmo(this,'location')">Cuarto</button>
-          <button class="emo-btn" onclick="selectEmo(this,'location')">Baño</button>
-          <button class="emo-btn" onclick="selectEmo(this,'location')">Sala</button>
+  <div class="phone-auth-wrap">
+    <div id="phone-step">
+      <p style="font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:20px;">Te enviaremos un código de verificación por SMS.</p>
+      <div class="input-group" style="margin-bottom:20px;">
+        <label>número de teléfono</label>
+        <div class="phone-input-row">
+          <span class="flag-select">🇨🇱 +56</span>
+          <input class="phone-field" id="phone-number" type="tel" placeholder="9 1234 5678">
         </div>
       </div>
-      <div class="input-group">
-        <label>¿qué pasó antes?</label>
-        <textarea id="trigger-notes" placeholder="Breve nota — sin censura"></textarea>
+      <button class="primary-btn" onclick="sendOTP()">Enviar código</button>
+    </div>
+    <div id="otp-step" style="display:none;">
+      <p style="font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:20px;">Ingresa el código de 6 dígitos que enviamos a tu teléfono.</p>
+      <div class="otp-row" style="margin-bottom:24px;">
+        <input class="otp-digit" maxlength="1" type="number" oninput="otpMove(this,0)">
+        <input class="otp-digit" maxlength="1" type="number" oninput="otpMove(this,1)">
+        <input class="otp-digit" maxlength="1" type="number" oninput="otpMove(this,2)">
+        <input class="otp-digit" maxlength="1" type="number" oninput="otpMove(this,3)">
+        <input class="otp-digit" maxlength="1" type="number" oninput="otpMove(this,4)">
+        <input class="otp-digit" maxlength="1" type="number" oninput="otpMove(this,5)">
       </div>
-      <button class="save-btn" onclick="saveTriggerLog()">Guardar registro</button>
+      <button class="primary-btn" onclick="verifyOTP()">Verificar</button>
+      <button class="secondary-btn" style="margin-top:10px;" onclick="document.getElementById('otp-step').style.display='none';document.getElementById('phone-step').style.display='block';">Cambiar número</button>
     </div>
-    <nav class="bottom-nav">
-      <button class="nav-item" onclick="goTo('screen-home')"><i class="ti ti-home"></i><span>Inicio</span></button>
-      <button class="nav-item" onclick="goTo('screen-patterns')"><i class="ti ti-chart-dots-3"></i><span>Patrones</span></button>
-      <button class="nav-item active"><i class="ti ti-edit"></i><span>Registrar</span></button>
-      <button class="nav-item" onclick="goTo('screen-diary')"><i class="ti ti-notebook"></i><span>Diario</span></button>
-      <button class="nav-item" onclick="goTo('screen-identity')"><i class="ti ti-heart"></i><span>Identidad</span></button>
-    </nav>
   </div>
+</div>
 
-  <!-- PATTERNS -->
-  <div class="screen" id="screen-patterns">
-    <div class="status-bar"><span>Patrones</span><span>calma</span></div>
-    <div class="top-bar">
-      <button onclick="goTo('screen-home')" aria-label="Volver"><i class="ti ti-arrow-left"></i></button>
-      <span class="app-name">mis patrones</span>
-      <span style="width:24px;"></span>
-    </div>
-    <div class="content" id="patterns-content">
-      <div class="loading-text">Cargando patrones...</div>
-    </div>
-    <nav class="bottom-nav">
-      <button class="nav-item" onclick="goTo('screen-home')"><i class="ti ti-home"></i><span>Inicio</span></button>
-      <button class="nav-item active"><i class="ti ti-chart-dots-3"></i><span>Patrones</span></button>
-      <button class="nav-item" onclick="goTo('screen-trigger')"><i class="ti ti-edit"></i><span>Registrar</span></button>
-      <button class="nav-item" onclick="goTo('screen-diary')"><i class="ti ti-notebook"></i><span>Diario</span></button>
-      <button class="nav-item" onclick="goTo('screen-identity')"><i class="ti ti-heart"></i><span>Identidad</span></button>
-    </nav>
+<!-- ════ HOME ════ -->
+<div class="screen" id="screen-home">
+  <div class="status-bar"><span id="current-time">--:--</span><span id="night-toggle-btn" onclick="toggleNight()" style="cursor:pointer;font-size:16px;">🌙</span></div>
+  <div class="top-bar">
+    <span class="app-name">calma</span>
+    <button onclick="logout()" aria-label="Salir"><i class="ti ti-logout"></i></button>
   </div>
-
-  <!-- DIARY LIST -->
-  <div class="screen" id="screen-diary">
-    <div class="status-bar"><span>Diario</span><span>calma</span></div>
-    <div class="top-bar">
-      <span class="app-name">mi diario</span>
-      <button onclick="goTo('screen-compose')" aria-label="Nueva entrada"><i class="ti ti-pencil-plus"></i></button>
+  <div class="content">
+    <div class="greeting" id="home-greeting">Hola<span id="home-subgreeting">Cargando...</span></div>
+    <div class="streak-card">
+      <div class="streak-num" id="streak-num">—</div>
+      <div class="streak-info">
+        <div class="label">días en control</div>
+        <div class="sublabel" id="streak-sub">Calculando...</div>
+      </div>
     </div>
-    <div class="content">
-      <button class="new-entry-btn" onclick="goTo('screen-compose')">
-        <i class="ti ti-plus" style="font-size:16px;"></i> Escribir entrada de hoy
-      </button>
-      <div class="section-title">entradas anteriores</div>
-      <div id="diary-list"><div class="loading-text">Cargando entradas...</div></div>
+    <div class="progress-grid">
+      <div class="prog-card"><div class="prog-label">Diario</div><div class="prog-val" id="stat-diary">—</div><div class="prog-bar"><div class="prog-fill" id="bar-diary" style="width:0%"></div></div></div>
+      <div class="prog-card"><div class="prog-label">Registros</div><div class="prog-val" id="stat-triggers">—</div><div class="prog-bar"><div class="prog-fill" id="bar-triggers" style="width:0%"></div></div></div>
+      <div class="prog-card"><div class="prog-label">Esta semana</div><div class="prog-val" id="stat-week">—</div><div class="prog-bar"><div class="prog-fill" id="bar-week" style="width:0%"></div></div></div>
+      <div class="prog-card"><div class="prog-label">Emergencias</div><div class="prog-val" id="stat-sos">—</div><div class="prog-bar"><div class="prog-fill" id="bar-sos" style="width:0%"></div></div></div>
     </div>
-    <nav class="bottom-nav">
-      <button class="nav-item" onclick="goTo('screen-home')"><i class="ti ti-home"></i><span>Inicio</span></button>
-      <button class="nav-item" onclick="goTo('screen-patterns')"><i class="ti ti-chart-dots-3"></i><span>Patrones</span></button>
-      <button class="nav-item" onclick="goTo('screen-trigger')"><i class="ti ti-edit"></i><span>Registrar</span></button>
-      <button class="nav-item active"><i class="ti ti-notebook"></i><span>Diario</span></button>
-      <button class="nav-item" onclick="goTo('screen-identity')"><i class="ti ti-heart"></i><span>Identidad</span></button>
-    </nav>
+    <div class="section-title">acciones</div>
+    <button class="action-btn" onclick="goTo('screen-trigger')"><span class="btn-icon"><i class="ti ti-mood-nervous"></i></span><div><div class="btn-text">Registrar detonante</div><div class="btn-sub">Anota qué pasó</div></div><span class="btn-arrow"><i class="ti ti-chevron-right"></i></span></button>
+    <button class="action-btn" onclick="goTo('screen-relapse')" style="border-color:#FEE2E2;"><span class="btn-icon" style="color:#E24B4A;"><i class="ti ti-refresh-alert"></i></span><div><div class="btn-text">Tuve una recaída</div><div class="btn-sub">Convertirla en aprendizaje</div></div><span class="btn-arrow"><i class="ti ti-chevron-right"></i></span></button>
+    <button class="sos-btn" onclick="goTo('screen-emergency')"><i class="ti ti-bolt"></i> Plan de emergencia</button>
   </div>
+  <nav class="bottom-nav">
+    <button class="nav-item active" onclick="goTo('screen-home')"><i class="ti ti-home"></i><span>Inicio</span></button>
+    <button class="nav-item" onclick="goTo('screen-diary')"><i class="ti ti-notebook"></i><span>Diario</span></button>
+    <button class="nav-item" onclick="goTo('screen-patterns')"><i class="ti ti-chart-dots-3"></i><span>Patrones</span></button>
+    <button class="nav-item" onclick="goTo('screen-coach')"><i class="ti ti-message-chatbot"></i><span>Coach</span></button>
+    <button class="nav-item" onclick="goTo('screen-identity')"><i class="ti ti-heart"></i><span>Identidad</span></button>
+  </nav>
+</div>
 
-  <!-- DIARY COMPOSE -->
-  <div class="screen" id="screen-compose">
-    <div class="status-bar"><span>Nueva entrada</span><span>calma</span></div>
-    <div class="compose-header">
-      <button onclick="goTo('screen-diary')" aria-label="Volver"><i class="ti ti-arrow-left"></i></button>
-      <span class="compose-date" id="compose-date-label"></span>
-      <span style="width:28px;"></span>
+<!-- ════ EMERGENCY ════ -->
+<div class="screen emergency-bg" id="screen-emergency">
+  <div class="status-bar" style="background:transparent;"><span style="color:var(--emer-accent);" id="emer-time">--:--</span></div>
+  <div class="emer-header">
+    <button onclick="goTo('screen-home')" aria-label="Volver"><i class="ti ti-arrow-left"></i></button>
+    <span class="emer-title">plan de emergencia</span>
+  </div>
+  <div class="emer-content">
+    <div class="emer-timer"><div class="timer-num" id="timer-display">60</div><div class="timer-label">segundos · respira</div></div>
+    <div class="emer-step" id="step1" onclick="markStep('step1',1)"><div class="step-num" id="step1-num">1</div><div><div class="step-text">Respira despacio</div><div class="step-sub">4 seg adentro · 4 seg afuera</div></div></div>
+    <div class="emer-step" id="step2" onclick="markStep('step2',2)"><div class="step-num" id="step2-num">2</div><div><div class="step-text">Sal del lugar ahora</div><div class="step-sub">Levántate y muévete</div></div></div>
+    <div class="emer-step" id="step3" onclick="markStep('step3',3)"><div class="step-num" id="step3-num">3</div><div><div class="step-text">Bloquear acceso</div><div class="step-sub">15 minutos automáticos</div></div></div>
+    <div class="emer-step" id="step4" onclick="markStep('step4',4)"><div class="step-num" id="step4-num">4</div><div><div class="step-text">Acción física corta</div><div class="step-sub">10 sentadillas o camina</div></div></div>
+    <div class="emer-step" id="step5" onclick="markStep('step5',5)"><div class="step-num" id="step5-num">5</div><div><div class="step-text">Anota qué lo detonó</div><div class="step-sub">Sin juicio — solo datos</div></div></div>
+    <button class="emer-save-btn" onclick="saveEmergencySession()">Guardar sesión completada</button>
+  </div>
+</div>
+
+<!-- ════ TRIGGER LOG ════ -->
+<div class="screen" id="screen-trigger">
+  <div class="status-bar"><span>Registrar</span></div>
+  <div class="top-bar">
+    <button onclick="goTo('screen-home')" aria-label="Volver"><i class="ti ti-arrow-left"></i></button>
+    <span class="app-name">registrar momento</span>
+    <span style="width:24px;"></span>
+  </div>
+  <div class="content">
+    <div class="section-title">¿qué emoción había?</div>
+    <div class="emotion-grid">
+      <button class="emo-btn" onclick="selectEmo(this,'emotion')">Aburrimiento</button>
+      <button class="emo-btn" onclick="selectEmo(this,'emotion')">Ansiedad</button>
+      <button class="emo-btn" onclick="selectEmo(this,'emotion')">Soledad</button>
+      <button class="emo-btn" onclick="selectEmo(this,'emotion')">Estrés</button>
+      <button class="emo-btn" onclick="selectEmo(this,'emotion')">Cansancio</button>
+      <button class="emo-btn" onclick="selectEmo(this,'emotion')">Frustración</button>
+    </div>
+    <div class="input-group"><label>nivel de cansancio (1–5)</label><input type="range" min="1" max="5" value="3" step="1" id="tiredness-slider"></div>
+    <div class="input-group"><label>¿dónde estabas?</label>
+      <div class="emotion-grid">
+        <button class="emo-btn" onclick="selectEmo(this,'location')">Cuarto</button>
+        <button class="emo-btn" onclick="selectEmo(this,'location')">Baño</button>
+        <button class="emo-btn" onclick="selectEmo(this,'location')">Sala</button>
+      </div>
+    </div>
+    <div class="input-group"><label>¿qué pasó antes?</label><textarea id="trigger-notes" placeholder="Breve nota — sin censura"></textarea></div>
+    <button class="save-btn" onclick="saveTriggerLog()">Guardar registro</button>
+  </div>
+  <nav class="bottom-nav">
+    <button class="nav-item" onclick="goTo('screen-home')"><i class="ti ti-home"></i><span>Inicio</span></button>
+    <button class="nav-item" onclick="goTo('screen-diary')"><i class="ti ti-notebook"></i><span>Diario</span></button>
+    <button class="nav-item" onclick="goTo('screen-patterns')"><i class="ti ti-chart-dots-3"></i><span>Patrones</span></button>
+    <button class="nav-item" onclick="goTo('screen-coach')"><i class="ti ti-message-chatbot"></i><span>Coach</span></button>
+    <button class="nav-item" onclick="goTo('screen-identity')"><i class="ti ti-heart"></i><span>Identidad</span></button>
+  </nav>
+</div>
+
+<!-- ════ RELAPSE ════ -->
+<div class="screen" id="screen-relapse">
+  <div class="status-bar"><span>Recaída</span></div>
+  <div class="top-bar">
+    <button onclick="goTo('screen-home')" aria-label="Volver"><i class="ti ti-arrow-left"></i></button>
+    <span class="app-name">reconstruir</span>
+    <span style="width:24px;"></span>
+  </div>
+  <div class="relapse-wrap">
+    <div class="relapse-intro">
+      <p>Está bien. Esto es parte del proceso.<br><span>No eres tu recaída. Eres lo que aprendes de ella.</span></p>
+    </div>
+    <div class="relapse-step"><label>¿qué pasó exactamente?</label><textarea class="relapse-textarea" id="r-what" placeholder="Describe brevemente el momento..."></textarea></div>
+    <div class="relapse-step">
+      <label>¿qué emoción había?</label>
+      <div class="emotion-grid">
+        <button class="emo-btn" onclick="selectEmo(this,'relapse-emotion')">Ansiedad</button>
+        <button class="emo-btn" onclick="selectEmo(this,'relapse-emotion')">Soledad</button>
+        <button class="emo-btn" onclick="selectEmo(this,'relapse-emotion')">Aburrimiento</button>
+        <button class="emo-btn" onclick="selectEmo(this,'relapse-emotion')">Estrés</button>
+        <button class="emo-btn" onclick="selectEmo(this,'relapse-emotion')">Cansancio</button>
+        <button class="emo-btn" onclick="selectEmo(this,'relapse-emotion')">Frustración</button>
+      </div>
+    </div>
+    <div class="relapse-step"><label>¿qué patrón se repitió?</label><textarea class="relapse-textarea" id="r-pattern" placeholder="Hora, lugar, estado mental similar a otras veces..."></textarea></div>
+    <div class="relapse-step"><label>¿qué cambias hoy?</label><textarea class="relapse-textarea" id="r-change" placeholder="Una acción concreta que harás diferente..."></textarea></div>
+    <div class="relapse-step"><label>¿qué barrera subes mañana?</label><textarea class="relapse-textarea" id="r-barrier" placeholder="Una dificultad más que pondrás entre tú y el impulso..."></textarea></div>
+    <button class="save-btn" onclick="saveRelapse()">Guardar y seguir adelante</button>
+  </div>
+</div>
+
+<!-- ════ DIARY LIST ════ -->
+<div class="screen" id="screen-diary">
+  <div class="status-bar"><span>Diario</span></div>
+  <div class="top-bar">
+    <span class="app-name">mi diario</span>
+    <button onclick="goTo('screen-compose')" aria-label="Nueva entrada"><i class="ti ti-pencil-plus"></i></button>
+  </div>
+  <div class="content">
+    <button class="new-entry-btn" onclick="goTo('screen-compose')"><i class="ti ti-plus" style="font-size:16px;"></i> Escribir entrada de hoy</button>
+    <div id="mini-calendar"></div>
+    <div class="section-title" style="margin-top:4px;">entradas</div>
+    <div id="diary-list"><div class="loading-text">Cargando...</div></div>
+  </div>
+  <nav class="bottom-nav">
+    <button class="nav-item" onclick="goTo('screen-home')"><i class="ti ti-home"></i><span>Inicio</span></button>
+    <button class="nav-item active"><i class="ti ti-notebook"></i><span>Diario</span></button>
+    <button class="nav-item" onclick="goTo('screen-patterns')"><i class="ti ti-chart-dots-3"></i><span>Patrones</span></button>
+    <button class="nav-item" onclick="goTo('screen-coach')"><i class="ti ti-message-chatbot"></i><span>Coach</span></button>
+    <button class="nav-item" onclick="goTo('screen-identity')"><i class="ti ti-heart"></i><span>Identidad</span></button>
+  </nav>
+</div>
+
+<!-- ════ DIARY COMPOSE ════ -->
+<div class="screen" id="screen-compose">
+  <div class="status-bar"><span>Nueva entrada</span></div>
+  <div class="top-bar">
+    <button onclick="goTo('screen-diary')" aria-label="Volver"><i class="ti ti-arrow-left"></i></button>
+    <span class="app-name">escribir</span>
+    <span style="width:24px;"></span>
+  </div>
+  <div class="compose-wrap">
+    <div class="compose-date-header">
+      <div class="compose-day-word" id="compose-day-word">Lunes</div>
+      <div class="compose-day-number" id="compose-day-number">1</div>
+      <div class="compose-month-year" id="compose-month-year">enero 2026</div>
     </div>
     <div class="compose-mood-row">
       <button class="mood-chip" onclick="selectMood(this)">Tranquilo</button>
@@ -326,330 +484,537 @@
       <button class="mood-chip" onclick="selectMood(this)">Agradecido</button>
       <button class="mood-chip" onclick="selectMood(this)">Cansado</button>
       <button class="mood-chip" onclick="selectMood(this)">Motivado</button>
+      <button class="mood-chip" onclick="selectMood(this)">Triste</button>
+      <button class="mood-chip" onclick="selectMood(this)">Enojado</button>
     </div>
     <div class="compose-area">
       <input class="compose-title-input" id="compose-title" type="text" placeholder="Título (opcional)">
-      <hr style="border:none;border-top:0.5px solid #e8e7e0;">
-      <textarea class="compose-body" id="compose-body" placeholder="Escribe lo que sientes hoy. Sin juicio, sin censura. Este espacio es solo tuyo."></textarea>
+      <div class="compose-divider"></div>
+      <textarea class="compose-body-input" id="compose-body" placeholder="¿Cómo estuvo el día? ¿Qué sentiste? Este espacio es solo tuyo, sin juicio."></textarea>
     </div>
-    <button class="compose-save-btn" onclick="saveDiaryEntry()">Guardar entrada</button>
+    <div class="compose-footer">
+      <button class="compose-save" onclick="saveDiaryEntry()">Guardar entrada</button>
+    </div>
   </div>
-
-  <!-- DIARY DETAIL -->
-  <div class="screen" id="screen-diary-detail">
-    <div class="status-bar"><span>Entrada</span><span>calma</span></div>
-    <div class="top-bar">
-      <button onclick="goTo('screen-diary')" aria-label="Volver"><i class="ti ti-arrow-left"></i></button>
-      <span class="app-name">entrada</span>
-      <span style="width:28px;"></span>
-    </div>
-    <div class="detail-content">
-      <div class="detail-meta" id="detail-meta"></div>
-      <div class="detail-title" id="detail-title"></div>
-      <div class="detail-body" id="detail-body"></div>
-    </div>
-    <nav class="bottom-nav">
-      <button class="nav-item" onclick="goTo('screen-home')"><i class="ti ti-home"></i><span>Inicio</span></button>
-      <button class="nav-item" onclick="goTo('screen-patterns')"><i class="ti ti-chart-dots-3"></i><span>Patrones</span></button>
-      <button class="nav-item" onclick="goTo('screen-trigger')"><i class="ti ti-edit"></i><span>Registrar</span></button>
-      <button class="nav-item active"><i class="ti ti-notebook"></i><span>Diario</span></button>
-      <button class="nav-item" onclick="goTo('screen-identity')"><i class="ti ti-heart"></i><span>Identidad</span></button>
-    </nav>
-  </div>
-
-  <!-- IDENTITY -->
-  <div class="screen" id="screen-identity">
-    <div class="status-bar"><span>Propósito</span><span>calma</span></div>
-    <div class="top-bar">
-      <button onclick="goTo('screen-home')" aria-label="Volver"><i class="ti ti-arrow-left"></i></button>
-      <span class="app-name">mi propósito</span>
-      <span style="width:24px;"></span>
-    </div>
-    <div class="content">
-      <div class="identity-card">
-        <div class="quote">"Quiero ser alguien que toma decisiones desde la claridad, no desde el impulso."</div>
-        <div class="quote-author">Tu razón profunda</div>
-      </div>
-      <div class="section-title">mis valores</div>
-      <div class="value-list">
-        <div class="value-item"><i class="ti ti-users"></i><span>Presencia en mis relaciones</span></div>
-        <div class="value-item"><i class="ti ti-brain"></i><span>Claridad mental y foco</span></div>
-        <div class="value-item"><i class="ti ti-run"></i><span>Energía y salud física</span></div>
-        <div class="value-item"><i class="ti ti-shield-check"></i><span>Respeto por mí mismo</span></div>
-      </div>
-      <div class="section-title">cuando llegue el impulso, recuerda</div>
-      <div class="reminder-card">El impulso dura menos de 20 minutos.<br>Lo que construyes dura años.</div>
-    </div>
-    <nav class="bottom-nav">
-      <button class="nav-item" onclick="goTo('screen-home')"><i class="ti ti-home"></i><span>Inicio</span></button>
-      <button class="nav-item" onclick="goTo('screen-patterns')"><i class="ti ti-chart-dots-3"></i><span>Patrones</span></button>
-      <button class="nav-item" onclick="goTo('screen-trigger')"><i class="ti ti-edit"></i><span>Registrar</span></button>
-      <button class="nav-item" onclick="goTo('screen-diary')"><i class="ti ti-notebook"></i><span>Diario</span></button>
-      <button class="nav-item active"><i class="ti ti-heart"></i><span>Identidad</span></button>
-    </nav>
-  </div>
-
 </div>
+
+<!-- ════ DIARY DETAIL ════ -->
+<div class="screen" id="screen-diary-detail">
+  <div class="status-bar"><span>Entrada</span></div>
+  <div class="top-bar">
+    <button onclick="goTo('screen-diary')" aria-label="Volver"><i class="ti ti-arrow-left"></i></button>
+    <span class="app-name">entrada</span>
+    <span style="width:24px;"></span>
+  </div>
+  <div class="detail-wrap">
+    <div class="detail-date-header">
+      <div class="compose-day-word" id="detail-day-word"></div>
+      <div class="compose-day-number" id="detail-day-number" style="font-size:40px;"></div>
+      <div class="compose-month-year" id="detail-month-year"></div>
+      <div id="detail-mood-pill" style="margin-top:8px;"></div>
+    </div>
+    <div class="detail-body-wrap">
+      <div class="detail-title-text" id="detail-title"></div>
+      <div class="detail-body-text" id="detail-body"></div>
+    </div>
+  </div>
+  <nav class="bottom-nav">
+    <button class="nav-item" onclick="goTo('screen-home')"><i class="ti ti-home"></i><span>Inicio</span></button>
+    <button class="nav-item active"><i class="ti ti-notebook"></i><span>Diario</span></button>
+    <button class="nav-item" onclick="goTo('screen-patterns')"><i class="ti ti-chart-dots-3"></i><span>Patrones</span></button>
+    <button class="nav-item" onclick="goTo('screen-coach')"><i class="ti ti-message-chatbot"></i><span>Coach</span></button>
+    <button class="nav-item" onclick="goTo('screen-identity')"><i class="ti ti-heart"></i><span>Identidad</span></button>
+  </nav>
+</div>
+
+<!-- ════ PATTERNS ════ -->
+<div class="screen" id="screen-patterns">
+  <div class="status-bar"><span>Patrones</span></div>
+  <div class="top-bar">
+    <button onclick="goTo('screen-home')" aria-label="Volver"><i class="ti ti-arrow-left"></i></button>
+    <span class="app-name">mis patrones</span>
+    <span style="width:24px;"></span>
+  </div>
+  <div class="content" id="patterns-content"><div class="loading-text">Analizando datos...</div></div>
+  <nav class="bottom-nav">
+    <button class="nav-item" onclick="goTo('screen-home')"><i class="ti ti-home"></i><span>Inicio</span></button>
+    <button class="nav-item" onclick="goTo('screen-diary')"><i class="ti ti-notebook"></i><span>Diario</span></button>
+    <button class="nav-item active"><i class="ti ti-chart-dots-3"></i><span>Patrones</span></button>
+    <button class="nav-item" onclick="goTo('screen-coach')"><i class="ti ti-message-chatbot"></i><span>Coach</span></button>
+    <button class="nav-item" onclick="goTo('screen-identity')"><i class="ti ti-heart"></i><span>Identidad</span></button>
+  </nav>
+</div>
+
+<!-- ════ COACH ════ -->
+<div class="screen" id="screen-coach">
+  <div class="status-bar"><span>Coach</span></div>
+  <div class="top-bar">
+    <button onclick="goTo('screen-home')" aria-label="Volver"><i class="ti ti-arrow-left"></i></button>
+    <span class="app-name">coach</span>
+    <span style="width:24px;"></span>
+  </div>
+  <div class="coach-wrap">
+    <div class="coach-messages" id="coach-messages">
+      <div class="msg assistant">
+        <div class="msg-bubble">Hola. Estoy aquí para acompañarte, no para juzgarte. ¿Qué está pasando hoy?</div>
+        <div class="msg-time">ahora</div>
+      </div>
+    </div>
+    <div class="coach-input-row">
+      <textarea class="coach-input" id="coach-input" placeholder="Escribe aquí..." rows="1" onkeydown="coachKeydown(event)"></textarea>
+      <button class="coach-send" onclick="sendCoachMessage()"><i class="ti ti-send"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ IDENTITY ════ -->
+<div class="screen" id="screen-identity">
+  <div class="status-bar"><span>Identidad</span></div>
+  <div class="top-bar">
+    <button onclick="goTo('screen-home')" aria-label="Volver"><i class="ti ti-arrow-left"></i></button>
+    <span class="app-name">mi propósito</span>
+    <span style="width:24px;"></span>
+  </div>
+  <div class="content">
+    <div class="identity-card">
+      <div class="quote">"Quiero ser alguien que toma decisiones desde la claridad, no desde el impulso."</div>
+      <div class="quote-author">Tu razón profunda</div>
+    </div>
+    <div class="section-title">mis valores</div>
+    <div class="value-list">
+      <div class="value-item"><i class="ti ti-users"></i><span>Presencia en mis relaciones</span></div>
+      <div class="value-item"><i class="ti ti-brain"></i><span>Claridad mental y foco</span></div>
+      <div class="value-item"><i class="ti ti-run"></i><span>Energía y salud física</span></div>
+      <div class="value-item"><i class="ti ti-shield-check"></i><span>Respeto por mí mismo</span></div>
+    </div>
+    <div class="section-title">cuando llegue el impulso</div>
+    <div class="reminder-card">El impulso dura menos de 20 minutos.<br>Lo que construyes dura años.</div>
+  </div>
+  <nav class="bottom-nav">
+    <button class="nav-item" onclick="goTo('screen-home')"><i class="ti ti-home"></i><span>Inicio</span></button>
+    <button class="nav-item" onclick="goTo('screen-diary')"><i class="ti ti-notebook"></i><span>Diario</span></button>
+    <button class="nav-item" onclick="goTo('screen-patterns')"><i class="ti ti-chart-dots-3"></i><span>Patrones</span></button>
+    <button class="nav-item" onclick="goTo('screen-coach')"><i class="ti ti-message-chatbot"></i><span>Coach</span></button>
+    <button class="nav-item active"><i class="ti ti-heart"></i><span>Identidad</span></button>
+  </nav>
+</div>
+
+</div><!-- /phone -->
 <div class="toast" id="toast"></div>
 
 <script>
-// ── Supabase init ──────────────────────────────────────────────
-const SUPABASE_URL = 'https://svwkqiodblrokvsbtizg.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN2d2txaW9kYmxyb2t2c2J0aXpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTgyNTIsImV4cCI6MjA5NTM5NDI1Mn0.MbwQgtZpJqu2-_jXNdgUFOdUWhCJfYFkGCIOpMSEBqQ';
-const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// ── Supabase ─────────────────────────────────────────────
+const SUPA_URL = 'https://svwkqiodblrokvsbtizg.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN2d2txaW9kYmxyb2t2c2J0aXpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTgyNTIsImV4cCI6MjA5NTM5NDI1Mn0.MbwQgtZpJqu2-_jXNdgUFOdUWhCJfYFkGCIOpMSEBqQ';
+const db = supabase.createClient(SUPA_URL, SUPA_KEY);
+let currentUser = null;
 
-// ── Time ───────────────────────────────────────────────────────
-function updateTime() {
-  const t = new Date().toLocaleTimeString('es-CL', { hour:'2-digit', minute:'2-digit' });
-  document.getElementById('current-time').textContent = t;
-  document.getElementById('emer-time').textContent = t;
+// ── Auth ─────────────────────────────────────────────────
+async function initAuth() {
+  const { data: { session } } = await db.auth.getSession();
+  if (session) { currentUser = session.user; showApp(); }
+  else goTo('screen-auth');
+  db.auth.onAuthStateChange((_e, session) => {
+    currentUser = session?.user || null;
+    if (currentUser) showApp(); else goTo('screen-auth');
+  });
 }
-updateTime(); setInterval(updateTime, 30000);
 
-// ── Greeting ───────────────────────────────────────────────────
-function setGreeting() {
-  const h = new Date().getHours();
-  const greet = h < 12 ? 'Buenos días' : h < 19 ? 'Buenas tardes' : 'Buenas noches';
-  const days = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
-  document.getElementById('home-greeting').firstChild.textContent = greet;
-  document.getElementById('home-subgreeting').textContent =
-    days[new Date().getDay()] + ' · cargando datos...';
+async function loginWith(provider) {
+  await db.auth.signInWithOAuth({
+    provider,
+    options: { redirectTo: window.location.origin }
+  });
 }
-setGreeting();
 
-// ── Navigation ─────────────────────────────────────────────────
+let phoneForOTP = '';
+async function sendOTP() {
+  const num = document.getElementById('phone-number').value.trim();
+  if (!num) { showToast('Ingresa tu número'); return; }
+  phoneForOTP = '+56' + num.replace(/\s/g,'');
+  const { error } = await db.auth.signInWithOtp({ phone: phoneForOTP });
+  if (error) { showToast('Error: ' + error.message); return; }
+  document.getElementById('phone-step').style.display = 'none';
+  document.getElementById('otp-step').style.display = 'block';
+  document.querySelectorAll('.otp-digit')[0].focus();
+}
+
+function otpMove(el, idx) {
+  if (el.value.length === 1) {
+    const digits = document.querySelectorAll('.otp-digit');
+    if (idx < 5) digits[idx+1].focus();
+  }
+}
+
+async function verifyOTP() {
+  const digits = document.querySelectorAll('.otp-digit');
+  const token = Array.from(digits).map(d => d.value).join('');
+  if (token.length < 6) { showToast('Ingresa los 6 dígitos'); return; }
+  const { error } = await db.auth.verifyOtp({ phone: phoneForOTP, token, type: 'sms' });
+  if (error) showToast('Código incorrecto');
+}
+
+async function logout() {
+  await db.auth.signOut();
+  goTo('screen-auth');
+}
+
+function showApp() {
+  goTo('screen-home');
+  loadHomeStats();
+}
+
+// ── Night mode ───────────────────────────────────────────
+function toggleNight() {
+  document.body.classList.toggle('night');
+  document.getElementById('night-toggle-btn').textContent =
+    document.body.classList.contains('night') ? '☀️' : '🌙';
+}
+
+// ── Navigation ───────────────────────────────────────────
 function goTo(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   if (id === 'screen-emergency') startTimer();
-  if (id === 'screen-diary') loadDiaryList();
+  if (id === 'screen-diary') { loadDiaryList(); buildMiniCal(); }
   if (id === 'screen-patterns') loadPatterns();
   if (id === 'screen-home') loadHomeStats();
-  if (id === 'screen-compose') {
-    const now = new Date();
-    document.getElementById('compose-date-label').textContent =
-      now.toLocaleDateString('es-CL', { weekday:'long', day:'numeric', month:'long' });
-    document.getElementById('compose-title').value = '';
-    document.getElementById('compose-body').value = '';
-    document.querySelectorAll('.mood-chip').forEach(c => c.classList.remove('selected'));
-    selectedMood = '';
-  }
+  if (id === 'screen-compose') setComposeDate();
 }
 
-// ── Toast ──────────────────────────────────────────────────────
+// ── Time ─────────────────────────────────────────────────
+function updateTime() {
+  const t = new Date().toLocaleTimeString('es-CL', { hour:'2-digit', minute:'2-digit' });
+  const el = document.getElementById('current-time');
+  const el2 = document.getElementById('emer-time');
+  if (el) el.textContent = t;
+  if (el2) el2.textContent = t;
+}
+updateTime(); setInterval(updateTime, 30000);
+
+function setGreeting() {
+  const h = new Date().getHours();
+  const greet = h < 12 ? 'Buenos días' : h < 19 ? 'Buenas tardes' : 'Buenas noches';
+  const days = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const el = document.getElementById('home-greeting');
+  if (el) el.firstChild.textContent = greet;
+  const sub = document.getElementById('home-subgreeting');
+  if (sub) sub.textContent = days[new Date().getDay()] + ' · cargando...';
+}
+setGreeting();
+
+// ── Toast ────────────────────────────────────────────────
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-// ── Home stats ─────────────────────────────────────────────────
+// ── Home stats ───────────────────────────────────────────
 async function loadHomeStats() {
-  const [{ count: diaryCount }, { count: triggerCount }, { count: sosCount }] = await Promise.all([
-    db.from('diary_entries').select('*', { count:'exact', head:true }),
-    db.from('trigger_logs').select('*', { count:'exact', head:true }),
-    db.from('emergency_sessions').select('*', { count:'exact', head:true }),
+  if (!currentUser) return;
+  const uid = currentUser.id;
+  const [r1, r2, r3] = await Promise.all([
+    db.from('diary_entries').select('*',{count:'exact',head:true}).eq('user_id',uid),
+    db.from('trigger_logs').select('*',{count:'exact',head:true}).eq('user_id',uid),
+    db.from('emergency_sessions').select('*',{count:'exact',head:true}).eq('user_id',uid)
   ]);
-
-  const weekAgo = new Date(Date.now() - 7*86400000).toISOString();
-  const { count: weekCount } = await db.from('diary_entries')
-    .select('*', { count:'exact', head:true })
-    .gte('created_at', weekAgo);
-
-  document.getElementById('stat-diary').textContent = diaryCount ?? 0;
-  document.getElementById('stat-triggers').textContent = triggerCount ?? 0;
-  document.getElementById('stat-sos').textContent = sosCount ?? 0;
-  document.getElementById('stat-week').textContent = (weekCount ?? 0) + ' entradas';
-
-  const maxD = Math.max(diaryCount, 10);
-  document.getElementById('bar-diary').style.width = Math.min(100, (diaryCount/maxD)*100) + '%';
-  document.getElementById('bar-triggers').style.width = Math.min(100, ((triggerCount??0)/Math.max(triggerCount,10))*100) + '%';
-  document.getElementById('bar-sos').style.width = Math.min(100, ((sosCount??0)/Math.max(sosCount,5))*100) + '%';
-  document.getElementById('bar-week').style.width = Math.min(100, ((weekCount??0)/7)*100) + '%';
-
-  // Streak: days since last trigger log
-  const { data: lastTrigger } = await db.from('trigger_logs')
-    .select('created_at').order('created_at', { ascending:false }).limit(1);
-  if (lastTrigger && lastTrigger.length > 0) {
-    const daysSince = Math.floor((Date.now() - new Date(lastTrigger[0].created_at)) / 86400000);
-    document.getElementById('streak-num').textContent = daysSince;
-    document.getElementById('streak-sub').textContent = daysSince === 1 ? 'Último impulso: ayer' : `Último impulso: hace ${daysSince} días`;
+  const weekAgo = new Date(Date.now()-7*86400000).toISOString();
+  const r4 = await db.from('diary_entries').select('*',{count:'exact',head:true}).eq('user_id',uid).gte('created_at',weekAgo);
+  const d = r1.count??0, tr = r2.count??0, sos = r3.count??0, wk = r4.count??0;
+  document.getElementById('stat-diary').textContent = d;
+  document.getElementById('stat-triggers').textContent = tr;
+  document.getElementById('stat-sos').textContent = sos;
+  document.getElementById('stat-week').textContent = wk + ' días';
+  document.getElementById('bar-diary').style.width = Math.min(100,(d/Math.max(d,10))*100)+'%';
+  document.getElementById('bar-triggers').style.width = Math.min(100,(tr/Math.max(tr,10))*100)+'%';
+  document.getElementById('bar-sos').style.width = Math.min(100,(sos/Math.max(sos,5))*100)+'%';
+  document.getElementById('bar-week').style.width = Math.min(100,(wk/7)*100)+'%';
+  const { data: lt } = await db.from('trigger_logs').select('created_at').eq('user_id',uid).order('created_at',{ascending:false}).limit(1);
+  if (lt && lt.length) {
+    const ds = Math.floor((Date.now()-new Date(lt[0].created_at))/86400000);
+    document.getElementById('streak-num').textContent = ds;
+    document.getElementById('streak-sub').textContent = ds===0?'Hoy fue un día de control':ds===1?'Desde ayer':('Hace '+ds+' días');
   } else {
     document.getElementById('streak-num').textContent = '∞';
-    document.getElementById('streak-sub').textContent = 'Sin impulsos registrados aún';
+    document.getElementById('streak-sub').textContent = 'Sin impulsos registrados';
   }
   document.getElementById('home-subgreeting').textContent =
-    new Date().toLocaleDateString('es-CL', {weekday:'long', day:'numeric', month:'long'});
+    new Date().toLocaleDateString('es-CL',{weekday:'long',day:'numeric',month:'long'});
 }
 
-// ── Emergency ──────────────────────────────────────────────────
-let timerInterval = null;
-let stepsCompleted = 0;
+// ── Emergency ────────────────────────────────────────────
+let timerInterval=null, stepsCompleted=0;
 function startTimer() {
-  clearInterval(timerInterval);
-  stepsCompleted = 0;
-  let t = 60;
-  document.getElementById('timer-display').textContent = t;
-  [1,2,3,4,5].forEach(n => {
+  clearInterval(timerInterval); stepsCompleted=0;
+  let t=60; document.getElementById('timer-display').textContent=t;
+  [1,2,3,4,5].forEach(n=>{
     document.getElementById('step'+n).classList.remove('done');
-    document.getElementById('step'+n+'-num').textContent = n;
+    document.getElementById('step'+n+'-num').textContent=n;
   });
-  timerInterval = setInterval(() => {
-    t--; document.getElementById('timer-display').textContent = t;
-    if (t <= 0) clearInterval(timerInterval);
-  }, 1000);
+  timerInterval=setInterval(()=>{ t--; document.getElementById('timer-display').textContent=t; if(t<=0)clearInterval(timerInterval); },1000);
 }
-function markStep(id, num) {
-  const step = document.getElementById(id);
-  const numEl = document.getElementById(id + '-num');
-  step.classList.toggle('done');
-  if (step.classList.contains('done')) {
-    numEl.innerHTML = '<i class="ti ti-check" style="font-size:11px;color:#fff;"></i>';
-    stepsCompleted++;
-  } else {
-    numEl.textContent = num;
-    stepsCompleted = Math.max(0, stepsCompleted - 1);
-  }
+function markStep(id,num) {
+  const s=document.getElementById(id), n=document.getElementById(id+'-num');
+  s.classList.toggle('done');
+  n.innerHTML=s.classList.contains('done')?'<i class="ti ti-check" style="font-size:11px;color:#fff;"></i>':num;
+  stepsCompleted=document.querySelectorAll('.emer-step.done').length;
 }
 async function saveEmergencySession() {
-  await db.from('emergency_sessions').insert({ steps_completed: stepsCompleted });
-  showToast('Sesión guardada ✓');
-  goTo('screen-home');
+  if (!currentUser) return;
+  await db.from('emergency_sessions').insert({steps_completed:stepsCompleted,user_id:currentUser.id});
+  showToast('Sesión guardada ✓'); goTo('screen-home');
 }
 
-// ── Trigger log ────────────────────────────────────────────────
-let selectedEmotion = '', selectedLocation = '';
-function selectEmo(btn, type) {
-  const grid = btn.closest('.emotion-grid');
-  grid.querySelectorAll('.emo-btn').forEach(b => b.classList.remove('selected'));
+// ── Trigger ──────────────────────────────────────────────
+let selEmotion='', selLocation='';
+function selectEmo(btn,type) {
+  const grid=btn.closest('.emotion-grid');
+  grid.querySelectorAll('.emo-btn').forEach(b=>b.classList.remove('selected'));
   btn.classList.add('selected');
-  if (type === 'emotion') selectedEmotion = btn.textContent;
-  if (type === 'location') selectedLocation = btn.textContent;
+  if(type==='emotion') selEmotion=btn.textContent;
+  if(type==='location') selLocation=btn.textContent;
 }
 async function saveTriggerLog() {
-  const notes = document.getElementById('trigger-notes').value.trim();
-  const tiredness = parseInt(document.getElementById('tiredness-slider').value);
+  if(!currentUser) return;
   await db.from('trigger_logs').insert({
-    emotion: selectedEmotion || null,
-    location: selectedLocation || null,
-    tiredness_level: tiredness,
-    notes: notes || null
+    emotion:selEmotion||null, location:selLocation||null,
+    tiredness_level:parseInt(document.getElementById('tiredness-slider').value),
+    notes:document.getElementById('trigger-notes').value.trim()||null,
+    user_id:currentUser.id
   });
-  // Reset
-  document.querySelectorAll('#screen-trigger .emo-btn').forEach(b => b.classList.remove('selected'));
-  document.getElementById('trigger-notes').value = '';
-  selectedEmotion = ''; selectedLocation = '';
-  showToast('Detonante registrado ✓');
-  goTo('screen-home');
+  document.querySelectorAll('#screen-trigger .emo-btn').forEach(b=>b.classList.remove('selected'));
+  document.getElementById('trigger-notes').value='';
+  selEmotion=''; selLocation='';
+  showToast('Registrado ✓'); goTo('screen-home');
 }
 
-// ── Diary ──────────────────────────────────────────────────────
-let selectedMood = '';
+// ── Relapse ──────────────────────────────────────────────
+let selRelapseEmotion='';
+async function saveRelapse() {
+  if(!currentUser) return;
+  const what=document.getElementById('r-what').value.trim();
+  if(!what){ showToast('Describe qué pasó'); return; }
+  await db.from('relapse_logs').insert({
+    what_happened:what,
+    emotion:selRelapseEmotion||null,
+    pattern:document.getElementById('r-pattern').value.trim()||null,
+    change_today:document.getElementById('r-change').value.trim()||null,
+    barrier_tomorrow:document.getElementById('r-barrier').value.trim()||null,
+    user_id:currentUser.id
+  });
+  ['r-what','r-pattern','r-change','r-barrier'].forEach(id=>document.getElementById(id).value='');
+  document.querySelectorAll('#screen-relapse .emo-btn').forEach(b=>b.classList.remove('selected'));
+  showToast('Guardado. Sigue adelante ✓'); goTo('screen-home');
+}
+
+// ── Diary ────────────────────────────────────────────────
+let selMood='';
 function selectMood(btn) {
-  document.querySelectorAll('.mood-chip').forEach(c => c.classList.remove('selected'));
-  btn.classList.add('selected');
-  selectedMood = btn.textContent;
+  document.querySelectorAll('.mood-chip').forEach(c=>c.classList.remove('selected'));
+  btn.classList.add('selected'); selMood=btn.textContent;
+}
+
+function setComposeDate() {
+  const now=new Date();
+  const days=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const months=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  document.getElementById('compose-day-word').textContent=days[now.getDay()];
+  document.getElementById('compose-day-number').textContent=now.getDate();
+  document.getElementById('compose-month-year').textContent=months[now.getMonth()]+' '+now.getFullYear();
+  document.getElementById('compose-title').value='';
+  document.getElementById('compose-body').value='';
+  document.querySelectorAll('.mood-chip').forEach(c=>c.classList.remove('selected'));
+  selMood='';
+}
+
+function moodClass(mood) {
+  if(!mood) return 'mood-default';
+  const m=mood.toLowerCase();
+  if(m==='tranquilo') return 'mood-tranquilo';
+  if(m==='ansioso') return 'mood-ansioso';
+  if(m==='agradecido') return 'mood-agradecido';
+  if(m==='cansado') return 'mood-cansado';
+  if(m==='motivado') return 'mood-motivado';
+  if(m==='triste') return 'mood-triste';
+  if(m==='enojado') return 'mood-enojado';
+  return 'mood-default';
 }
 
 async function loadDiaryList() {
-  const list = document.getElementById('diary-list');
-  list.innerHTML = '<div class="loading-text">Cargando entradas...</div>';
-  const { data, error } = await db.from('diary_entries')
-    .select('*').order('created_at', { ascending: false }).limit(30);
-  if (error || !data || data.length === 0) {
-    list.innerHTML = '<p style="font-size:13px;color:#aaa;text-align:center;padding:20px 0;">Aún no hay entradas.<br>Escribe tu primera hoy.</p>';
-    return;
-  }
-  list.innerHTML = data.map(e => {
-    const d = new Date(e.created_at);
-    const dateStr = d.toLocaleDateString('es-CL', {weekday:'short', day:'numeric', month:'short'});
-    return `<div class="diary-entry-card" onclick="openEntry(${JSON.stringify(e).replace(/"/g,'&quot;')})">
-      <div class="diary-entry-header">
-        <span class="diary-date">${dateStr}</span>
-        ${e.mood ? `<span class="diary-mood">${e.mood}</span>` : ''}
+  if(!currentUser) return;
+  const list=document.getElementById('diary-list');
+  list.innerHTML='<div class="loading-text">Cargando entradas...</div>';
+  const { data }=await db.from('diary_entries').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(40);
+  if(!data||!data.length){ list.innerHTML='<p style="font-size:13px;color:var(--text3);text-align:center;padding:24px 0;">Aún no hay entradas.<br>Escribe la primera hoy.</p>'; return; }
+  const days=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const months=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  let html='', lastMonth='';
+  data.forEach(e=>{
+    const d=new Date(e.created_at);
+    const monthKey=d.getFullYear()+'-'+d.getMonth();
+    if(monthKey!==lastMonth){
+      const mLabel=months[d.getMonth()].toUpperCase()+' '+d.getFullYear();
+      html+=`<div class="diary-month-header">${mLabel}</div>`;
+      lastMonth=monthKey;
+    }
+    const mc=moodClass(e.mood);
+    html+=`<div class="diary-card ${mc}" onclick='openDiaryEntry(${JSON.stringify(e).replace(/'/g,"&#39;")})'>
+      <div class="diary-card-accent"></div>
+      <div class="diary-card-body">
+        <div class="diary-card-meta">
+          <div class="diary-card-date">
+            <span class="diary-day-name">${days[d.getDay()]}</span>
+            <span class="diary-day-num">${d.getDate()}</span>
+            <span class="diary-month-name">${months[d.getMonth()]}</span>
+          </div>
+          ${e.mood?`<span class="diary-mood-pill">${e.mood}</span>`:''}
+        </div>
+        ${e.title?`<div class="diary-entry-title">${e.title}</div>`:''}
+        <div class="diary-preview">${e.body}</div>
       </div>
-      ${e.title ? `<div style="font-size:13px;font-weight:500;color:#1a1a1a;margin-bottom:4px;">${e.title}</div>` : ''}
-      <div class="diary-preview">${e.body}</div>
     </div>`;
-  }).join('');
+  });
+  list.innerHTML=html;
 }
 
-function openEntry(entryStr) {
-  const e = typeof entryStr === 'string' ? JSON.parse(entryStr.replace(/&quot;/g,'"')) : entryStr;
-  const d = new Date(e.created_at);
-  document.getElementById('detail-meta').textContent =
-    d.toLocaleDateString('es-CL', {weekday:'long', day:'numeric', month:'long', year:'numeric'})
-    + (e.mood ? ' · ' + e.mood : '');
-  document.getElementById('detail-title').textContent = e.title || '';
-  document.getElementById('detail-body').textContent = e.body;
+function openDiaryEntry(e) {
+  const d=new Date(e.created_at);
+  const days=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const months=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  document.getElementById('detail-day-word').textContent=days[d.getDay()];
+  document.getElementById('detail-day-number').textContent=d.getDate();
+  document.getElementById('detail-month-year').textContent=months[d.getMonth()]+' '+d.getFullYear();
+  document.getElementById('detail-mood-pill').innerHTML=e.mood?`<span class="diary-mood-pill">${e.mood}</span>`:'';
+  document.getElementById('detail-title').textContent=e.title||'';
+  document.getElementById('detail-body').textContent=e.body;
   goTo('screen-diary-detail');
 }
 
 async function saveDiaryEntry() {
-  const title = document.getElementById('compose-title').value.trim();
-  const body = document.getElementById('compose-body').value.trim();
-  if (!body) { showToast('Escribe algo primero'); return; }
-  const { error } = await db.from('diary_entries').insert({
-    title: title || null, body, mood: selectedMood || null
+  if(!currentUser) return;
+  const body=document.getElementById('compose-body').value.trim();
+  if(!body){ showToast('Escribe algo primero'); return; }
+  await db.from('diary_entries').insert({
+    title:document.getElementById('compose-title').value.trim()||null,
+    body, mood:selMood||null, user_id:currentUser.id
   });
-  if (error) { showToast('Error al guardar'); return; }
-  showToast('Entrada guardada ✓');
-  goTo('screen-diary');
+  showToast('Entrada guardada ✓'); goTo('screen-diary');
 }
 
-// ── Patterns (from real trigger data) ─────────────────────────
-async function loadPatterns() {
-  const content = document.getElementById('patterns-content');
-  const { data } = await db.from('trigger_logs').select('*').order('created_at', { ascending:false });
+async function buildMiniCal() {
+  if(!currentUser) return;
+  const now=new Date();
+  const y=now.getFullYear(), m=now.getMonth();
+  const first=new Date(y,m,1);
+  const last=new Date(y,m+1,0);
+  const monthStart=new Date(y,m,1).toISOString();
+  const monthEnd=new Date(y,m+1,0,23,59,59).toISOString();
+  const { data }=await db.from('diary_entries').select('created_at').eq('user_id',currentUser.id).gte('created_at',monthStart).lte('created_at',monthEnd);
+  const entryDays=new Set((data||[]).map(e=>new Date(e.created_at).getDate()));
+  const months=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  const dayNames=['D','L','M','X','J','V','S'];
+  let html=`<div class="mini-cal"><div class="mini-cal-header"><span class="mini-cal-title">${months[m]} ${y}</span></div><div class="mini-cal-grid">`;
+  dayNames.forEach(d=>{ html+=`<div class="cal-day-name">${d}</div>`; });
+  for(let i=0;i<first.getDay();i++) html+='<div class="cal-day empty"></div>';
+  for(let d=1;d<=last.getDate();d++){
+    const isToday=d===now.getDate();
+    const hasE=entryDays.has(d);
+    html+=`<div class="cal-day${hasE?' has-entry':''}${isToday?' today':''}">${d}</div>`;
+  }
+  html+='</div></div>';
+  document.getElementById('mini-calendar').innerHTML=html;
+}
 
-  if (!data || data.length === 0) {
-    content.innerHTML = `
-      <div class="section-title">sin datos aún</div>
-      <div class="pattern-card">
-        <div class="pat-title">Empieza a registrar</div>
-        <div class="pat-desc">Cuando registres detonantes, aquí aparecerán tus patrones detectados automáticamente.</div>
-      </div>`;
+// ── Patterns ─────────────────────────────────────────────
+async function loadPatterns() {
+  if(!currentUser) return;
+  const content=document.getElementById('patterns-content');
+  const { data }=await db.from('trigger_logs').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false});
+  if(!data||!data.length){
+    content.innerHTML=`<div class="section-title">sin datos aún</div><div class="pattern-card"><div class="pat-title">Empieza a registrar</div><div class="pat-desc">Cuando registres detonantes, aquí verás tus patrones detectados.</div></div>`;
     return;
   }
-
-  // Analyze emotions
-  const emotions = {}, locations = {}, hours = {};
-  data.forEach(t => {
-    if (t.emotion) emotions[t.emotion] = (emotions[t.emotion]||0)+1;
-    if (t.location) locations[t.location] = (locations[t.location]||0)+1;
-    const h = new Date(t.created_at).getHours();
-    const bucket = h >= 22 || h < 6 ? 'Noche (22h–6h)' : h < 12 ? 'Mañana' : h < 19 ? 'Tarde' : 'Noche temprana';
-    hours[bucket] = (hours[bucket]||0)+1;
+  const emotions={}, locations={}, hours={};
+  data.forEach(t=>{
+    if(t.emotion) emotions[t.emotion]=(emotions[t.emotion]||0)+1;
+    if(t.location) locations[t.location]=(locations[t.location]||0)+1;
+    const h=new Date(t.created_at).getHours();
+    const b=h>=22||h<6?'Noche (22h–6h)':h<12?'Mañana':h<19?'Tarde':'Noche temprana';
+    hours[b]=(hours[b]||0)+1;
   });
-
-  const topEmo = Object.entries(emotions).sort((a,b)=>b[1]-a[1])[0];
-  const topLoc = Object.entries(locations).sort((a,b)=>b[1]-a[1])[0];
-  const topHour = Object.entries(hours).sort((a,b)=>b[1]-a[1])[0];
-  const total = data.length;
-
-  content.innerHTML = `
-    <div class="section-title">basado en tus ${total} registros</div>
-    ${topHour ? `<div class="pattern-card">
-      <div class="pat-header"><span class="pat-tag">Horario crítico</span><i class="ti ti-clock" style="font-size:14px;color:#ccc;"></i></div>
-      <div class="pat-title">${topHour[0]}</div>
-      <div class="pat-desc">${Math.round((topHour[1]/total)*100)}% de tus impulsos ocurren en este horario.</div>
-    </div>` : ''}
-    ${topEmo ? `<div class="pattern-card">
-      <div class="pat-header"><span class="pat-tag">Emoción frecuente</span><i class="ti ti-mood-nervous" style="font-size:14px;color:#ccc;"></i></div>
-      <div class="pat-title">${topEmo[0]}</div>
-      <div class="pat-desc">Aparece en ${topEmo[1]} de ${total} registros (${Math.round((topEmo[1]/total)*100)}%).</div>
-      <div class="pat-pills">${Object.keys(emotions).map(e=>`<span class="pat-pill">${e}</span>`).join('')}</div>
-    </div>` : ''}
-    ${topLoc ? `<div class="pattern-card">
-      <div class="pat-header"><span class="pat-tag">Lugar de riesgo</span><i class="ti ti-map-pin" style="font-size:14px;color:#ccc;"></i></div>
-      <div class="pat-title">${topLoc[0]}</div>
-      <div class="pat-desc">El lugar más frecuente en tus registros (${topLoc[1]} veces).</div>
-      <div class="pat-pills">${Object.keys(locations).map(l=>`<span class="pat-pill">${l}</span>`).join('')}</div>
-    </div>` : ''}`;
+  const topE=Object.entries(emotions).sort((a,b)=>b[1]-a[1])[0];
+  const topL=Object.entries(locations).sort((a,b)=>b[1]-a[1])[0];
+  const topH=Object.entries(hours).sort((a,b)=>b[1]-a[1])[0];
+  const total=data.length;
+  content.innerHTML=`
+    <div class="section-title">basado en ${total} registros</div>
+    ${topH?`<div class="pattern-card"><div class="pat-header"><span class="pat-tag">Horario crítico</span><i class="ti ti-clock" style="font-size:14px;color:var(--text3);"></i></div><div class="pat-title">${topH[0]}</div><div class="pat-desc">${Math.round((topH[1]/total)*100)}% de tus impulsos ocurren aquí.</div></div>`:''}
+    ${topE?`<div class="pattern-card"><div class="pat-header"><span class="pat-tag">Emoción frecuente</span></div><div class="pat-title">${topE[0]}</div><div class="pat-desc">Aparece en ${topE[1]} de ${total} registros (${Math.round((topE[1]/total)*100)}%).</div><div class="pat-pills">${Object.keys(emotions).map(e=>`<span class="pat-pill">${e}</span>`).join('')}</div></div>`:''}
+    ${topL?`<div class="pattern-card"><div class="pat-header"><span class="pat-tag">Lugar de riesgo</span></div><div class="pat-title">${topL[0]}</div><div class="pat-desc">Lugar más frecuente en tus registros (${topL[1]} veces).</div><div class="pat-pills">${Object.keys(locations).map(l=>`<span class="pat-pill">${l}</span>`).join('')}</div></div>`:''}`;
 }
 
-// ── Init ───────────────────────────────────────────────────────
-loadHomeStats();
+// ── Coach (Claude AI) ─────────────────────────────────────
+const COACH_SYSTEM = `Eres un coach de cambio conductual compasivo y preciso. Ayudas a personas a superar adicciones a contenido pornográfico (PMO). Tu rol: escuchar sin juzgar, detectar patrones con preguntas específicas, sugerir acciones concretas. Nunca moralizes. Siempre en español. Sé directo, cálido y útil. Cuando alguien menciona una recaída, ayúdalos a extraer datos útiles en vez de solo consolarlos. Máximo 3 párrafos por respuesta.`;
+let coachHistory=[];
+
+function coachKeydown(e) {
+  if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendCoachMessage(); }
+}
+
+async function sendCoachMessage() {
+  const input=document.getElementById('coach-input');
+  const text=input.value.trim();
+  if(!text) return;
+  input.value='';
+  addChatMsg(text,'user');
+  coachHistory.push({role:'user',content:text});
+  const typing=addTyping();
+  try {
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:COACH_SYSTEM,
+        messages:coachHistory
+      })
+    });
+    const data=await res.json();
+    typing.remove();
+    const reply=data.content?.[0]?.text||'No pude responder. Inténtalo de nuevo.';
+    coachHistory.push({role:'assistant',content:reply});
+    addChatMsg(reply,'assistant');
+  } catch(e) {
+    typing.remove();
+    addChatMsg('Error de conexión. Revisa tu internet.','assistant');
+  }
+}
+
+function addChatMsg(text,role) {
+  const msgs=document.getElementById('coach-messages');
+  const now=new Date().toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'});
+  const div=document.createElement('div');
+  div.className='msg '+role;
+  div.innerHTML=`<div class="msg-bubble">${text.replace(/\n/g,'<br>')}</div><div class="msg-time">${now}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop=msgs.scrollHeight;
+  return div;
+}
+
+function addTyping() {
+  const msgs=document.getElementById('coach-messages');
+  const div=document.createElement('div');
+  div.className='msg assistant';
+  div.innerHTML='<div class="msg-bubble"><div class="coach-typing"><span></span><span></span><span></span></div></div>';
+  msgs.appendChild(div);
+  msgs.scrollTop=msgs.scrollHeight;
+  return div;
+}
+
+// ── Init ──────────────────────────────────────────────────
+initAuth();
 </script>
 </body>
 </html>

@@ -356,33 +356,25 @@ main.main{flex:1;margin-left:240px;min-height:100vh;padding:32px 48px 64px}
           <i class="ti ti-chevron-right" style="color:var(--text-3);font-size:14px;"></i>
         </button>
         <div class="auth-divider"><span>or</span></div>
-        <button class="auth-btn" onclick="showPhoneFlow()">
-          <span class="icn"><i class="ti ti-device-mobile" style="font-size:16px;color:var(--text-2);"></i></span>
-          <span>Continue with phone</span>
+        <button class="auth-btn" onclick="showEmailFlow()">
+          <span class="icn"><i class="ti ti-mail" style="font-size:16px;color:var(--text-2);"></i></span>
+          <span>Continue with email</span>
           <i class="ti ti-chevron-right" style="color:var(--text-3);font-size:14px;"></i>
         </button>
       </div>
     </div>
-    <div id="phone-flow-step" class="phone-flow" style="display:none;">
+    <div id="email-flow-step" class="phone-flow" style="display:none;">
       <div>
-        <div class="input-label" style="margin-bottom:8px;">Phone number</div>
-        <div class="phone-row">
-          <button class="cc-pill">🇨🇱 +56</button>
-          <input class="phone-field" id="phone-num" type="tel" placeholder="9 1234 5678">
-        </div>
+        <div class="input-label" style="margin-bottom:8px;">Email</div>
+        <input class="phone-field" id="em-email" type="email" placeholder="you@example.com" style="width:100%;">
       </div>
-      <button class="primary-btn" onclick="sendOTP()">Send code</button>
-      <button class="ghost-btn" onclick="hidePhoneFlow()">Back</button>
-    </div>
-    <div id="otp-step" class="phone-flow" style="display:none;">
       <div>
-        <div class="input-label" style="margin-bottom:12px;text-align:center;">Enter 6-digit code</div>
-        <div class="otp-row">
-          <input class="otp-d" maxlength="1" oninput="otpMove(this,0)"><input class="otp-d" maxlength="1" oninput="otpMove(this,1)"><input class="otp-d" maxlength="1" oninput="otpMove(this,2)"><input class="otp-d" maxlength="1" oninput="otpMove(this,3)"><input class="otp-d" maxlength="1" oninput="otpMove(this,4)"><input class="otp-d" maxlength="1" oninput="otpMove(this,5)">
-        </div>
+        <div class="input-label" style="margin-bottom:8px;">Password <span style="color:var(--text-4);text-transform:none;letter-spacing:0;">· minimum 6 characters</span></div>
+        <input class="phone-field" id="em-pass" type="password" placeholder="••••••••" style="width:100%;">
       </div>
-      <button class="primary-btn" onclick="verifyOTP()">Verify</button>
-      <button class="ghost-btn" onclick="document.getElementById('otp-step').style.display='none';document.getElementById('phone-flow-step').style.display='flex';">Change number</button>
+      <button class="primary-btn" id="em-submit" onclick="submitEmail()">Sign in</button>
+      <button class="ghost-btn" onclick="toggleEmailMode()" id="em-toggle">Don't have an account? Create one</button>
+      <button class="ghost-btn" onclick="hideEmailFlow()" style="margin-top:4px;">Back</button>
     </div>
     <p class="auth-foot">Your data is private. Encrypted. Never shared.</p>
   </div>
@@ -828,25 +820,28 @@ function showApp(){
   loadStats(); loadJournalList(); buildCal(); buildPractices(); buildToday();
 }
 async function oauth(p){ await db.auth.signInWithOAuth({provider:p,options:{redirectTo:window.location.origin}}); }
-function showPhoneFlow(){ document.getElementById('auth-main').style.display='none'; document.getElementById('phone-flow-step').style.display='flex'; }
-function hidePhoneFlow(){ document.getElementById('phone-flow-step').style.display='none'; document.getElementById('auth-main').style.display='block'; }
-let phForOTP='';
-async function sendOTP(){
-  const n=document.getElementById('phone-num').value.trim();
-  if(!n){ toast('Enter your number'); return; }
-  phForOTP='+56'+n.replace(/\s/g,'');
-  const { error }=await db.auth.signInWithOtp({phone:phForOTP});
-  if(error){ toast('Error: '+error.message); return; }
-  document.getElementById('phone-flow-step').style.display='none';
-  document.getElementById('otp-step').style.display='flex';
-  document.querySelectorAll('.otp-d')[0].focus();
+
+let emailMode='signin'; // or 'signup'
+function showEmailFlow(){ document.getElementById('auth-main').style.display='none'; document.getElementById('email-flow-step').style.display='flex'; }
+function hideEmailFlow(){ document.getElementById('email-flow-step').style.display='none'; document.getElementById('auth-main').style.display='block'; }
+function toggleEmailMode(){
+  emailMode=emailMode==='signin'?'signup':'signin';
+  document.getElementById('em-submit').textContent=emailMode==='signin'?'Sign in':'Create account';
+  document.getElementById('em-toggle').textContent=emailMode==='signin'?"Don't have an account? Create one":'Already have an account? Sign in';
 }
-function otpMove(el,i){ if(el.value.length===1){ const ds=document.querySelectorAll('.otp-d'); if(i<5) ds[i+1].focus(); } }
-async function verifyOTP(){
-  const t=Array.from(document.querySelectorAll('.otp-d')).map(d=>d.value).join('');
-  if(t.length<6){ toast('Enter 6 digits'); return; }
-  const { error }=await db.auth.verifyOtp({phone:phForOTP,token:t,type:'sms'});
-  if(error) toast('Invalid code');
+async function submitEmail(){
+  const email=document.getElementById('em-email').value.trim();
+  const password=document.getElementById('em-pass').value;
+  if(!email||!password){ toast('Fill both fields'); return; }
+  if(password.length<6){ toast('Password must be at least 6 characters'); return; }
+  if(emailMode==='signup'){
+    const { error }=await db.auth.signUp({email,password});
+    if(error){ toast('Error: '+error.message); return; }
+    toast('Check your email to confirm');
+  } else {
+    const { error }=await db.auth.signInWithPassword({email,password});
+    if(error){ toast('Error: '+error.message); return; }
+  }
 }
 async function logout(){ await db.auth.signOut(); }
 

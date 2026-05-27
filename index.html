@@ -109,6 +109,169 @@ main.main{flex:1;margin-left:240px;min-height:100vh;padding:32px 48px 64px;posit
 .lang-name .s{font-family:var(--font-mono);font-size:9px;letter-spacing:0.1em;color:var(--text-3);text-transform:uppercase;margin-top:2px}
 .lang-foot{font-family:var(--font-mono);font-size:9px;letter-spacing:0.06em;color:var(--text-3);line-height:1.55;text-transform:uppercase;padding-top:8px;border-top:0.5px solid var(--border)}
 
+/* ─── Sidebar danger nav ─── */
+.nav-item.danger{color:#FCA5A5}
+.nav-item.danger:hover{background:rgba(248,113,113,0.06);color:#FCA5A5}
+.nav-item.danger i{color:var(--danger)}
+.nav-item.danger.active{background:rgba(248,113,113,0.08)}
+.nav-item.danger.active::before{background:var(--danger);box-shadow:0 0 8px var(--danger)}
+
+/* ─── Mission card ─── */
+.mission-card{padding:14px;background:var(--bg-3);border:0.5px solid var(--border);border-radius:10px;display:flex;flex-direction:column;gap:8px}
+.mission-head{display:flex;align-items:center;gap:8px}
+.mission-icon{width:22px;height:22px;border-radius:6px;background:var(--accent-glow);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:12px}
+.mission-title{font-family:var(--font-mono);font-size:9px;letter-spacing:0.12em;color:var(--text-2);text-transform:uppercase}
+.mission-text{font-family:var(--font-serif);font-style:italic;font-size:12px;color:var(--text-2);line-height:1.5}
+.mission-list{display:flex;flex-direction:column;gap:5px;margin-top:4px}
+.mish-item{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text-2);font-family:var(--font-mono);cursor:pointer}
+.mish-check{width:13px;height:13px;border-radius:3px;border:1px solid var(--border-3);display:flex;align-items:center;justify-content:center;font-size:8px;flex-shrink:0}
+.mish-item.done .mish-check{background:var(--accent-2);border-color:var(--accent-2);color:white}
+.mish-item.done .mish-check::after{content:'✓'}
+.mish-item.done{color:var(--text-3);text-decoration:line-through}
+.mish-progress{font-family:var(--font-mono);font-size:9px;color:var(--text-3);letter-spacing:0.06em;margin-top:4px}
+.mish-bar{height:3px;background:var(--bg-4);border-radius:2px;margin-top:4px;overflow:hidden}
+.mish-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-soft));border-radius:2px;transition:width 0.3s}
+
+/* ─── Level card ─── */
+.level-card{padding:14px;background:linear-gradient(135deg,rgba(168,85,247,0.12),rgba(192,132,252,0.04));border:0.5px solid rgba(192,132,252,0.3);border-radius:10px;display:flex;flex-direction:column;gap:8px}
+.level-row{display:flex;align-items:center;gap:10px}
+.level-shield{width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,var(--accent-2),var(--accent));display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 12px rgba(192,132,252,0.3)}
+.level-shield i{color:white;font-size:16px}
+.level-info{flex:1}
+.level-num{font-family:var(--font-serif);font-style:italic;font-size:15px;font-weight:600;color:var(--text);line-height:1.1}
+.level-name{font-family:var(--font-mono);font-size:9px;color:var(--accent);letter-spacing:0.14em;text-transform:uppercase;margin-top:2px}
+.xp-bar{height:4px;background:var(--bg-4);border-radius:2px;overflow:hidden}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-soft));border-radius:2px}
+.xp-text{font-family:var(--font-mono);font-size:9px;color:var(--text-3);letter-spacing:0.06em}
+
+/* ─── Circle layout ─── */
+.circle-wrap{display:grid;grid-template-columns:1fr 300px;gap:24px;align-items:start}
+.circle-head{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;padding-bottom:20px;border-bottom:0.5px solid var(--border);margin-bottom:24px}
+.mode-selector{display:flex;align-items:center;gap:10px;position:relative}
+.mode-label{font-family:var(--font-mono);font-size:10px;letter-spacing:0.08em;color:var(--text-3);text-transform:uppercase;white-space:nowrap}
+.mode-btn{background:var(--bg-2);border:0.5px solid var(--border-2);border-radius:20px;padding:7px 14px;font-family:var(--font-ui);font-size:12px;color:var(--text);cursor:pointer;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.mode-btn:hover{border-color:var(--accent)}
+.mode-btn .dot{width:6px;height:6px;background:var(--accent);border-radius:50%;box-shadow:0 0 6px var(--accent)}
+.mode-dropdown{position:absolute;top:100%;right:0;background:var(--bg-2);border:0.5px solid var(--border-2);border-radius:10px;padding:6px;display:none;min-width:220px;z-index:50;box-shadow:0 10px 32px rgba(0,0,0,0.4);margin-top:6px}
+.mode-dropdown.open{display:block}
+.mode-opt{padding:8px 12px;border-radius:6px;font-size:12px;color:var(--text-2);cursor:pointer;display:flex;align-items:center;gap:8px}
+.mode-opt:hover{background:var(--bg-3);color:var(--text)}
+.mode-opt.sel{color:var(--accent)}
+
+/* ─── Chat panel ─── */
+.circle-chat{background:var(--bg-2);border:0.5px solid var(--border);border-radius:12px;padding:20px;display:flex;flex-direction:column;height:480px}
+.chat-area{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:14px;padding-right:8px}
+.cm{max-width:80%;display:flex;flex-direction:column;gap:4px}
+.cm.user{align-self:flex-end;align-items:flex-end}
+.cm.bot{align-self:flex-start;flex-direction:row;align-items:flex-start;gap:10px;max-width:85%}
+.bot-av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent-2),var(--accent));display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 12px rgba(192,132,252,0.4);position:relative}
+.bot-av::before{content:'';position:absolute;inset:9px;border:1.5px solid rgba(10,8,20,0.5);border-radius:50%}
+.cm.bot .bub-wrap{display:flex;flex-direction:column;gap:4px;flex:1}
+.cm .bub{padding:11px 15px;border-radius:14px;font-size:13px;line-height:1.6}
+.cm.user .bub{background:var(--bg-3);color:var(--text);border:0.5px solid var(--border-2);border-bottom-right-radius:4px}
+.cm.bot .bub{background:var(--accent-glow);border:0.5px solid rgba(192,132,252,0.2);color:var(--text);border-bottom-left-radius:4px}
+.cm .tm{font-family:var(--font-mono);font-size:9px;color:var(--text-4);letter-spacing:0.06em;display:flex;align-items:center;gap:4px}
+.cm.user .tm{justify-content:flex-end}
+.cm.user .tm i{color:var(--accent);font-size:10px}
+.chat-quick{display:flex;gap:8px;padding:14px 0 4px;border-top:0.5px solid var(--border);margin-top:14px}
+.cq-btn{flex:1;background:var(--bg-3);border:0.5px solid var(--border-2);border-radius:8px;padding:10px 12px;font-family:var(--font-ui);font-size:12px;color:var(--text-2);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all 0.12s}
+.cq-btn:hover{color:var(--text);border-color:var(--border-3)}
+.cq-btn.primary{background:var(--accent-2);color:white;border-color:var(--accent)}
+.cq-btn.primary:hover{background:var(--accent)}
+.cq-btn i{font-size:14px}
+.chat-input-row{display:flex;gap:10px;padding-top:10px;align-items:flex-end}
+.chat-ta{flex:1;background:var(--bg-3);border:0.5px solid var(--border-2);border-radius:10px;padding:10px 14px;font-family:var(--font-ui);font-size:13px;color:var(--text);outline:none;resize:none;line-height:1.5;max-height:100px}
+.chat-ta:focus{border-color:var(--accent)}
+.chat-send{width:40px;height:40px;background:var(--accent-2);border:none;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.chat-send:hover{background:var(--accent)}
+.chat-send i{color:white;font-size:16px}
+
+/* ─── Insights row ─── */
+.insights-row{display:grid;grid-template-columns:320px 1fr;gap:16px;margin-top:16px}
+.insight-card{background:var(--bg-2);border:0.5px solid var(--border);border-radius:12px;padding:18px 20px}
+.insight-title{font-family:var(--font-serif);font-style:italic;font-size:17px;font-weight:500;color:var(--text);margin-bottom:16px}
+.radar-content{display:flex;align-items:center;gap:18px}
+.radar-svg{flex-shrink:0}
+.radar-text{font-size:12px;color:var(--text-2);line-height:1.55}
+.radar-text strong{font-family:var(--font-serif);font-style:italic;font-size:18px;color:var(--text);display:block;margin-bottom:4px;font-weight:500}
+.radar-days{margin-top:14px;padding-top:12px;border-top:0.5px solid var(--border)}
+.radar-days-label{font-family:var(--font-mono);font-size:9px;letter-spacing:0.12em;color:var(--text-3);text-transform:uppercase}
+.radar-days-list{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.radar-day-pill{font-family:var(--font-mono);font-size:10px;padding:3px 9px;border-radius:20px;background:rgba(248,113,113,0.08);color:#FCA5A5;border:0.5px solid rgba(248,113,113,0.2)}
+.recovery-content{display:flex;flex-direction:column;gap:12px}
+.recovery-chart-wrap{background:var(--bg-3);border-radius:8px;padding:14px;position:relative}
+.trend-pill{position:absolute;top:14px;right:14px;background:rgba(52,211,153,0.1);color:#86EFAC;border:0.5px solid rgba(52,211,153,0.2);font-family:var(--font-mono);font-size:10px;letter-spacing:0.06em;padding:4px 9px;border-radius:4px;display:flex;align-items:center;gap:4px}
+.recovery-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.rs-card{background:var(--bg-3);border-radius:8px;padding:10px 12px}
+.rs-label{font-family:var(--font-mono);font-size:9px;letter-spacing:0.08em;color:var(--text-3);text-transform:uppercase}
+.rs-value{font-family:var(--font-serif);font-style:italic;font-size:18px;font-weight:500;color:var(--text);margin-top:2px;display:flex;align-items:baseline;gap:4px}
+.rs-value small{font-family:var(--font-mono);font-size:10px;color:var(--text-3);font-style:normal}
+.rs-delta{font-family:var(--font-mono);font-size:9px;margin-top:2px;letter-spacing:0.04em}
+.rs-delta.up{color:#86EFAC}
+.rs-delta.down{color:#FCA5A5}
+
+/* ─── Quick actions ─── */
+.quick-section{margin-top:16px;background:var(--bg-2);border:0.5px solid var(--border);border-radius:12px;padding:18px 20px}
+.quick-section-head{font-family:var(--font-serif);font-style:italic;font-size:17px;font-weight:500;margin-bottom:14px}
+.quick-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.qb{background:var(--bg-3);border:0.5px solid var(--border-2);border-radius:10px;padding:14px 8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;transition:all 0.12s;font-family:var(--font-ui)}
+.qb:hover{border-color:var(--accent);transform:translateY(-2px)}
+.qb i{font-size:20px;color:var(--accent)}
+.qb .qb-title{font-family:var(--font-mono);font-size:10px;letter-spacing:0.04em;color:var(--text);line-height:1.3}
+.qb .qb-sub{font-family:var(--font-mono);font-size:9px;color:var(--text-3)}
+.qb.urge{background:linear-gradient(135deg,#4A1418,#2A0F12);border-color:rgba(248,113,113,0.4)}
+.qb.urge i{color:#FCA5A5}
+.qb.urge .qb-title{color:#FCA5A5;font-weight:600}
+.qb.urge:hover{border-color:#FCA5A5}
+.quick-foot{margin-top:14px;text-align:center;font-family:var(--font-mono);font-size:10px;color:var(--text-3);letter-spacing:0.04em}
+
+/* ─── Right panel ─── */
+.right-panel{display:flex;flex-direction:column;gap:14px;position:sticky;top:32px}
+.rp-card{background:var(--bg-2);border:0.5px solid var(--border);border-radius:12px;padding:18px 20px}
+.rp-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.rp-title{font-family:var(--font-serif);font-style:italic;font-size:15px;font-weight:500}
+.rp-link{font-family:var(--font-mono);font-size:10px;color:var(--accent);letter-spacing:0.06em;cursor:pointer;background:none;border:none}
+.rp-link:hover{color:var(--accent-soft)}
+.state-gauge{display:flex;flex-direction:column;align-items:center;gap:2px;margin:-6px 0 4px}
+.gauge-label{font-family:var(--font-mono);font-size:9px;letter-spacing:0.14em;color:var(--text-3);text-transform:uppercase}
+.gauge-value{font-family:var(--font-serif);font-style:italic;font-size:38px;font-weight:500;color:var(--danger);line-height:1}
+.gauge-status{font-family:var(--font-mono);font-size:11px;letter-spacing:0.08em;color:var(--text-2)}
+.state-alert{margin-top:14px;background:rgba(248,113,113,0.08);border:0.5px solid rgba(248,113,113,0.2);border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;width:100%}
+.state-alert i{color:var(--danger);font-size:16px}
+.state-alert .txt{flex:1;font-size:10px;color:#FCA5A5;line-height:1.4;text-align:left;font-family:var(--font-ui)}
+.state-alert .txt strong{display:block;color:var(--danger);font-weight:500;font-size:11px;margin-bottom:2px}
+.state-alert .chev{color:var(--danger);font-size:13px}
+
+.factors-list{display:flex;flex-direction:column;gap:10px}
+.factor{display:flex;align-items:center;gap:10px}
+.factor-ico{width:20px;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--text-2);flex-shrink:0}
+.factor-name{font-size:11px;color:var(--text-2);flex:0 0 80px}
+.factor-bar{flex:1;height:4px;background:var(--bg-4);border-radius:2px;overflow:hidden}
+.factor-fill{height:100%;border-radius:2px}
+.factor-fill.low{background:linear-gradient(90deg,#86EFAC,#34D399)}
+.factor-fill.mid{background:linear-gradient(90deg,#FCD34D,#F59E0B)}
+.factor-fill.high{background:linear-gradient(90deg,#FCA5A5,#F87171)}
+.factor-value{font-family:var(--font-mono);font-size:10px;color:var(--text-3);letter-spacing:0.04em;flex-shrink:0;min-width:30px;text-align:right}
+
+.stats-mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.sm-item .sm-label{font-family:var(--font-mono);font-size:10px;color:var(--text-3);letter-spacing:0.06em}
+.sm-item .sm-val{font-family:var(--font-serif);font-style:italic;font-size:22px;font-weight:500;color:var(--text);margin-top:3px;display:flex;align-items:baseline;gap:6px}
+.sm-item .sm-delta{font-family:var(--font-mono);font-size:10px;font-style:normal}
+.sm-delta.up{color:#86EFAC}
+.sm-delta.down{color:#FCA5A5}
+
+.why-row{display:flex;align-items:flex-start;gap:12px}
+.why-text{font-family:var(--font-serif);font-style:italic;font-size:12px;color:var(--text-2);line-height:1.65;flex:1}
+.why-heart{flex-shrink:0;width:32px;height:32px;border-radius:8px;background:rgba(192,132,252,0.1);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:15px}
+
+@media(max-width:1280px){
+  .circle-wrap{grid-template-columns:1fr}
+  .right-panel{position:static;flex-direction:row;flex-wrap:wrap}
+  .right-panel .rp-card{flex:1;min-width:240px}
+  .insights-row{grid-template-columns:1fr}
+}
+@media(max-width:900px){.quick-grid{grid-template-columns:repeat(3,1fr)}.right-panel{flex-direction:column}}
+
 /* ─── Page System ─── */
 .page{display:none}
 .page.active{display:block}
@@ -441,9 +604,38 @@ main.main{flex:1;margin-left:240px;min-height:100vh;padding:32px 48px 64px;posit
     <button class="nav-item" data-page="journal" onclick="nav('journal')"><i class="ti ti-notebook"></i> Diario</button>
     <button class="nav-item" data-page="circle" onclick="nav('circle')"><i class="ti ti-message-chatbot"></i> Circle</button>
     <button class="nav-item" data-page="accountability" onclick="nav('accountability')"><i class="ti ti-users"></i> Acompañamiento</button>
+    <button class="nav-item danger" onclick="openEmerg()"><i class="ti ti-urgent"></i> Sala de emergencia</button>
+    <button class="nav-item" data-page="stats" onclick="nav('stats')"><i class="ti ti-chart-bar"></i> Estadísticas</button>
     <button class="nav-item" data-page="settings" onclick="nav('settings')"><i class="ti ti-settings"></i> Ajustes</button>
 
     <div class="sidebar-foot">
+      <div class="mission-card">
+        <div class="mission-head">
+          <div class="mission-icon"><i class="ti ti-target"></i></div>
+          <div class="mission-title">Misión del día</div>
+        </div>
+        <div class="mission-text">Enfócate en lo que construye tu futuro, no en lo que te destruye hoy.</div>
+        <div class="mission-list" id="mission-list">
+          <div class="mish-item done" onclick="toggleMish(this)"><div class="mish-check"></div><span>Ejercicio 20 min</span></div>
+          <div class="mish-item done" onclick="toggleMish(this)"><div class="mish-check"></div><span>Estudiar 45 min</span></div>
+          <div class="mish-item" onclick="toggleMish(this)"><div class="mish-check"></div><span>Sin redes sociales</span></div>
+        </div>
+        <div class="mish-progress" id="mish-progress">2/3 completado</div>
+        <div class="mish-bar"><div class="mish-fill" id="mish-fill" style="width:66%"></div></div>
+      </div>
+
+      <div class="level-card">
+        <div class="level-row">
+          <div class="level-shield"><i class="ti ti-shield"></i></div>
+          <div class="level-info">
+            <div class="level-num">Nivel 7</div>
+            <div class="level-name">Guerrero</div>
+          </div>
+        </div>
+        <div class="xp-bar"><div class="xp-fill" style="width:68%"></div></div>
+        <div class="xp-text">680 / 1000 XP</div>
+      </div>
+
       <div class="streak-mini">
         <div class="lbl">Racha actual</div>
         <div class="num"><span id="streak-num">—</span> <span>días</span></div>
@@ -674,20 +866,154 @@ main.main{flex:1;margin-left:240px;min-height:100vh;padding:32px 48px 64px;posit
 
     <!-- CIRCLE -->
     <section class="page" id="page-circle">
-      <div class="page-head">
+      <div class="circle-head">
         <div>
           <h1 class="page-title">Circle</h1>
           <div class="page-sub">No un juez · un compañero preciso</div>
         </div>
+        <div class="mode-selector">
+          <span class="mode-label">Modo actual:</span>
+          <button class="mode-btn" onclick="document.getElementById('mode-dd').classList.toggle('open')">
+            <span class="dot"></span>
+            <span id="mode-current">Compañero tranquilo</span>
+            <i class="ti ti-chevron-down" style="font-size:12px;"></i>
+          </button>
+          <div class="mode-dropdown" id="mode-dd">
+            <div class="mode-opt sel" onclick="setMode('tranquilo','Compañero tranquilo')"><i class="ti ti-feather"></i> Compañero tranquilo</div>
+            <div class="mode-opt" onclick="setMode('directo','Coach directo')"><i class="ti ti-bolt"></i> Coach directo</div>
+            <div class="mode-opt" onclick="setMode('filosofo','Filósofo')"><i class="ti ti-book"></i> Filósofo</div>
+            <div class="mode-opt" onclick="setMode('amigo','Amigo cercano')"><i class="ti ti-heart"></i> Amigo cercano</div>
+          </div>
+        </div>
       </div>
-      <div class="coach-page">
-        <div class="coach-msgs" id="coach-msgs">
-          <div class="msg bot"><div class="msg-bub">Hola. Estoy aquí para pensar contigo, no para juzgarte. ¿Qué está pasando hoy?</div><div class="msg-t">ahora</div></div>
+
+      <div class="circle-wrap">
+        <div class="circle-main">
+          <div class="circle-chat">
+            <div class="chat-area" id="chat-area">
+              <div class="cm bot">
+                <div class="bot-av"></div>
+                <div class="bub-wrap">
+                  <div class="bub">Hola. Estoy aquí para pensar contigo, no para juzgarte. ¿Qué está pasando hoy?</div>
+                  <div class="tm">ahora</div>
+                </div>
+              </div>
+            </div>
+            <div class="chat-quick">
+              <button class="cq-btn" onclick="sendPreset('Quiero entender qué está pasando con mi impulso ahora mismo. ¿Puedes ayudarme a verlo claro?')"><i class="ti ti-brain"></i> Entender mi impulso</button>
+              <button class="cq-btn" onclick="sendPreset('Necesito distraerme. Hablemos de algo distinto.')"><i class="ti ti-message"></i> Hablar de otra cosa</button>
+              <button class="cq-btn primary" onclick="openEmerg()"><i class="ti ti-bolt"></i> Activar protocolo</button>
+            </div>
+            <div class="chat-input-row">
+              <textarea class="chat-ta" id="circle-ta" placeholder="Escribe aquí..." rows="1" onkeydown="circleKey(event)"></textarea>
+              <button class="chat-send" onclick="sendCircle()"><i class="ti ti-send"></i></button>
+            </div>
+          </div>
+
+          <div class="insights-row">
+            <div class="insight-card">
+              <div class="insight-title">Radar de detonantes</div>
+              <div class="radar-content">
+                <div class="radar-svg" id="radar-svg"></div>
+                <div class="radar-text">
+                  <strong>80%</strong>
+                  de tus recaídas aparecen entre 22:00 – 01:00
+                </div>
+              </div>
+              <div class="radar-days">
+                <div class="radar-days-label">Días más difíciles</div>
+                <div class="radar-days-list">
+                  <span class="radar-day-pill">Domingo</span>
+                  <span class="radar-day-pill">Viernes</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="insight-card">
+              <div class="insight-title">Línea de recuperación</div>
+              <div class="recovery-content">
+                <div class="recovery-chart-wrap">
+                  <div class="trend-pill"><i class="ti ti-trending-up"></i> Tendencia estable</div>
+                  <div id="recovery-chart"></div>
+                </div>
+                <div class="recovery-stats">
+                  <div class="rs-card">
+                    <div class="rs-label">Impulsos promedio</div>
+                    <div class="rs-value">4.2 <small>/sem</small></div>
+                  </div>
+                  <div class="rs-card">
+                    <div class="rs-label">Estabilidad emocional</div>
+                    <div class="rs-value">68% <small>↑15%</small></div>
+                  </div>
+                  <div class="rs-card">
+                    <div class="rs-label">Recuperación</div>
+                    <div class="rs-value">2.1 <small>días</small></div>
+                    <div class="rs-delta down">↓ 30%</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="quick-section">
+            <div class="quick-section-head">Acciones rápidas</div>
+            <div class="quick-grid">
+              <button class="qb urge" onclick="openEmerg()"><i class="ti ti-bolt"></i><div class="qb-title">TENGO IMPULSO</div></button>
+              <button class="qb" onclick="sendPreset('Guíame en una respiración de 5 minutos.')"><i class="ti ti-wind"></i><div class="qb-title">Respiración</div><div class="qb-sub">5 min</div></button>
+              <button class="qb" onclick="sendPreset('Quiero hacer ejercicio rápido. Dame ideas concretas para los próximos 10 minutos.')"><i class="ti ti-run"></i><div class="qb-title">Ejercicio rápido</div></button>
+              <button class="qb" onclick="sendPreset('Voy a salir a caminar. ¿Qué debo observar o pensar?')"><i class="ti ti-walk"></i><div class="qb-title">Salir a caminar</div></button>
+              <button class="qb" onclick="nav('journal');openCompose();"><i class="ti ti-pencil"></i><div class="qb-title">Escribir</div><div class="qb-sub">pensamientos</div></button>
+              <button class="qb" onclick="nav('accountability')"><i class="ti ti-users"></i><div class="qb-title">Contacto</div><div class="qb-sub">de apoyo</div></button>
+            </div>
+            <div class="quick-foot">Elige una acción. Solo 5 minutos pueden cambiar tu día.</div>
+          </div>
         </div>
-        <div class="coach-input-wrap">
-          <textarea class="coach-ta" id="coach-ta" placeholder="Escribe aquí..." rows="1" onkeydown="coachKey(event)"></textarea>
-          <button class="send-btn" onclick="sendCoach()"><i class="ti ti-send"></i></button>
-        </div>
+
+        <aside class="right-panel">
+          <div class="rp-card">
+            <div class="rp-head"><span class="rp-title">Tu estado actual</span><i class="ti ti-info-circle" style="color:var(--text-3);font-size:14px;cursor:pointer;"></i></div>
+            <div class="state-gauge">
+              <div id="gauge-svg"></div>
+              <div class="gauge-label">Riesgo actual</div>
+              <div class="gauge-value" id="gauge-value">78%</div>
+              <div class="gauge-status" id="gauge-status">ALTO</div>
+            </div>
+            <button class="state-alert" onclick="openEmerg()">
+              <i class="ti ti-shield-exclamation"></i>
+              <div class="txt"><strong>Riesgo alto de recaída</strong>Activa tu escudo ahora</div>
+              <i class="ti ti-chevron-right chev"></i>
+            </button>
+          </div>
+
+          <div class="rp-card">
+            <div class="rp-head"><span class="rp-title">Factores que influyen</span></div>
+            <div class="factors-list">
+              <div class="factor"><span class="factor-ico"><i class="ti ti-moon"></i></span><span class="factor-name">Sueño</span><div class="factor-bar"><div class="factor-fill mid" style="width:40%"></div></div><span class="factor-value">4/10</span></div>
+              <div class="factor"><span class="factor-ico"><i class="ti ti-flame"></i></span><span class="factor-name">Estrés</span><div class="factor-bar"><div class="factor-fill high" style="width:80%"></div></div><span class="factor-value">8/10</span></div>
+              <div class="factor"><span class="factor-ico"><i class="ti ti-user"></i></span><span class="factor-name">Soledad</span><div class="factor-bar"><div class="factor-fill high" style="width:70%"></div></div><span class="factor-value">7/10</span></div>
+              <div class="factor"><span class="factor-ico"><i class="ti ti-device-mobile"></i></span><span class="factor-name">Uso del móvil</span><div class="factor-bar"><div class="factor-fill high" style="width:90%"></div></div><span class="factor-value">9/10</span></div>
+              <div class="factor"><span class="factor-ico"><i class="ti ti-mood-neutral"></i></span><span class="factor-name">Estado emocional</span><div class="factor-bar"><div class="factor-fill mid" style="width:50%"></div></div><span class="factor-value">5/10</span></div>
+            </div>
+          </div>
+
+          <div class="rp-card">
+            <div class="rp-head"><span class="rp-title">Estadísticas rápidas</span><button class="rp-link" onclick="nav('stats')">Ver más</button></div>
+            <div class="stats-mini-grid">
+              <div class="sm-item"><div class="sm-label">Días limpios</div><div class="sm-val" id="sm-clean">24 <span class="sm-delta up">↑5</span></div></div>
+              <div class="sm-item"><div class="sm-label">Mejor racha</div><div class="sm-val">24 <span class="sm-delta">días</span></div></div>
+              <div class="sm-item"><div class="sm-label">Recaídas</div><div class="sm-val">2 <span class="sm-delta down">↑1</span></div></div>
+              <div class="sm-item"><div class="sm-label">Impulsos resistidos</div><div class="sm-val">47 <span class="sm-delta up">↑12</span></div></div>
+            </div>
+          </div>
+
+          <div class="rp-card">
+            <div class="rp-head"><span class="rp-title">Tu porqué</span><button class="rp-link" onclick="toast('Próximamente')">Editar</button></div>
+            <div class="why-row">
+              <p class="why-text">"Quiero ser la mejor versión de mí para mi familia y para construir la vida que siempre soñé."</p>
+              <div class="why-heart"><i class="ti ti-heart-filled"></i></div>
+            </div>
+          </div>
+        </aside>
       </div>
     </section>
 
@@ -703,6 +1029,26 @@ main.main{flex:1;margin-left:240px;min-height:100vh;padding:32px 48px 64px;posit
         <h2>Conectar un acompañante</h2>
         <p>Invita a alguien de tu confianza a ver tu registro de actividad y eventos del escudo. Asimétrico — ellos ven, tú no ves que ellos ven. El observador conocido es el filtro más efectivo que los humanos hayan inventado.</p>
         <button class="primary-btn" style="margin-top:24px;max-width:240px;">Invitar por enlace</button>
+      </div>
+    </section>
+
+    <!-- ESTADÍSTICAS -->
+    <section class="page" id="page-stats">
+      <div class="page-head">
+        <div>
+          <h1 class="page-title">Estadísticas</h1>
+          <div class="page-sub">Todos tus números · sin maquillaje</div>
+        </div>
+      </div>
+      <div class="stats-mini-grid" style="grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;">
+        <div class="rp-card"><div class="sm-label" style="font-family:var(--font-mono);font-size:10px;letter-spacing:0.08em;color:var(--text-3);text-transform:uppercase;">Entradas diario</div><div class="gauge-value" id="ss-diary" style="color:var(--text);font-size:42px;">—</div></div>
+        <div class="rp-card"><div class="sm-label" style="font-family:var(--font-mono);font-size:10px;letter-spacing:0.08em;color:var(--text-3);text-transform:uppercase;">Detonantes</div><div class="gauge-value" id="ss-triggers" style="color:var(--text);font-size:42px;">—</div></div>
+        <div class="rp-card"><div class="sm-label" style="font-family:var(--font-mono);font-size:10px;letter-spacing:0.08em;color:var(--text-3);text-transform:uppercase;">Emergencias</div><div class="gauge-value" id="ss-emerg" style="color:var(--text);font-size:42px;">—</div></div>
+        <div class="rp-card"><div class="sm-label" style="font-family:var(--font-mono);font-size:10px;letter-spacing:0.08em;color:var(--text-3);text-transform:uppercase;">Sitios bloqueados</div><div class="gauge-value" id="ss-blocked" style="color:var(--text);font-size:42px;">—</div></div>
+      </div>
+      <div class="rp-card" style="padding:24px 28px;">
+        <div class="rp-head"><span class="rp-title" style="font-size:20px;">Resumen del mes</span></div>
+        <p style="color:var(--text-2);font-size:13px;line-height:1.75;font-family:var(--font-serif);">Tu progreso se mide en datos, no en sentimientos. Estos números no son una calificación — son información para entender mejor tus patrones. Cada detonante registrado es información útil. Cada entrada de diario es metabolismo emocional. Cada sesión de emergencia completada es una ola que pasó sin arrastrarte.</p>
       </div>
     </section>
 
@@ -904,6 +1250,8 @@ function nav(p){
   if(p==='today') buildToday();
   if(p==='shield') loadBlockedUrls();
   if(p==='home') drawNeural();
+  if(p==='circle'){ drawGauge(78); drawRadar(80); drawRecovery(); }
+  if(p==='stats') loadStats2();
   if(window.innerWidth<900) document.querySelector('aside.sidebar').classList.remove('open');
 }
 
@@ -1097,41 +1445,147 @@ async function saveEmergSession(){
   toast('Guardado · lo lograste'); closeEmerg();
 }
 
-// ── Circle (Claude) ──
-const COACH_SYS=`Eres un coach de cambio conductual compasivo y preciso para personas en recuperación de uso compulsivo de pornografía (PMO). Tu rol: escuchar sin juzgar, detectar patrones con preguntas específicas, sugerir acciones concretas. Nunca moralizes. Responde siempre en español. Sé directo, cálido y útil. Cuando alguien mencione una recaída, ayúdalos a extraer datos útiles en vez de solo consolarlos. Máximo 3 párrafos por respuesta.`;
+// ── Charts ──
+function drawGauge(percent){
+  const c=document.getElementById('gauge-svg'); if(!c) return;
+  const angle=(percent/100)*180;
+  const rad=(180-angle)*Math.PI/180;
+  const x=100+70*Math.cos(rad), y=100-70*Math.sin(rad);
+  c.innerHTML=`<svg viewBox="0 0 200 115" style="width:170px;height:auto;">
+    <defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#34D399"/><stop offset="50%" stop-color="#FCD34D"/><stop offset="100%" stop-color="#F87171"/></linearGradient></defs>
+    <path d="M 20 100 A 80 80 0 0 1 180 100" stroke="#1E1838" stroke-width="14" fill="none" stroke-linecap="round"/>
+    <path d="M 20 100 A 80 80 0 0 1 180 100" stroke="url(#gg)" stroke-width="14" fill="none" stroke-linecap="round"/>
+    <line x1="100" y1="100" x2="${x}" y2="${y}" stroke="#EBE6F5" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="100" cy="100" r="6" fill="#EBE6F5"/>
+    <circle cx="${x}" cy="${y}" r="4" fill="#F87171"/>
+  </svg>`;
+}
+function drawRadar(percent){
+  const c=document.getElementById('radar-svg'); if(!c) return;
+  const C=2*Math.PI*36, off=C*(1-percent/100);
+  c.innerHTML=`<svg viewBox="0 0 100 100" style="width:120px;height:120px;">
+    <defs><linearGradient id="rg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#F87171"/><stop offset="100%" stop-color="#C084FC"/></linearGradient></defs>
+    <circle cx="50" cy="50" r="36" stroke="#1E1838" stroke-width="6" fill="none"/>
+    <circle cx="50" cy="50" r="36" stroke="url(#rg2)" stroke-width="6" fill="none" stroke-dasharray="${C}" stroke-dashoffset="${off}" transform="rotate(-90 50 50)" stroke-linecap="round" style="filter:drop-shadow(0 0 4px #C084FC);"/>
+    <text x="50" y="58" text-anchor="middle" fill="#EBE6F5" font-family="Playfair Display" font-style="italic" font-size="22" font-weight="500">${percent}%</text>
+  </svg>`;
+}
+function drawRecovery(){
+  const c=document.getElementById('recovery-chart'); if(!c) return;
+  const pts=[60,50,38,30,22,15];
+  const W=380,H=100,pad=12;
+  let line='',area=`M ${pad} ${H} `;
+  pts.forEach((p,i)=>{
+    const x=pad+(i*(W-pad*2)/(pts.length-1));
+    const y=H-(p/100)*(H-15);
+    line+=(i===0?'M':'L')+' '+x+' '+y+' ';
+    area+='L '+x+' '+y+' ';
+  });
+  area+=`L ${W-pad} ${H} Z`;
+  let dots='';
+  pts.forEach((p,i)=>{
+    const x=pad+(i*(W-pad*2)/(pts.length-1));
+    const y=H-(p/100)*(H-15);
+    dots+=`<circle cx="${x}" cy="${y}" r="3" fill="#C084FC"/>`;
+  });
+  c.innerHTML=`<svg viewBox="0 0 ${W} ${H+22}" style="width:100%;height:auto;display:block;">
+    <defs><linearGradient id="rg3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#C084FC" stop-opacity="0.3"/><stop offset="100%" stop-color="#C084FC" stop-opacity="0"/></linearGradient></defs>
+    <path d="${area}" fill="url(#rg3)"/>
+    <path d="${line}" stroke="#C084FC" stroke-width="2" fill="none" style="filter:drop-shadow(0 0 4px rgba(192,132,252,0.4));"/>
+    ${dots}
+    <text x="${pad}" y="${H+18}" fill="#5B4F7A" font-family="JetBrains Mono" font-size="9">Sem 1</text>
+    <text x="${W*0.3}" y="${H+18}" fill="#5B4F7A" font-family="JetBrains Mono" font-size="9">Sem 3</text>
+    <text x="${W*0.6}" y="${H+18}" fill="#5B4F7A" font-family="JetBrains Mono" font-size="9">Sem 6</text>
+    <text x="${W-40}" y="${H+18}" fill="#C084FC" font-family="JetBrains Mono" font-size="9">Hoy</text>
+  </svg>`;
+}
+
+// ── Mission ──
+function toggleMish(el){
+  el.classList.toggle('done');
+  const items=document.querySelectorAll('#mission-list .mish-item');
+  const done=document.querySelectorAll('#mission-list .mish-item.done').length;
+  document.getElementById('mish-progress').textContent=done+'/'+items.length+' completado';
+  document.getElementById('mish-fill').style.width=(done/items.length*100)+'%';
+}
+
+// ── Modes (Circle) ──
+const MODES={
+  tranquilo:`Eres un compañero cálido y tranquilo para alguien en recuperación de uso compulsivo de pornografía (PMO). Hablas con calma, sin urgencia. Escuchas más de lo que aconsejas. Cuando das una sugerencia, es suave y específica. Nunca moralizas. Respondes siempre en español. Máximo 3 párrafos.`,
+  directo:`Eres un coach directo y específico para alguien en recuperación de PMO. No edulcoras. Haces preguntas precisas. Sugieres acciones concretas que se pueden hacer en los próximos 10 minutos. Cero condescendencia. Respondes siempre en español. Máximo 3 párrafos.`,
+  filosofo:`Eres un filósofo cálido pero penetrante. Ayudas a la persona a ver el problema más profundo detrás del impulso, sin volverlo abstracto. Conectas con Marco Aurelio, Frankl, Pascal cuando aplique, sin sonar pretencioso. Respondes en español, con elegancia. Máximo 3 párrafos.`,
+  amigo:`Eres un amigo cercano que conoce muy bien a esta persona y le habla con honestidad y cariño. Tu tono es cálido, directo, sin tecnicismos. Usas humor cuando aplica. Recuerdas que estás del lado de la persona. Respondes en español, como amigo. Máximo 3 párrafos.`
+};
+let currentMode='tranquilo';
+function setMode(key,label){
+  currentMode=key;
+  document.getElementById('mode-current').textContent=label;
+  document.querySelectorAll('.mode-opt').forEach(o=>o.classList.remove('sel'));
+  event.target.closest('.mode-opt').classList.add('sel');
+  document.getElementById('mode-dd').classList.remove('open');
+  coachHist=[];
+  toast('Modo: '+label);
+}
+
+// ── Circle Chat (Claude) ──
 let coachHist=[];
-function coachKey(e){ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendCoach(); } }
-async function sendCoach(){
-  const inp=document.getElementById('coach-ta');
+function circleKey(e){ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendCircle(); } }
+async function sendCircle(){
+  const inp=document.getElementById('circle-ta');
   const text=inp.value.trim(); if(!text) return;
   inp.value='';
-  addMsg(text,'user'); coachHist.push({role:'user',content:text});
-  const tEl=addTyping();
+  addCMsg(text,'user');
+  coachHist.push({role:'user',content:text});
+  const tEl=addCTyping();
   try{
     const res=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:COACH_SYS,messages:coachHist})
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:MODES[currentMode],messages:coachHist})
     });
     const d=await res.json();
     tEl.remove();
     const reply=d.content?.[0]?.text||'No pude responder. Inténtalo de nuevo.';
     coachHist.push({role:'assistant',content:reply});
-    addMsg(reply,'bot');
-  }catch(e){ tEl.remove(); addMsg('Error de conexión.','bot'); }
+    addCMsg(reply,'bot');
+  }catch(e){ tEl.remove(); addCMsg('Error de conexión.','bot'); }
 }
-function addMsg(text,role){
-  const m=document.getElementById('coach-msgs');
+function sendPreset(text){
+  document.getElementById('circle-ta').value=text;
+  sendCircle();
+}
+function addCMsg(text,role){
+  const m=document.getElementById('chat-area');
   const now=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-  const div=document.createElement('div'); div.className='msg '+role;
-  div.innerHTML=`<div class="msg-bub">${text.replace(/\n/g,'<br>')}</div><div class="msg-t">${now}</div>`;
+  const div=document.createElement('div'); div.className='cm '+role;
+  if(role==='bot'){
+    div.innerHTML=`<div class="bot-av"></div><div class="bub-wrap"><div class="bub">${text.replace(/\n/g,'<br>')}</div><div class="tm">${now}</div></div>`;
+  } else {
+    div.innerHTML=`<div class="bub">${text.replace(/\n/g,'<br>')}</div><div class="tm">${now} <i class="ti ti-checks"></i></div>`;
+  }
   m.appendChild(div); m.scrollTop=m.scrollHeight; return div;
 }
-function addTyping(){
-  const m=document.getElementById('coach-msgs');
-  const div=document.createElement('div'); div.className='msg bot';
-  div.innerHTML='<div class="msg-bub"><div class="typing"><span></span><span></span><span></span></div></div>';
+function addCTyping(){
+  const m=document.getElementById('chat-area');
+  const div=document.createElement('div'); div.className='cm bot';
+  div.innerHTML='<div class="bot-av"></div><div class="bub-wrap"><div class="bub"><div class="typing"><span></span><span></span><span></span></div></div></div>';
   m.appendChild(div); m.scrollTop=m.scrollHeight; return div;
+}
+
+// ── Stats page ──
+async function loadStats2(){
+  if(!user) return;
+  const uid=user.id;
+  const [r1,r2,r3,r4]=await Promise.all([
+    db.from('diary_entries').select('*',{count:'exact',head:true}).eq('user_id',uid),
+    db.from('trigger_logs').select('*',{count:'exact',head:true}).eq('user_id',uid),
+    db.from('emergency_sessions').select('*',{count:'exact',head:true}).eq('user_id',uid),
+    db.from('blocked_urls').select('*',{count:'exact',head:true}).eq('user_id',uid)
+  ]);
+  const el1=document.getElementById('ss-diary'); if(el1) el1.textContent=r1.count??0;
+  const el2=document.getElementById('ss-triggers'); if(el2) el2.textContent=r2.count??0;
+  const el3=document.getElementById('ss-emerg'); if(el3) el3.textContent=r3.count??0;
+  const el4=document.getElementById('ss-blocked'); if(el4) el4.textContent=r4.count??0;
 }
 
 async function exportData(){

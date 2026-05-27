@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,11 +11,11 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
 :root{
-  --bg:#0A0E1A; --bg-2:#0F1421; --bg-3:#161B2A; --bg-4:#1C2235;
-  --border:#1E2538; --border-2:#2A3148; --border-3:#3B4566;
-  --text:#E8EAF0; --text-2:#9CA3B5; --text-3:#5B6478; --text-4:#3F4860;
-  --accent:#7DD3FC; --accent-2:#38BDF8; --accent-glow:rgba(125,211,252,0.12);
-  --green:#5DCAA5; --green-soft:#86EFAC; --pink:#F0ABFC; --pink-soft:#FBA1A1;
+  --bg:#0A0814; --bg-2:#120E20; --bg-3:#1A1530; --bg-4:#231C3D;
+  --border:#231A38; --border-2:#2E2447; --border-3:#3F3361;
+  --text:#EBE6F5; --text-2:#A89FB8; --text-3:#6A607D; --text-4:#453B5C;
+  --accent:#C084FC; --accent-2:#A855F7; --accent-soft:#D8B4FE; --accent-glow:rgba(192,132,252,0.14);
+  --green:#5DCAA5; --green-soft:#86EFAC; --pink:#F0ABFC;
   --warn:#FCD34D; --danger:#F87171; --success:#34D399;
   --font-serif:'Playfair Display', Georgia, serif;
   --font-mono:'JetBrains Mono', ui-monospace, monospace;
@@ -30,14 +30,15 @@ body{font-family:var(--font-ui);background:var(--bg);color:var(--text);overflow-
 ::-webkit-scrollbar-thumb:hover{background:var(--border-3)}
 
 /* ─── Auth ─── */
-.auth-screen{min-height:100vh;display:none;align-items:center;justify-content:center;padding:24px;background:radial-gradient(ellipse at top,#0F1A2D 0%,var(--bg) 60%)}
+.auth-screen{min-height:100vh;display:none;align-items:center;justify-content:center;padding:24px;background:radial-gradient(ellipse at top,#1A0D2E 0%,var(--bg) 60%)}
 .auth-screen.active{display:flex}
 .auth-box{width:100%;max-width:420px;background:var(--bg-2);border:0.5px solid var(--border);border-radius:16px;padding:40px 36px;display:flex;flex-direction:column;gap:24px}
 .auth-logo-row{display:flex;align-items:center;gap:12px;margin-bottom:8px}
-.brand-mark{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#5BA8E8,#7DD3FC);display:flex;align-items:center;justify-content:center;position:relative}
-.brand-mark::before{content:'';position:absolute;inset:8px;border:1.5px solid rgba(10,14,26,0.5);border-radius:4px}
+.brand-mark{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#A855F7,#C084FC);display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 0 20px rgba(168,85,247,0.3)}
+.brand-mark::before{content:'';position:absolute;inset:8px;border:1.5px solid rgba(10,8,20,0.5);border-radius:4px}
 .brand-text{font-family:var(--font-serif);font-style:italic;font-size:22px;font-weight:500;letter-spacing:-0.01em}
 .auth-title{font-family:var(--font-serif);font-style:italic;font-size:32px;font-weight:500;line-height:1.2;color:var(--text)}
+.auth-title em{color:var(--accent);font-style:italic}
 .auth-sub{font-size:13px;color:var(--text-2);line-height:1.6}
 .auth-btns{display:flex;flex-direction:column;gap:10px}
 .auth-btn{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;border:0.5px solid var(--border-2);background:var(--bg-3);cursor:pointer;font-family:var(--font-ui);font-size:13px;color:var(--text);transition:background 0.15s,border-color 0.15s;width:100%;text-align:left}
@@ -49,27 +50,21 @@ body{font-family:var(--font-ui);background:var(--bg);color:var(--text);overflow-
 .auth-divider::before,.auth-divider::after{content:'';flex:1;height:0.5px;background:var(--border)}
 .auth-foot{font-family:var(--font-mono);font-size:10px;color:var(--text-3);text-align:center;line-height:1.6;letter-spacing:0.04em}
 
-/* phone OTP */
 .phone-flow{display:flex;flex-direction:column;gap:18px}
 .input-label{font-family:var(--font-mono);font-size:10px;letter-spacing:0.12em;color:var(--text-3);text-transform:uppercase}
-.phone-row{display:flex;gap:8px}
-.cc-pill{padding:11px 12px;background:var(--bg-3);border:0.5px solid var(--border-2);border-radius:8px;font-family:var(--font-mono);font-size:13px;color:var(--text);cursor:pointer}
-.phone-field{flex:1;background:var(--bg-3);border:0.5px solid var(--border-2);border-radius:8px;padding:11px 14px;font-family:var(--font-mono);font-size:13px;color:var(--text);outline:none}
+.phone-field{background:var(--bg-3);border:0.5px solid var(--border-2);border-radius:8px;padding:11px 14px;font-family:var(--font-mono);font-size:13px;color:var(--text);outline:none;width:100%}
 .phone-field:focus{border-color:var(--accent)}
-.otp-row{display:flex;gap:8px;justify-content:center}
-.otp-d{width:46px;height:54px;background:var(--bg-3);border:0.5px solid var(--border-2);border-radius:8px;text-align:center;font-family:var(--font-serif);font-size:24px;font-weight:500;color:var(--text);font-style:italic;outline:none}
-.otp-d:focus{border-color:var(--accent);background:var(--bg-4)}
-.primary-btn{background:var(--accent-2);color:var(--bg);border:none;border-radius:8px;padding:13px;font-family:var(--font-ui);font-size:13px;font-weight:600;cursor:pointer;width:100%;transition:opacity 0.15s}
-.primary-btn:hover{opacity:0.9}
+.primary-btn{background:var(--accent-2);color:#fff;border:none;border-radius:8px;padding:13px;font-family:var(--font-ui);font-size:13px;font-weight:600;cursor:pointer;width:100%;transition:opacity 0.15s,background 0.15s}
+.primary-btn:hover{background:var(--accent)}
 .ghost-btn{background:transparent;border:0.5px solid var(--border-2);border-radius:8px;padding:11px;font-family:var(--font-mono);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-2);cursor:pointer;width:100%}
+.ghost-btn:hover{border-color:var(--border-3);color:var(--text)}
 
 /* ─── App Layout ─── */
 .app{display:none;min-height:100vh}
 .app.active{display:flex}
 aside.sidebar{width:240px;min-height:100vh;background:var(--bg-2);border-right:0.5px solid var(--border);padding:20px 16px;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;overflow-y:auto;z-index:50}
-main.main{flex:1;margin-left:240px;min-height:100vh;padding:32px 48px 64px}
+main.main{flex:1;margin-left:240px;min-height:100vh;padding:32px 48px 64px;position:relative}
 
-/* sidebar header */
 .brand-block{display:flex;align-items:center;gap:10px;padding:6px 6px 18px}
 .brand-block .brand-mark{width:32px;height:32px;border-radius:7px;flex-shrink:0}
 .brand-block .brand-mark::before{inset:7px}
@@ -77,16 +72,14 @@ main.main{flex:1;margin-left:240px;min-height:100vh;padding:32px 48px 64px}
 .brand-stack .name{font-family:var(--font-serif);font-style:italic;font-size:17px;font-weight:600;letter-spacing:-0.01em}
 .brand-stack .meta{font-family:var(--font-mono);font-size:9px;letter-spacing:0.14em;color:var(--text-3);margin-top:3px}
 
-/* nav */
 .nav-label{font-family:var(--font-mono);font-size:9px;letter-spacing:0.16em;color:var(--text-4);text-transform:uppercase;padding:14px 8px 8px}
 .nav-item{display:flex;align-items:center;gap:11px;padding:8px 10px;border-radius:6px;cursor:pointer;color:var(--text-2);font-family:var(--font-ui);font-size:13px;border:none;background:transparent;width:100%;text-align:left;transition:all 0.12s;position:relative}
 .nav-item:hover{background:var(--bg-3);color:var(--text)}
 .nav-item.active{background:var(--bg-3);color:var(--text)}
-.nav-item.active::before{content:'';position:absolute;left:-16px;top:6px;bottom:6px;width:2px;background:var(--accent);border-radius:0 2px 2px 0}
+.nav-item.active::before{content:'';position:absolute;left:-16px;top:6px;bottom:6px;width:2px;background:var(--accent);border-radius:0 2px 2px 0;box-shadow:0 0 8px var(--accent)}
 .nav-item i{font-size:16px;color:var(--text-3)}
 .nav-item.active i{color:var(--accent)}
 
-/* sidebar footer */
 .sidebar-foot{margin-top:auto;padding-top:16px;display:flex;flex-direction:column;gap:12px}
 .streak-mini{padding:14px;background:var(--bg-3);border:0.5px solid var(--border);border-radius:10px}
 .streak-mini .lbl{font-family:var(--font-mono);font-size:9px;letter-spacing:0.14em;color:var(--text-3);text-transform:uppercase}
@@ -98,39 +91,72 @@ main.main{flex:1;margin-left:240px;min-height:100vh;padding:32px 48px 64px}
 .urge-btn::before{content:'';width:6px;height:6px;background:var(--danger);border-radius:50%;flex-shrink:0;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
 
+/* ─── Lang switcher ─── */
+.lang-switch{position:absolute;top:32px;right:48px;z-index:30}
+.lang-btn{background:var(--bg-2);border:0.5px solid var(--border-2);border-radius:20px;padding:8px 16px;font-family:var(--font-mono);font-size:11px;letter-spacing:0.08em;color:var(--text);cursor:pointer;display:flex;align-items:center;gap:8px;text-transform:uppercase}
+.lang-btn:hover{border-color:var(--accent)}
+.lang-btn .globe{color:var(--accent)}
+.lang-dropdown{position:absolute;top:42px;right:0;background:var(--bg-2);border:0.5px solid var(--border-2);border-radius:12px;padding:16px;width:280px;display:none;flex-direction:column;gap:10px;box-shadow:0 12px 32px rgba(0,0,0,0.4)}
+.lang-dropdown.open{display:flex}
+.lang-dl{font-family:var(--font-mono);font-size:9px;letter-spacing:0.14em;color:var(--text-3);text-transform:uppercase;padding-bottom:4px}
+.lang-opt{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;cursor:pointer;border:0.5px solid transparent}
+.lang-opt:hover{background:var(--bg-3)}
+.lang-opt.sel{background:var(--accent-glow);border-color:var(--accent)}
+.lang-flag{width:34px;height:24px;border-radius:4px;background:var(--bg-3);border:0.5px solid var(--border-2);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:10px;letter-spacing:0.08em;color:var(--text-2);flex-shrink:0}
+.lang-opt.sel .lang-flag{background:var(--accent);color:#fff;border-color:var(--accent)}
+.lang-name{flex:1}
+.lang-name .n{font-family:var(--font-serif);font-style:italic;font-size:15px;font-weight:500;line-height:1.1}
+.lang-name .s{font-family:var(--font-mono);font-size:9px;letter-spacing:0.1em;color:var(--text-3);text-transform:uppercase;margin-top:2px}
+.lang-foot{font-family:var(--font-mono);font-size:9px;letter-spacing:0.06em;color:var(--text-3);line-height:1.55;text-transform:uppercase;padding-top:8px;border-top:0.5px solid var(--border)}
+
 /* ─── Page System ─── */
 .page{display:none}
 .page.active{display:block}
-
-/* page header */
 .page-head{margin-bottom:32px;display:flex;align-items:flex-end;justify-content:space-between;gap:24px;padding-bottom:20px;border-bottom:0.5px solid var(--border)}
 .page-title{font-family:var(--font-serif);font-style:italic;font-size:34px;font-weight:500;line-height:1.1;letter-spacing:-0.01em}
 .page-sub{font-family:var(--font-mono);font-size:10px;letter-spacing:0.14em;color:var(--text-3);text-transform:uppercase;margin-top:8px}
 .page-meta{font-family:var(--font-mono);font-size:11px;color:var(--text-3);letter-spacing:0.06em}
 
-/* ─── HOME (editorial) ─── */
-.editorial{display:grid;grid-template-columns:1fr 360px;gap:48px;align-items:start}
+/* ─── HERO (home) ─── */
+.hero{position:relative;padding:40px 0 80px;margin:-32px -48px 60px;overflow:hidden;border-bottom:0.5px solid var(--border)}
+.hero-bg{position:absolute;inset:0;opacity:0.8;pointer-events:none}
+.hero-content{position:relative;padding:40px 48px 0;max-width:1100px;margin:0 auto;display:flex;flex-direction:column;align-items:center;text-align:center;gap:24px}
+.hero-pill{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:20px;border:0.5px solid var(--accent);background:var(--accent-glow);font-family:var(--font-mono);font-size:10px;letter-spacing:0.14em;color:var(--accent);text-transform:uppercase}
+.hero-pill::before{content:'';width:5px;height:5px;background:var(--accent);border-radius:50%;box-shadow:0 0 8px var(--accent)}
+.hero-title{font-family:var(--font-serif);font-style:italic;font-size:64px;font-weight:500;line-height:1.05;letter-spacing:-0.02em;max-width:900px}
+.hero-title em{color:var(--accent);font-style:italic}
+.hero-sub{font-family:var(--font-serif);font-size:18px;line-height:1.6;color:var(--text-2);max-width:680px}
+.hero-meta{font-family:var(--font-mono);font-size:10px;letter-spacing:0.18em;color:var(--text-3);text-transform:uppercase;margin-top:12px}
+
+@media(max-width:900px){
+  .hero-title{font-size:38px}
+  .hero{margin:-24px -20px 40px}
+  .hero-content{padding:24px 20px 0}
+}
+
+/* ─── Editorial / Article ─── */
+.editorial{display:grid;grid-template-columns:1fr 360px;gap:48px;align-items:start;padding-top:20px}
 .article{display:flex;flex-direction:column;gap:24px}
 .article-num{font-family:var(--font-serif);font-style:italic;font-size:64px;color:var(--accent);font-weight:400;line-height:1}
 .article-kicker{font-family:var(--font-mono);font-size:10px;letter-spacing:0.18em;color:var(--text-3);text-transform:uppercase}
-.article-title{font-family:var(--font-serif);font-style:italic;font-size:38px;font-weight:500;line-height:1.15;letter-spacing:-0.01em;max-width:600px}
-.article-body{display:flex;flex-direction:column;gap:18px;font-family:var(--font-serif);font-size:16px;line-height:1.75;color:var(--text-2);max-width:580px}
+.article-title{font-family:var(--font-serif);font-style:italic;font-size:38px;font-weight:500;line-height:1.15;letter-spacing:-0.01em;max-width:640px}
+.article-body{display:flex;flex-direction:column;gap:18px;font-family:var(--font-serif);font-size:16px;line-height:1.75;color:var(--text-2);max-width:620px}
 .article-body p:first-child::first-letter{font-family:var(--font-serif);font-style:italic;font-size:54px;float:left;line-height:0.9;padding:6px 8px 0 0;color:var(--accent)}
 .article-body em{color:var(--text);font-style:italic}
 .stat-list{display:flex;flex-direction:column;gap:14px;position:sticky;top:32px}
 .stat-card{background:var(--bg-2);border:0.5px solid var(--border);border-left:2px solid var(--accent);border-radius:8px;padding:18px 20px}
 .stat-num{font-family:var(--font-serif);font-style:italic;font-size:32px;color:var(--text);display:flex;align-items:baseline;gap:8px}
-.stat-num span{font-family:var(--font-mono);font-size:10px;color:var(--text-3);letter-spacing:0.14em;font-style:normal}
+.stat-num span{font-family:var(--font-mono);font-size:10px;color:var(--text-3);letter-spacing:0.14em;font-style:normal;text-transform:uppercase}
 .stat-desc{font-size:12px;color:var(--text-2);line-height:1.6;margin-top:8px}
 
 /* ─── Practices ─── */
 .practice-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}
 .practice-card{background:var(--bg-2);border:0.5px solid var(--border);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;transition:border-color 0.15s,transform 0.15s}
-.practice-card:hover{border-color:var(--border-2);transform:translateY(-2px)}
-.practice-art{height:120px;display:flex;align-items:center;justify-content:center;background-image:repeating-linear-gradient(45deg,transparent,transparent 8px,rgba(255,255,255,0.015) 8px,rgba(255,255,255,0.015) 16px);background-color:var(--bg-3);position:relative}
+.practice-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 24px rgba(192,132,252,0.08)}
+.practice-art{height:120px;display:flex;align-items:center;justify-content:center;background-image:repeating-linear-gradient(45deg,transparent,transparent 8px,rgba(192,132,252,0.03) 8px,rgba(192,132,252,0.03) 16px);background-color:var(--bg-3);position:relative}
 .practice-art .sym{font-size:42px;line-height:1}
 .practice-art .sym.breath{color:var(--green)}
-.practice-art .sym.create{color:var(--green-soft)}
+.practice-art .sym.create{color:var(--accent)}
 .practice-art .sym.connect{color:var(--pink)}
 .practice-body{padding:18px 20px 16px;display:flex;flex-direction:column;gap:8px;flex:1}
 .practice-cat{font-family:var(--font-mono);font-size:9px;letter-spacing:0.18em;color:var(--text-3);text-transform:uppercase}
@@ -140,7 +166,7 @@ main.main{flex:1;margin-left:240px;min-height:100vh;padding:32px 48px 64px}
 .practice-desc{font-size:12px;color:var(--text-2);line-height:1.55;margin-top:2px}
 .practice-actions{display:flex;align-items:center;justify-content:space-between;padding:12px 20px 16px;border-top:0.5px solid var(--border)}
 .chip-btn{font-family:var(--font-mono);font-size:10px;letter-spacing:0.08em;color:var(--text-2);background:var(--bg-3);border:0.5px solid var(--border);border-radius:20px;padding:6px 12px;cursor:pointer;text-transform:lowercase}
-.chip-btn:hover{background:var(--bg-4)}
+.chip-btn:hover{background:var(--bg-4);color:var(--text)}
 .start-btn{font-family:var(--font-mono);font-size:11px;color:var(--text);background:transparent;border:none;cursor:pointer;display:flex;align-items:center;gap:6px;padding:4px 0}
 .start-btn:hover{color:var(--accent)}
 
@@ -175,13 +201,29 @@ main.main{flex:1;margin-left:240px;min-height:100vh;padding:32px 48px 64px}
 .toggle.off{background:var(--bg-4)}
 .toggle.off::after{right:21px}
 
+/* URL block list */
+.blocklist-wrap{background:var(--bg-2);border:0.5px solid var(--border);border-radius:10px;padding:24px;margin-top:14px}
+.blocklist-add{display:flex;gap:8px;margin-bottom:18px}
+.blocklist-add input{flex:1;background:var(--bg-3);border:0.5px solid var(--border-2);border-radius:8px;padding:11px 14px;font-family:var(--font-mono);font-size:12px;color:var(--text);outline:none}
+.blocklist-add input:focus{border-color:var(--accent)}
+.blocklist-add button{background:var(--accent-2);color:#fff;border:none;border-radius:8px;padding:11px 20px;font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer}
+.blocklist-add button:hover{background:var(--accent)}
+.blocklist-items{display:flex;flex-direction:column;gap:8px}
+.blocked-item{display:flex;align-items:center;gap:14px;padding:12px 16px;background:var(--bg-3);border:0.5px solid var(--border);border-radius:8px}
+.blocked-item .ico{width:28px;height:28px;background:rgba(248,113,113,0.1);color:var(--danger);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.blocked-item .url{flex:1;font-family:var(--font-mono);font-size:13px;color:var(--text);word-break:break-all}
+.blocked-item .date{font-family:var(--font-mono);font-size:10px;color:var(--text-3);letter-spacing:0.04em;white-space:nowrap}
+.blocked-item .del{background:transparent;border:none;color:var(--text-3);cursor:pointer;padding:6px;border-radius:6px;display:flex;align-items:center;justify-content:center}
+.blocked-item .del:hover{color:var(--danger);background:rgba(248,113,113,0.08)}
+.empty-msg{padding:40px 24px;text-align:center;color:var(--text-3);font-size:13px;font-style:italic;font-family:var(--font-serif)}
+
 /* ─── Journal ─── */
 .journal-layout{display:grid;grid-template-columns:1fr 320px;gap:40px;align-items:start}
 .new-entry-cta{background:var(--bg-2);border:0.5px dashed var(--border-2);border-radius:10px;padding:18px 22px;display:flex;align-items:center;gap:14px;cursor:pointer;color:var(--text-2);transition:all 0.15s;width:100%;font-family:var(--font-ui);font-size:14px}
 .new-entry-cta:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-glow)}
 .month-head{font-family:var(--font-mono);font-size:10px;letter-spacing:0.16em;color:var(--text-3);text-transform:uppercase;padding:24px 0 12px}
 .entry-card{background:var(--bg-2);border:0.5px solid var(--border);border-left:3px solid var(--accent);border-radius:10px;padding:18px 22px;margin-bottom:12px;cursor:pointer;transition:border-color 0.15s,transform 0.15s;display:flex;gap:20px;align-items:flex-start}
-.entry-card:hover{border-color:var(--border-2);transform:translateX(2px)}
+.entry-card:hover{border-color:var(--accent);transform:translateX(2px)}
 .entry-date{display:flex;flex-direction:column;align-items:center;min-width:60px;padding-top:2px}
 .entry-day{font-family:var(--font-mono);font-size:9px;letter-spacing:0.14em;color:var(--text-3);text-transform:uppercase}
 .entry-day-num{font-family:var(--font-serif);font-style:italic;font-size:34px;font-weight:500;line-height:1;color:var(--text);margin-top:2px}
@@ -192,7 +234,6 @@ main.main{flex:1;margin-left:240px;min-height:100vh;padding:32px 48px 64px}
 .mood-pill{font-family:var(--font-mono);font-size:9px;letter-spacing:0.1em;padding:3px 9px;border-radius:4px;text-transform:uppercase;color:var(--text-2);background:var(--bg-3);border:0.5px solid var(--border-2)}
 .entry-preview{font-size:13px;color:var(--text-2);line-height:1.65;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 
-/* journal sidebar */
 .j-side{position:sticky;top:32px;display:flex;flex-direction:column;gap:18px}
 .mini-cal{background:var(--bg-2);border:0.5px solid var(--border);border-radius:10px;padding:18px}
 .mini-cal-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
@@ -202,17 +243,18 @@ main.main{flex:1;margin-left:240px;min-height:100vh;padding:32px 48px 64px}
 .cal-d-label{font-family:var(--font-mono);font-size:8px;color:var(--text-4);text-align:center;letter-spacing:0.1em;padding-bottom:6px;text-transform:uppercase}
 .cal-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:10px;color:var(--text-2);border-radius:5px}
 .cal-day.empty{color:transparent}
-.cal-day.has{background:rgba(125,211,252,0.1);color:var(--accent);font-weight:500}
+.cal-day.has{background:var(--accent-glow);color:var(--accent);font-weight:500}
 .cal-day.today{border:1px solid var(--accent);color:var(--accent)}
 
-/* ─── Compose ─── */
-.compose-screen{display:none;position:fixed;inset:0;background:var(--bg);z-index:100;flex-direction:column}
-.compose-screen.active{display:flex}
+/* ─── Compose / Detail ─── */
+.compose-screen,.detail-screen{display:none;position:fixed;inset:0;background:var(--bg);z-index:100;flex-direction:column;overflow-y:auto}
+.compose-screen.active,.detail-screen.active{display:flex}
 .compose-top{display:flex;align-items:center;justify-content:space-between;padding:20px 32px;border-bottom:0.5px solid var(--border)}
 .compose-back{background:transparent;border:0.5px solid var(--border-2);border-radius:6px;padding:7px 14px;font-family:var(--font-mono);font-size:10px;color:var(--text-2);letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px}
+.compose-back:hover{border-color:var(--accent);color:var(--accent)}
 .compose-body-wrap{flex:1;overflow-y:auto;display:flex;justify-content:center;padding:40px 24px 100px}
 .compose-inner{width:100%;max-width:720px;display:flex;flex-direction:column;gap:24px}
-.compose-date-block{display:flex;align-items:flex-end;gap:14px;padding-bottom:8px;border-bottom:0.5px solid var(--border)}
+.compose-date-block{display:flex;align-items:flex-end;gap:14px;padding-bottom:8px;border-bottom:0.5px solid var(--border);flex-wrap:wrap}
 .cd-day{font-family:var(--font-mono);font-size:11px;letter-spacing:0.16em;color:var(--text-3);text-transform:uppercase;padding-bottom:14px}
 .cd-num{font-family:var(--font-serif);font-style:italic;font-size:72px;font-weight:500;line-height:1;color:var(--text)}
 .cd-my{font-family:var(--font-mono);font-size:11px;color:var(--text-3);letter-spacing:0.06em;padding-bottom:14px}
@@ -225,13 +267,11 @@ main.main{flex:1;margin-left:240px;min-height:100vh;padding:32px 48px 64px}
 .compose-body-i{font-family:var(--font-serif);font-size:17px;line-height:1.85;color:var(--text);background:transparent;border:none;outline:none;width:100%;resize:none;min-height:300px}
 .compose-body-i::placeholder{color:var(--text-4)}
 .compose-bar{position:fixed;bottom:0;left:0;right:0;padding:16px 32px;border-top:0.5px solid var(--border);background:var(--bg);display:flex;justify-content:flex-end}
-.save-btn-2{background:var(--accent-2);color:var(--bg);border:none;border-radius:8px;padding:11px 26px;font-family:var(--font-mono);font-size:11px;font-weight:600;cursor:pointer;letter-spacing:0.08em;text-transform:uppercase}
+.save-btn-2{background:var(--accent-2);color:#fff;border:none;border-radius:8px;padding:11px 26px;font-family:var(--font-mono);font-size:11px;font-weight:600;cursor:pointer;letter-spacing:0.08em;text-transform:uppercase}
+.save-btn-2:hover{background:var(--accent)}
 
-/* detail */
-.detail-screen{display:none;position:fixed;inset:0;background:var(--bg);z-index:100;flex-direction:column;overflow-y:auto}
-.detail-screen.active{display:flex}
 .detail-inner{max-width:720px;margin:0 auto;padding:40px 24px 80px;width:100%}
-.detail-d-block{display:flex;align-items:flex-end;gap:14px;padding-bottom:24px;border-bottom:0.5px solid var(--border);margin-bottom:32px}
+.detail-d-block{display:flex;align-items:flex-end;gap:14px;padding-bottom:24px;border-bottom:0.5px solid var(--border);margin-bottom:32px;flex-wrap:wrap}
 .detail-title-t{font-family:var(--font-serif);font-style:italic;font-size:34px;font-weight:500;line-height:1.2;margin-bottom:20px}
 .detail-body-t{font-family:var(--font-serif);font-size:17px;line-height:1.85;color:var(--text-2);white-space:pre-wrap}
 
@@ -242,10 +282,10 @@ main.main{flex:1;margin-left:240px;min-height:100vh;padding:32px 48px 64px}
 .today-quote .a{font-family:var(--font-mono);font-size:10px;letter-spacing:0.14em;color:var(--text-3);text-transform:uppercase;margin-top:14px}
 .plan-list{display:flex;flex-direction:column;gap:10px;margin-top:24px}
 .plan-item{display:flex;align-items:center;gap:14px;padding:14px 18px;background:var(--bg-2);border:0.5px solid var(--border);border-radius:8px;cursor:pointer}
-.plan-item:hover{border-color:var(--border-2)}
+.plan-item:hover{border-color:var(--accent)}
 .plan-check{width:18px;height:18px;border:1.5px solid var(--border-3);border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
 .plan-item.done .plan-check{background:var(--accent-2);border-color:var(--accent-2)}
-.plan-item.done .plan-check::after{content:'✓';color:var(--bg);font-size:12px;font-weight:700}
+.plan-item.done .plan-check::after{content:'✓';color:#fff;font-size:12px;font-weight:700}
 .plan-item.done .plan-text{color:var(--text-3);text-decoration:line-through}
 .plan-text{font-family:var(--font-serif);font-size:15px;color:var(--text)}
 .plan-time{font-family:var(--font-mono);font-size:10px;color:var(--text-3);margin-left:auto;letter-spacing:0.06em}
@@ -257,29 +297,28 @@ main.main{flex:1;margin-left:240px;min-height:100vh;padding:32px 48px 64px}
 .wisdom-quote{font-family:var(--font-serif);font-style:italic;font-size:18px;line-height:1.5;color:var(--text)}
 .wisdom-author{font-family:var(--font-mono);font-size:10px;letter-spacing:0.14em;color:var(--text-3);text-transform:uppercase}
 
-/* ─── Coach ─── */
+/* ─── Coach / Circle ─── */
 .coach-page{display:flex;flex-direction:column;height:calc(100vh - 128px)}
 .coach-msgs{flex:1;overflow-y:auto;padding:8px 0 16px;display:flex;flex-direction:column;gap:14px;max-width:780px;width:100%;margin:0 auto}
 .msg{max-width:80%;display:flex;flex-direction:column;gap:4px}
 .msg.user{align-self:flex-end;align-items:flex-end}
 .msg.bot{align-self:flex-start}
 .msg-bub{padding:12px 18px;border-radius:14px;font-size:14px;line-height:1.65}
-.msg.user .msg-bub{background:var(--accent-glow);color:var(--text);border:0.5px solid rgba(125,211,252,0.2);border-bottom-right-radius:4px}
+.msg.user .msg-bub{background:var(--accent-glow);color:var(--text);border:0.5px solid rgba(192,132,252,0.25);border-bottom-right-radius:4px}
 .msg.bot .msg-bub{background:var(--bg-2);border:0.5px solid var(--border);color:var(--text);border-bottom-left-radius:4px;font-family:var(--font-serif);font-size:15px;line-height:1.7}
 .msg-t{font-family:var(--font-mono);font-size:9px;color:var(--text-4);letter-spacing:0.08em}
 .coach-input-wrap{max-width:780px;width:100%;margin:0 auto;padding-top:12px;border-top:0.5px solid var(--border);display:flex;gap:10px;align-items:flex-end}
 .coach-ta{flex:1;background:var(--bg-2);border:0.5px solid var(--border-2);border-radius:12px;padding:12px 16px;font-family:var(--font-ui);font-size:14px;color:var(--text);outline:none;resize:none;max-height:140px;line-height:1.5}
 .coach-ta:focus{border-color:var(--accent)}
 .send-btn{width:44px;height:44px;background:var(--accent-2);border:none;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.send-btn:hover{opacity:0.9}
-.send-btn i{font-size:18px;color:var(--bg)}
+.send-btn:hover{background:var(--accent)}
+.send-btn i{font-size:18px;color:#fff}
 .typing{display:flex;gap:5px;padding:4px 0}
 .typing span{width:7px;height:7px;background:var(--text-3);border-radius:50%;animation:b 1s infinite}
 .typing span:nth-child(2){animation-delay:0.15s}
 .typing span:nth-child(3){animation-delay:0.3s}
 @keyframes b{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
 
-/* ─── Accountability / Identity / Settings ─── */
 .simple-card{background:var(--bg-2);border:0.5px solid var(--border);border-radius:12px;padding:28px}
 .simple-card h3{font-family:var(--font-serif);font-style:italic;font-size:22px;font-weight:500;margin-bottom:12px}
 .simple-card p{color:var(--text-2);font-size:14px;line-height:1.7;margin-bottom:10px}
@@ -287,8 +326,8 @@ main.main{flex:1;margin-left:240px;min-height:100vh;padding:32px 48px 64px}
 .coming-soon h2{font-family:var(--font-serif);font-style:italic;font-size:28px;font-weight:500;margin-bottom:12px}
 .coming-soon p{color:var(--text-2);max-width:420px;margin:0 auto;line-height:1.7}
 
-/* ─── Emergency overlay ─── */
-.emerg{display:none;position:fixed;inset:0;background:#04060D;z-index:200;align-items:center;justify-content:center;padding:32px}
+/* ─── Urge overlay ─── */
+.emerg{display:none;position:fixed;inset:0;background:#06040C;z-index:200;align-items:center;justify-content:center;padding:32px}
 .emerg.active{display:flex}
 .emerg-inner{max-width:520px;width:100%;display:flex;flex-direction:column;gap:18px}
 .emerg-close{position:absolute;top:24px;right:24px;background:transparent;border:0.5px solid var(--border-2);border-radius:6px;padding:7px 14px;font-family:var(--font-mono);font-size:10px;color:var(--text-2);letter-spacing:0.1em;text-transform:uppercase;cursor:pointer}
@@ -303,11 +342,9 @@ main.main{flex:1;margin-left:240px;min-height:100vh;padding:32px 48px 64px}
 .e-tx{font-family:var(--font-serif);font-size:16px;color:var(--text)}
 .e-sb{font-family:var(--font-mono);font-size:10px;color:var(--text-3);margin-top:3px;letter-spacing:0.04em}
 
-/* ─── Toast ─── */
 .toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 22px;border-radius:24px;font-family:var(--font-mono);font-size:11px;letter-spacing:0.06em;opacity:0;transition:opacity 0.25s;z-index:300;pointer-events:none}
 .toast.show{opacity:1}
 
-/* responsive */
 @media(max-width:900px){
   aside.sidebar{transform:translateX(-100%);transition:transform 0.2s}
   aside.sidebar.open{transform:translateX(0)}
@@ -316,6 +353,7 @@ main.main{flex:1;margin-left:240px;min-height:100vh;padding:32px 48px 64px}
   .stat-list,.j-side{position:static}
   .cat-grid{grid-template-columns:1fr}
   .mobile-bar{display:flex !important}
+  .lang-switch{top:14px;right:20px}
 }
 .mobile-bar{display:none;position:fixed;top:0;left:0;right:0;height:56px;background:var(--bg-2);border-bottom:0.5px solid var(--border);align-items:center;padding:0 16px;gap:14px;z-index:40}
 .mobile-bar button{background:none;border:none;color:var(--text);font-size:20px;cursor:pointer}
@@ -335,48 +373,48 @@ main.main{flex:1;margin-left:240px;min-height:100vh;padding:32px 48px 64px}
       <span class="brand-text">OvercomePMO</span>
     </div>
     <div>
-      <h1 class="auth-title">Recovery is a system,<br>not a prayer.</h1>
-      <p class="auth-sub" style="margin-top:14px;">Your private space to understand patterns, build identity, and rewire response. No shame. No streaks weaponized against you.</p>
+      <h1 class="auth-title">La recuperación es un <em>sistema</em>,<br>no una oración.</h1>
+      <p class="auth-sub" style="margin-top:14px;">Tu espacio privado para entender patrones, construir identidad y reescribir la respuesta automática. Sin vergüenza. Sin rachas usadas en tu contra.</p>
     </div>
     <div id="auth-main">
       <div class="auth-btns">
         <button class="auth-btn" onclick="oauth('google')">
           <span class="icn"><svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg></span>
-          <span>Continue with Google</span>
+          <span>Continuar con Google</span>
           <i class="ti ti-chevron-right" style="color:var(--text-3);font-size:14px;"></i>
         </button>
         <button class="auth-btn" onclick="oauth('facebook')">
           <span class="icn"><svg width="18" height="18" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></span>
-          <span>Continue with Facebook</span>
+          <span>Continuar con Facebook</span>
           <i class="ti ti-chevron-right" style="color:var(--text-3);font-size:14px;"></i>
         </button>
         <button class="auth-btn" onclick="oauth('apple')">
-          <span class="icn"><svg width="18" height="18" viewBox="0 0 24 24" fill="#E8EAF0"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg></span>
-          <span>Continue with Apple</span>
+          <span class="icn"><svg width="18" height="18" viewBox="0 0 24 24" fill="#EBE6F5"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg></span>
+          <span>Continuar con Apple</span>
           <i class="ti ti-chevron-right" style="color:var(--text-3);font-size:14px;"></i>
         </button>
-        <div class="auth-divider"><span>or</span></div>
+        <div class="auth-divider"><span>o</span></div>
         <button class="auth-btn" onclick="showEmailFlow()">
           <span class="icn"><i class="ti ti-mail" style="font-size:16px;color:var(--text-2);"></i></span>
-          <span>Continue with email</span>
+          <span>Continuar con correo</span>
           <i class="ti ti-chevron-right" style="color:var(--text-3);font-size:14px;"></i>
         </button>
       </div>
     </div>
     <div id="email-flow-step" class="phone-flow" style="display:none;">
       <div>
-        <div class="input-label" style="margin-bottom:8px;">Email</div>
-        <input class="phone-field" id="em-email" type="email" placeholder="you@example.com" style="width:100%;">
+        <div class="input-label" style="margin-bottom:8px;">Correo</div>
+        <input class="phone-field" id="em-email" type="email" placeholder="tu@correo.com">
       </div>
       <div>
-        <div class="input-label" style="margin-bottom:8px;">Password <span style="color:var(--text-4);text-transform:none;letter-spacing:0;">· minimum 6 characters</span></div>
-        <input class="phone-field" id="em-pass" type="password" placeholder="••••••••" style="width:100%;">
+        <div class="input-label" style="margin-bottom:8px;">Contraseña <span style="color:var(--text-4);text-transform:none;letter-spacing:0;">· mínimo 6 caracteres</span></div>
+        <input class="phone-field" id="em-pass" type="password" placeholder="••••••••">
       </div>
-      <button class="primary-btn" id="em-submit" onclick="submitEmail()">Sign in</button>
-      <button class="ghost-btn" onclick="toggleEmailMode()" id="em-toggle">Don't have an account? Create one</button>
-      <button class="ghost-btn" onclick="hideEmailFlow()" style="margin-top:4px;">Back</button>
+      <button class="primary-btn" id="em-submit" onclick="submitEmail()">Entrar</button>
+      <button class="ghost-btn" onclick="toggleEmailMode()" id="em-toggle">¿No tienes cuenta? Crear una</button>
+      <button class="ghost-btn" onclick="hideEmailFlow()" style="margin-top:4px;">Volver</button>
     </div>
-    <p class="auth-foot">Your data is private. Encrypted. Never shared.</p>
+    <p class="auth-foot">Tus datos son privados. Cifrados. Nunca compartidos.</p>
   </div>
 </div>
 
@@ -394,207 +432,216 @@ main.main{flex:1;margin-left:240px;min-height:100vh;padding:32px 48px 64px}
       <div class="brand-mark"></div>
       <div class="brand-stack">
         <span class="name">OvercomePMO</span>
-        <span class="meta" id="day-meta">RECOVERY · DAY —</span>
+        <span class="meta" id="day-meta">RECUPERACIÓN · DÍA —</span>
       </div>
     </div>
 
-    <div class="nav-label">Navigation</div>
-    <button class="nav-item active" data-page="home" onclick="nav('home')"><i class="ti ti-book-2"></i> Home</button>
-    <button class="nav-item" data-page="today" onclick="nav('today')"><i class="ti ti-home"></i> Today</button>
-    <button class="nav-item" data-page="brain" onclick="nav('brain')"><i class="ti ti-bulb"></i> Your Brain</button>
-    <button class="nav-item" data-page="shield" onclick="nav('shield')"><i class="ti ti-shield-check"></i> Shield</button>
-    <button class="nav-item" data-page="practices" onclick="nav('practices')"><i class="ti ti-clock-hour-3"></i> Practices</button>
-    <button class="nav-item" data-page="wisdom" onclick="nav('wisdom')"><i class="ti ti-quote"></i> Wisdom</button>
-    <button class="nav-item" data-page="journal" onclick="nav('journal')"><i class="ti ti-notebook"></i> Journal</button>
-    <button class="nav-item" data-page="coach" onclick="nav('coach')"><i class="ti ti-message-chatbot"></i> Coach</button>
-    <button class="nav-item" data-page="accountability" onclick="nav('accountability')"><i class="ti ti-users"></i> Accountability</button>
-    <button class="nav-item" data-page="settings" onclick="nav('settings')"><i class="ti ti-settings"></i> Settings</button>
+    <div class="nav-label">Navegación</div>
+    <button class="nav-item active" data-page="home" onclick="nav('home')"><i class="ti ti-book-2"></i> Inicio</button>
+    <button class="nav-item" data-page="today" onclick="nav('today')"><i class="ti ti-home"></i> Hoy</button>
+    <button class="nav-item" data-page="brain" onclick="nav('brain')"><i class="ti ti-bulb"></i> Tu cerebro</button>
+    <button class="nav-item" data-page="shield" onclick="nav('shield')"><i class="ti ti-shield-check"></i> Escudo</button>
+    <button class="nav-item" data-page="practices" onclick="nav('practices')"><i class="ti ti-clock-hour-3"></i> Prácticas</button>
+    <button class="nav-item" data-page="wisdom" onclick="nav('wisdom')"><i class="ti ti-quote"></i> Sabiduría</button>
+    <button class="nav-item" data-page="journal" onclick="nav('journal')"><i class="ti ti-notebook"></i> Diario</button>
+    <button class="nav-item" data-page="circle" onclick="nav('circle')"><i class="ti ti-message-chatbot"></i> Circle</button>
+    <button class="nav-item" data-page="accountability" onclick="nav('accountability')"><i class="ti ti-users"></i> Acompañamiento</button>
+    <button class="nav-item" data-page="settings" onclick="nav('settings')"><i class="ti ti-settings"></i> Ajustes</button>
 
     <div class="sidebar-foot">
       <div class="streak-mini">
-        <div class="lbl">Current streak</div>
-        <div class="num"><span id="streak-num">—</span> <span>days</span></div>
-        <div class="sub" id="streak-best">Longest · — days</div>
+        <div class="lbl">Racha actual</div>
+        <div class="num"><span id="streak-num">—</span> <span>días</span></div>
+        <div class="sub" id="streak-best">Más larga · — días</div>
       </div>
-      <button class="urge-btn" onclick="openEmerg()">I'm having an urge</button>
+      <button class="urge-btn" onclick="openEmerg()">Tengo un impulso</button>
     </div>
   </aside>
 
   <main class="main">
 
-    <!-- HOME -->
+    <!-- Language switch -->
+    <div class="lang-switch">
+      <button class="lang-btn" onclick="document.getElementById('lang-dd').classList.toggle('open')">
+        <span class="globe"><i class="ti ti-world" style="font-size:13px;"></i></span> ES
+        <i class="ti ti-chevron-down" style="font-size:11px;"></i>
+      </button>
+      <div class="lang-dropdown" id="lang-dd">
+        <div class="lang-dl">Choose your language</div>
+        <div class="lang-opt" onclick="pickLang('en')"><div class="lang-flag">GB</div><div class="lang-name"><div class="n">English</div><div class="s">EN · International</div></div></div>
+        <div class="lang-opt sel" onclick="pickLang('es')"><div class="lang-flag">ES</div><div class="lang-name"><div class="n">Español</div><div class="s">ES · Castellano</div></div><i class="ti ti-check" style="color:var(--accent);"></i></div>
+        <div class="lang-opt" onclick="pickLang('pt')"><div class="lang-flag">BR</div><div class="lang-name"><div class="n">Português</div><div class="s">PT · Brasil</div></div></div>
+        <div class="lang-foot">Wisdom quotes stay in source language — they're cultural artifacts.</div>
+      </div>
+    </div>
+
+    <!-- INICIO -->
     <section class="page active" id="page-home">
-      <div class="page-head">
-        <div>
-          <h1 class="page-title">The thing itself</h1>
-          <div class="page-sub">Chapter 01 · why this is different</div>
+      <div class="hero">
+        <div class="hero-bg" id="neural-bg"></div>
+        <div class="hero-content">
+          <div class="hero-pill">EL INFORME · LÉELO UNA VEZ · VUELVE A ÉL</div>
+          <h1 class="hero-title">Esto es lo que <em>realmente</em> está pasando.</h1>
+          <p class="hero-sub">Un informe sobre lo que puede ser el secuestro neurológico más exitoso en la historia humana — qué es, de dónde viene, qué le ha hecho a tu cerebro, a tus relaciones, a tu trabajo, a tu sociedad, y en qué está a punto de convertirse.</p>
+          <p class="hero-meta">↓ DOCE MINUTOS DE LECTURA. EL RESTO DE TU VIDA PARA VIVIR DIFERENTE.</p>
         </div>
-        <div class="page-meta">5 min read</div>
       </div>
       <div class="editorial">
         <div class="article">
           <div class="article-num">01</div>
-          <div class="article-kicker">The thing itself</div>
-          <h2 class="article-title">Pornography in its current form is less than two decades old.</h2>
+          <div class="article-kicker">La cosa misma</div>
+          <h2 class="article-title">La pornografía en su forma actual tiene menos de dos décadas.</h2>
           <div class="article-body">
-            <p>Pornography is not new. Humans have produced erotic images since they could produce images at all. But what people called <em>pornography</em> a century ago — a printed photograph passed around, a magazine purchased in shame — is to what exists today as a <em>campfire</em> is to a <em>forest fire</em>.</p>
-            <p>High-speed internet pornography — free, infinite, instantly accessible, algorithmically curated, taggable, searchable, and surfaced to you in bed at three in the morning by a device you cannot leave the house without — is a different category of stimulus than anything that came before. The human brain was not built for it. There has not been time.</p>
-            <p>And so the brain is doing what it does with any supernormal stimulus: it is adapting. The cost of that adaptation is the subject of this page.</p>
-            <p>The good news is that the same brain that adapts toward dependence also adapts away from it. The neural circuits that learned this behavior can learn another. Recovery is not a prayer. It is a system.</p>
+            <p>La pornografía no es nueva. Los humanos han producido imágenes eróticas desde que podían producir imágenes. Pero lo que la gente llamaba <em>pornografía</em> hace un siglo —una fotografía impresa que se pasaba de mano en mano, una revista comprada con vergüenza— es a lo que existe hoy lo que una <em>fogata</em> es a un <em>incendio forestal</em>.</p>
+            <p>La pornografía de internet de alta velocidad —gratis, infinita, instantáneamente accesible, curada algorítmicamente, etiquetable, buscable, y servida en tu cama a las tres de la mañana por un dispositivo que no puedes salir de casa sin él— es una categoría diferente de estímulo a cualquier cosa anterior. El cerebro humano no fue construido para ella. No ha habido tiempo.</p>
+            <p>Y entonces el cerebro está haciendo lo que hace con cualquier estímulo supranormal: se está adaptando. El costo de esa adaptación es el tema de esta página.</p>
+            <p>La buena noticia es que el mismo cerebro que se adapta hacia la dependencia también se adapta para alejarse de ella. Los circuitos neurales que aprendieron este comportamiento pueden aprender otro. La recuperación no es una oración. Es un sistema.</p>
           </div>
         </div>
         <div class="stat-list">
-          <div class="stat-card">
-            <div class="stat-num">11 <span>years</span></div>
-            <div class="stat-desc">Average age of first exposure to pornography in the developed world.</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-num">42B <span>visits</span></div>
-            <div class="stat-desc">Annual traffic to a single tube site, exceeding Netflix and Amazon combined.</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-num">0 sec <span>friction</span></div>
-            <div class="stat-desc">Time required to access unlimited free hardcore content from anywhere on earth.</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-num">90% <span>solo</span></div>
-            <div class="stat-desc">Of men under 40 report regular use. The behavior is no longer fringe — it is the modal experience.</div>
-          </div>
+          <div class="stat-card"><div class="stat-num">11 <span>años</span></div><div class="stat-desc">Edad promedio de primera exposición a la pornografía en el mundo desarrollado.</div></div>
+          <div class="stat-card"><div class="stat-num">42B <span>visitas</span></div><div class="stat-desc">Tráfico anual a un solo sitio tube, superando a Netflix y Amazon combinados.</div></div>
+          <div class="stat-card"><div class="stat-num">0 seg <span>fricción</span></div><div class="stat-desc">Tiempo requerido para acceder a contenido hardcore gratuito ilimitado desde cualquier lugar.</div></div>
+          <div class="stat-card"><div class="stat-num">90% <span>solo</span></div><div class="stat-desc">De hombres menores de 40 reportan uso regular. El comportamiento ya no es marginal — es la experiencia modal.</div></div>
         </div>
       </div>
     </section>
 
-    <!-- TODAY -->
+    <!-- HOY -->
     <section class="page" id="page-today">
       <div class="page-head">
         <div>
-          <h1 class="page-title" id="today-title">Today</h1>
+          <h1 class="page-title">Hoy</h1>
           <div class="page-sub" id="today-date">—</div>
         </div>
-        <div class="page-meta" id="today-meta">—</div>
       </div>
       <div class="today-grid">
         <div>
           <div class="today-quote">
-            <div class="q" id="today-quote-text">"The chains of habit are too light to be felt until they are too heavy to be broken."</div>
-            <div class="a">— Samuel Johnson · daily focus</div>
+            <div class="q" id="today-quote-text">"Las cadenas del hábito son demasiado ligeras para ser sentidas hasta que son demasiado pesadas para ser rotas."</div>
+            <div class="a">— Samuel Johnson · enfoque del día</div>
           </div>
           <div style="margin-top:32px;">
-            <div class="section-head">Today's plan <span class="meta" id="plan-count">0 / 4 done</span></div>
+            <div class="section-head">Plan de hoy <span class="meta" id="plan-count">0 / 0 hecho</span></div>
             <div class="plan-list" id="plan-list"></div>
           </div>
         </div>
         <div class="j-side">
           <div class="simple-card">
-            <h3>Yesterday in review</h3>
-            <p style="font-family:var(--font-mono);font-size:11px;color:var(--text-3);letter-spacing:0.06em;">— triggers logged</p>
-            <p style="font-family:var(--font-mono);font-size:11px;color:var(--text-3);letter-spacing:0.06em;margin-top:4px;">— journal entries</p>
-            <p style="font-family:var(--font-mono);font-size:11px;color:var(--text-3);letter-spacing:0.06em;margin-top:4px;" id="yest-prac">— practices completed</p>
+            <h3>Ayer en revisión</h3>
+            <p style="font-family:var(--font-mono);font-size:11px;color:var(--text-3);letter-spacing:0.06em;">— detonantes registrados</p>
+            <p style="font-family:var(--font-mono);font-size:11px;color:var(--text-3);letter-spacing:0.06em;margin-top:4px;">— entradas de diario</p>
+            <p style="font-family:var(--font-mono);font-size:11px;color:var(--text-3);letter-spacing:0.06em;margin-top:4px;">— prácticas completadas</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- YOUR BRAIN -->
+    <!-- TU CEREBRO -->
     <section class="page" id="page-brain">
       <div class="page-head">
         <div>
-          <h1 class="page-title">Your brain on this</h1>
-          <div class="page-sub">Chapter 02 · the neuroscience</div>
+          <h1 class="page-title">Tu cerebro en esto</h1>
+          <div class="page-sub">Capítulo 02 · la neurociencia</div>
         </div>
       </div>
       <div class="editorial">
         <div class="article">
           <div class="article-num">02</div>
-          <div class="article-kicker">Dopamine, novelty, adaptation</div>
-          <h2 class="article-title">Your brain treats novel sexual stimuli the way it treats a famine ending.</h2>
+          <div class="article-kicker">Dopamina, novedad, adaptación</div>
+          <h2 class="article-title">Tu cerebro trata los estímulos sexuales novedosos como si fuera el fin de una hambruna.</h2>
           <div class="article-body">
-            <p>The reward system did not evolve for pleasure. It evolved for <em>prediction error</em> — the gap between what you expected and what you got. When the gap is positive and large, dopamine fires, and the brain learns: <em>do that again</em>.</p>
-            <p>A single sexual partner produces diminishing dopamine response with each repeated encounter. This is called the Coolidge effect, and it is the reason long-term monogamy is biologically interesting. Novelty resets the response. The brain treats a new partner as a new opportunity.</p>
-            <p>Internet pornography hijacks this. Each tab is a new "partner". Each click is a new prediction error. The brain, which evolved over millions of years to occasionally meet a new mate, is now meeting one every four seconds.</p>
-            <p>The receptors downregulate. The baseline shifts. What used to be exciting becomes ordinary. What used to be ordinary becomes invisible. This is not weakness. It is biology behaving exactly as predicted in a context it was never designed for.</p>
-            <p>And it is reversible. Slowly. With a protocol.</p>
+            <p>El sistema de recompensa no evolucionó para el placer. Evolucionó para el <em>error de predicción</em> — la diferencia entre lo que esperabas y lo que obtuviste. Cuando la diferencia es positiva y grande, la dopamina dispara, y el cerebro aprende: <em>hazlo de nuevo</em>.</p>
+            <p>Una sola pareja sexual produce respuesta de dopamina decreciente con cada encuentro repetido. Esto se llama el efecto Coolidge, y es la razón por la cual la monogamia a largo plazo es biológicamente interesante. La novedad resetea la respuesta. El cerebro trata a una nueva pareja como una nueva oportunidad.</p>
+            <p>La pornografía de internet secuestra esto. Cada pestaña es una nueva "pareja". Cada clic es un nuevo error de predicción. El cerebro, que evolucionó durante millones de años para ocasionalmente conocer una nueva pareja, ahora está conociendo una cada cuatro segundos.</p>
+            <p>Los receptores se regulan a la baja. La línea base cambia. Lo que solía ser emocionante se vuelve ordinario. Lo que solía ser ordinario se vuelve invisible. Esto no es debilidad. Es biología comportándose exactamente como predecible en un contexto para el que nunca fue diseñada.</p>
+            <p>Y es reversible. Lentamente. Con un protocolo.</p>
           </div>
         </div>
         <div class="stat-list">
-          <div class="stat-card">
-            <div class="stat-num">90 <span>days</span></div>
-            <div class="stat-desc">Approximate timeline for dopamine receptor density to return toward baseline after cessation, per current animal models.</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-num">2-4× <span>stronger</span></div>
-            <div class="stat-desc">Dopamine response to novel partners vs. familiar ones — the Coolidge effect, well-documented across mammals.</div>
-          </div>
+          <div class="stat-card"><div class="stat-num">90 <span>días</span></div><div class="stat-desc">Línea de tiempo aproximada para que la densidad de receptores de dopamina vuelva hacia la línea base después del cese.</div></div>
+          <div class="stat-card"><div class="stat-num">2-4× <span>más fuerte</span></div><div class="stat-desc">Respuesta de dopamina a parejas nuevas vs. familiares — el efecto Coolidge, bien documentado en mamíferos.</div></div>
         </div>
       </div>
     </section>
 
-    <!-- SHIELD -->
+    <!-- ESCUDO -->
     <section class="page" id="page-shield">
       <div class="page-head">
         <div>
-          <h1 class="page-title">Shield</h1>
-          <div class="page-sub">Default to friction · review the edges</div>
+          <h1 class="page-title">Escudo</h1>
+          <div class="page-sub">Fricción por defecto · revisa los bordes</div>
         </div>
-        <div class="page-meta">Active · 8 categories</div>
+        <div class="page-meta">Activo · 8 categorías</div>
       </div>
 
-      <div class="section-head">Recent activity <span class="meta">8 entries · auto-rolling 24h</span></div>
+      <div class="section-head">Mi lista personal <span class="meta" id="blocklist-count">— sitios bloqueados</span></div>
+      <div class="blocklist-wrap">
+        <div class="blocklist-add">
+          <input id="block-input" type="text" placeholder="ejemplo.com o https://sitio-completo.com">
+          <button onclick="addBlockedUrl()">Bloquear</button>
+        </div>
+        <div class="blocklist-items" id="blocklist-items">
+          <div class="empty-msg">Aún no has agregado sitios. Empieza con los que sabes que son detonantes.</div>
+        </div>
+      </div>
+
+      <div class="section-head" style="margin-top:36px;">Actividad reciente <span class="meta">8 entradas · 24h</span></div>
       <div class="activity-table">
         <table>
-          <thead><tr><th>Status</th><th>URL</th><th>Category</th><th>AI reasoning</th><th style="text-align:right;">Time</th></tr></thead>
+          <thead><tr><th>Estado</th><th>URL</th><th>Categoría</th><th>Razonamiento IA</th><th style="text-align:right;">Hora</th></tr></thead>
           <tbody>
-            <tr><td><span class="badge safe">safe</span></td><td class="url">github.com/anthropics/claude-code</td><td>Development</td><td>Code repository.</td><td class="time">2 min ago</td></tr>
-            <tr><td><span class="badge review">review</span></td><td class="url">twitter.com/explore</td><td>Social</td><td>Public timelines can surface trigger content.</td><td class="time">14 min ago</td></tr>
-            <tr><td><span class="badge blocked">blocked</span></td><td class="url">reddit.com/r/gonewild</td><td>Adult</td><td>Subreddit known for explicit imagery.</td><td class="time">1 hr ago</td></tr>
-            <tr><td><span class="badge safe">safe</span></td><td class="url">youtube.com</td><td>Video</td><td>General platform — recommended feed soft-filtered.</td><td class="time">1 hr ago</td></tr>
-            <tr><td><span class="badge blocked">blocked</span></td><td class="url">onlyfans.com</td><td>Adult</td><td>Adult subscription platform.</td><td class="time">3 hr ago</td></tr>
-            <tr><td><span class="badge safe">safe</span></td><td class="url">wikipedia.org</td><td>Reference</td><td>Knowledge base.</td><td class="time">yesterday</td></tr>
-            <tr><td><span class="badge blocked">blocked</span></td><td class="url">pornhub.com</td><td>Adult</td><td>Adult video platform.</td><td class="time">yesterday</td></tr>
-            <tr><td><span class="badge review">review</span></td><td class="url">instagram.com/explore</td><td>Social</td><td>Explore feed can surface suggestive content.</td><td class="time">yesterday</td></tr>
+            <tr><td><span class="badge safe">seguro</span></td><td class="url">github.com/anthropics/claude-code</td><td>Desarrollo</td><td>Repositorio de código.</td><td class="time">hace 2 min</td></tr>
+            <tr><td><span class="badge review">revisar</span></td><td class="url">twitter.com/explore</td><td>Social</td><td>Timelines públicos pueden surfacear contenido detonante.</td><td class="time">hace 14 min</td></tr>
+            <tr><td><span class="badge blocked">bloqueado</span></td><td class="url">reddit.com/r/gonewild</td><td>Adulto</td><td>Subreddit conocido por imágenes explícitas.</td><td class="time">hace 1 hr</td></tr>
+            <tr><td><span class="badge safe">seguro</span></td><td class="url">youtube.com</td><td>Video</td><td>Plataforma general — feed recomendado filtrado suave.</td><td class="time">hace 1 hr</td></tr>
+            <tr><td><span class="badge blocked">bloqueado</span></td><td class="url">onlyfans.com</td><td>Adulto</td><td>Plataforma de suscripción para adultos.</td><td class="time">hace 3 hr</td></tr>
+            <tr><td><span class="badge safe">seguro</span></td><td class="url">wikipedia.org</td><td>Referencia</td><td>Base de conocimiento.</td><td class="time">ayer</td></tr>
+            <tr><td><span class="badge blocked">bloqueado</span></td><td class="url">pornhub.com</td><td>Adulto</td><td>Plataforma de video para adultos.</td><td class="time">ayer</td></tr>
+            <tr><td><span class="badge review">revisar</span></td><td class="url">instagram.com/explore</td><td>Social</td><td>Feed de explorar puede mostrar contenido sugestivo.</td><td class="time">ayer</td></tr>
           </tbody>
         </table>
       </div>
 
-      <div class="section-head" style="margin-top:36px;">Default categories <span class="meta">locked categories need partner's approval to disable</span></div>
+      <div class="section-head" style="margin-top:36px;">Categorías por defecto <span class="meta">las categorías bloqueadas requieren aprobación del acompañante</span></div>
       <div class="cat-grid">
         <div class="cat-card">
-          <div class="cat-info"><div class="name">Adult &amp; explicit <span class="lock-pill"><i class="ti ti-lock" style="font-size:9px;"></i> partner-locked</span></div><div class="desc">Pornographic sites, explicit subreddits, adult subscription platforms.</div><div class="domains">142,318 domains in pattern set</div></div>
+          <div class="cat-info"><div class="name">Adulto y explícito <span class="lock-pill"><i class="ti ti-lock" style="font-size:9px;"></i> bloqueado por acompañante</span></div><div class="desc">Sitios pornográficos, subreddits explícitos, plataformas de suscripción adulta.</div><div class="domains">142,318 dominios en el patrón</div></div>
           <button class="toggle" onclick="this.classList.toggle('off')"></button>
         </div>
         <div class="cat-card">
-          <div class="cat-info"><div class="name">Webcam &amp; live <span class="lock-pill"><i class="ti ti-lock" style="font-size:9px;"></i> partner-locked</span></div><div class="desc">Live performer platforms, video chat with adult intent.</div><div class="domains">8,204 domains in pattern set</div></div>
+          <div class="cat-info"><div class="name">Webcam y vivo <span class="lock-pill"><i class="ti ti-lock" style="font-size:9px;"></i> bloqueado por acompañante</span></div><div class="desc">Plataformas de performers en vivo, video chat con intención adulta.</div><div class="domains">8,204 dominios en el patrón</div></div>
           <button class="toggle" onclick="this.classList.toggle('off')"></button>
         </div>
         <div class="cat-card">
-          <div class="cat-info"><div class="name">AI-generated explicit <span class="lock-pill"><i class="ti ti-lock" style="font-size:9px;"></i> partner-locked</span></div><div class="desc">AI image generators producing explicit content, character chatbots with adult framing.</div><div class="domains">1,142 domains in pattern set</div></div>
+          <div class="cat-info"><div class="name">Explícito generado por IA <span class="lock-pill"><i class="ti ti-lock" style="font-size:9px;"></i> bloqueado por acompañante</span></div><div class="desc">Generadores de imágenes IA produciendo contenido explícito, chatbots con marco adulto.</div><div class="domains">1,142 dominios en el patrón</div></div>
           <button class="toggle" onclick="this.classList.toggle('off')"></button>
         </div>
         <div class="cat-card">
-          <div class="cat-info"><div class="name">Suggestive feeds</div><div class="desc">Platforms whose recommendation engines tend to surface suggestive imagery (TikTok For You, Reels, etc.)</div><div class="domains">24 domains · 312 keywords</div></div>
+          <div class="cat-info"><div class="name">Feeds sugestivos</div><div class="desc">Plataformas cuyos motores de recomendación tienden a mostrar imágenes sugestivas (TikTok For You, Reels, etc.)</div><div class="domains">24 dominios · 312 palabras clave</div></div>
           <button class="toggle" onclick="this.classList.toggle('off')"></button>
         </div>
       </div>
     </section>
 
-    <!-- PRACTICES -->
+    <!-- PRÁCTICAS -->
     <section class="page" id="page-practices">
       <div class="page-head">
         <div>
-          <h1 class="page-title">Practices</h1>
-          <div class="page-sub">Concrete actions · choose 3 for today</div>
+          <h1 class="page-title">Prácticas</h1>
+          <div class="page-sub">Acciones concretas · elige 3 para hoy</div>
         </div>
-        <div class="page-meta">12 in catalog</div>
+        <div class="page-meta">12 en catálogo</div>
       </div>
       <div class="practice-grid" id="practice-grid"></div>
     </section>
 
-    <!-- WISDOM -->
+    <!-- SABIDURÍA -->
     <section class="page" id="page-wisdom">
       <div class="page-head">
         <div>
-          <h1 class="page-title">Wisdom</h1>
-          <div class="page-sub">Lines worth remembering</div>
+          <h1 class="page-title">Sabiduría</h1>
+          <div class="page-sub">Frases que vale la pena recordar</div>
         </div>
       </div>
       <div class="wisdom-grid">
@@ -607,101 +654,95 @@ main.main{flex:1;margin-left:240px;min-height:100vh;padding:32px 48px 64px}
       </div>
     </section>
 
-    <!-- JOURNAL -->
+    <!-- DIARIO -->
     <section class="page" id="page-journal">
       <div class="page-head">
         <div>
-          <h1 class="page-title">Journal</h1>
-          <div class="page-sub">Honest, unedited · the page metabolizes what the brain wanted to numb</div>
+          <h1 class="page-title">Diario</h1>
+          <div class="page-sub">Honesto, sin editar · la página metaboliza lo que el cerebro quería adormecer</div>
         </div>
-        <div class="page-meta" id="journal-count">— entries</div>
+        <div class="page-meta" id="journal-count">— entradas</div>
       </div>
       <div class="journal-layout">
         <div>
-          <button class="new-entry-cta" onclick="openCompose()">
-            <i class="ti ti-pencil-plus" style="font-size:18px;"></i>
-            Write today's entry
-          </button>
+          <button class="new-entry-cta" onclick="openCompose()"><i class="ti ti-pencil-plus" style="font-size:18px;"></i> Escribir entrada de hoy</button>
           <div id="journal-list"></div>
         </div>
         <div class="j-side">
           <div class="mini-cal">
-            <div class="mini-cal-h">
-              <span class="t" id="cal-month">—</span>
-              <span class="y" id="cal-year">—</span>
-            </div>
+            <div class="mini-cal-h"><span class="t" id="cal-month">—</span><span class="y" id="cal-year">—</span></div>
             <div class="cal-grid" id="cal-grid"></div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- COACH -->
-    <section class="page" id="page-coach">
+    <!-- CIRCLE -->
+    <section class="page" id="page-circle">
       <div class="page-head">
         <div>
-          <h1 class="page-title">Coach</h1>
-          <div class="page-sub">Not a judge · a precise companion</div>
+          <h1 class="page-title">Circle</h1>
+          <div class="page-sub">No un juez · un compañero preciso</div>
         </div>
       </div>
       <div class="coach-page">
         <div class="coach-msgs" id="coach-msgs">
-          <div class="msg bot"><div class="msg-bub">Hi. I'm here to think with you, not to judge you. What's happening today?</div><div class="msg-t">now</div></div>
+          <div class="msg bot"><div class="msg-bub">Hola. Estoy aquí para pensar contigo, no para juzgarte. ¿Qué está pasando hoy?</div><div class="msg-t">ahora</div></div>
         </div>
         <div class="coach-input-wrap">
-          <textarea class="coach-ta" id="coach-ta" placeholder="Type here..." rows="1" onkeydown="coachKey(event)"></textarea>
+          <textarea class="coach-ta" id="coach-ta" placeholder="Escribe aquí..." rows="1" onkeydown="coachKey(event)"></textarea>
           <button class="send-btn" onclick="sendCoach()"><i class="ti ti-send"></i></button>
         </div>
       </div>
     </section>
 
-    <!-- ACCOUNTABILITY -->
+    <!-- ACOMPAÑAMIENTO -->
     <section class="page" id="page-accountability">
       <div class="page-head">
         <div>
-          <h1 class="page-title">Accountability</h1>
-          <div class="page-sub">A witness changes everything</div>
+          <h1 class="page-title">Acompañamiento</h1>
+          <div class="page-sub">Un testigo lo cambia todo</div>
         </div>
       </div>
       <div class="coming-soon">
-        <h2>Connect a partner</h2>
-        <p>Invite someone you trust to see your activity log and shield events. Asymmetric — they see, you don't see them seeing. The known observer is the most effective filter humans have ever invented.</p>
-        <button class="primary-btn" style="margin-top:24px;max-width:220px;">Invite by link</button>
+        <h2>Conectar un acompañante</h2>
+        <p>Invita a alguien de tu confianza a ver tu registro de actividad y eventos del escudo. Asimétrico — ellos ven, tú no ves que ellos ven. El observador conocido es el filtro más efectivo que los humanos hayan inventado.</p>
+        <button class="primary-btn" style="margin-top:24px;max-width:240px;">Invitar por enlace</button>
       </div>
     </section>
 
-    <!-- SETTINGS -->
+    <!-- AJUSTES -->
     <section class="page" id="page-settings">
       <div class="page-head">
         <div>
-          <h1 class="page-title">Settings</h1>
-          <div class="page-sub">Account · privacy · data</div>
+          <h1 class="page-title">Ajustes</h1>
+          <div class="page-sub">Cuenta · privacidad · datos</div>
         </div>
       </div>
       <div class="simple-card" style="margin-bottom:14px;">
-        <h3>Account</h3>
+        <h3>Cuenta</h3>
         <p id="account-email">—</p>
-        <button class="ghost-btn" style="max-width:180px;margin-top:14px;" onclick="logout()">Sign out</button>
+        <button class="ghost-btn" style="max-width:200px;margin-top:14px;" onclick="logout()">Cerrar sesión</button>
       </div>
       <div class="simple-card" style="margin-bottom:14px;">
-        <h3>Privacy</h3>
-        <p>All your data — journal entries, triggers, practices, shield events — is encrypted at rest in your Supabase instance. Nothing is shared with third parties. Nothing is used for training. Nothing is sold.</p>
+        <h3>Privacidad</h3>
+        <p>Todos tus datos — entradas de diario, detonantes, prácticas, eventos del escudo — están cifrados en reposo en tu instancia de Supabase. Nada se comparte con terceros. Nada se usa para entrenamiento. Nada se vende.</p>
       </div>
       <div class="simple-card">
-        <h3>Export data</h3>
-        <p>Download everything you've ever written or logged as a JSON file. Yours, always.</p>
-        <button class="ghost-btn" style="max-width:180px;margin-top:14px;" onclick="exportData()">Export JSON</button>
+        <h3>Exportar datos</h3>
+        <p>Descarga todo lo que has escrito o registrado como un archivo JSON. Tuyo, siempre.</p>
+        <button class="ghost-btn" style="max-width:200px;margin-top:14px;" onclick="exportData()">Exportar JSON</button>
       </div>
     </section>
 
   </main>
 </div>
 
-<!-- ════════ Compose Overlay ════════ -->
+<!-- ════════ Compose ════════ -->
 <div class="compose-screen" id="compose">
   <div class="compose-top">
-    <button class="compose-back" onclick="closeCompose()"><i class="ti ti-arrow-left" style="font-size:12px;"></i> Back</button>
-    <span style="font-family:var(--font-mono);font-size:10px;letter-spacing:0.14em;color:var(--text-3);text-transform:uppercase;">New entry</span>
+    <button class="compose-back" onclick="closeCompose()"><i class="ti ti-arrow-left" style="font-size:12px;"></i> Volver</button>
+    <span style="font-family:var(--font-mono);font-size:10px;letter-spacing:0.14em;color:var(--text-3);text-transform:uppercase;">Nueva entrada</span>
     <span style="width:60px;"></span>
   </div>
   <div class="compose-body-wrap">
@@ -712,29 +753,29 @@ main.main{flex:1;margin-left:240px;min-height:100vh;padding:32px 48px 64px}
         <div class="cd-my" id="cd-my">—</div>
       </div>
       <div class="mood-row">
-        <button class="mood-chip" onclick="pickMood(this)">calm</button>
-        <button class="mood-chip" onclick="pickMood(this)">anxious</button>
-        <button class="mood-chip" onclick="pickMood(this)">grateful</button>
-        <button class="mood-chip" onclick="pickMood(this)">tired</button>
-        <button class="mood-chip" onclick="pickMood(this)">motivated</button>
-        <button class="mood-chip" onclick="pickMood(this)">sad</button>
-        <button class="mood-chip" onclick="pickMood(this)">angry</button>
-        <button class="mood-chip" onclick="pickMood(this)">lonely</button>
+        <button class="mood-chip" onclick="pickMood(this)">tranquilo</button>
+        <button class="mood-chip" onclick="pickMood(this)">ansioso</button>
+        <button class="mood-chip" onclick="pickMood(this)">agradecido</button>
+        <button class="mood-chip" onclick="pickMood(this)">cansado</button>
+        <button class="mood-chip" onclick="pickMood(this)">motivado</button>
+        <button class="mood-chip" onclick="pickMood(this)">triste</button>
+        <button class="mood-chip" onclick="pickMood(this)">enojado</button>
+        <button class="mood-chip" onclick="pickMood(this)">solo</button>
       </div>
-      <input class="compose-title-i" id="c-title" placeholder="A title, perhaps">
-      <textarea class="compose-body-i" id="c-body" placeholder="Honest, unedited. The page metabolizes what the brain wanted to numb. Write the whole thing — the embarrassing part, the part you'd never say out loud. No one reads this but you."></textarea>
+      <input class="compose-title-i" id="c-title" placeholder="Un título, tal vez">
+      <textarea class="compose-body-i" id="c-body" placeholder="Honesto, sin editar. La página metaboliza lo que el cerebro quería adormecer. Escribe lo completo — la parte vergonzosa, la parte que nunca dirías en voz alta. Nadie lee esto sino tú."></textarea>
     </div>
   </div>
   <div class="compose-bar">
-    <button class="save-btn-2" onclick="saveEntry()">Save entry</button>
+    <button class="save-btn-2" onclick="saveEntry()">Guardar entrada</button>
   </div>
 </div>
 
-<!-- ════════ Detail Overlay ════════ -->
+<!-- ════════ Detail ════════ -->
 <div class="detail-screen" id="detail">
   <div class="compose-top">
-    <button class="compose-back" onclick="closeDetail()"><i class="ti ti-arrow-left" style="font-size:12px;"></i> Back</button>
-    <span style="font-family:var(--font-mono);font-size:10px;letter-spacing:0.14em;color:var(--text-3);text-transform:uppercase;">Entry</span>
+    <button class="compose-back" onclick="closeDetail()"><i class="ti ti-arrow-left" style="font-size:12px;"></i> Volver</button>
+    <span style="font-family:var(--font-mono);font-size:10px;letter-spacing:0.14em;color:var(--text-3);text-transform:uppercase;">Entrada</span>
     <span style="width:60px;"></span>
   </div>
   <div class="detail-inner">
@@ -749,95 +790,111 @@ main.main{flex:1;margin-left:240px;min-height:100vh;padding:32px 48px 64px}
   </div>
 </div>
 
-<!-- ════════ Urge / Emergency ════════ -->
+<!-- ════════ Urge ════════ -->
 <div class="emerg" id="emerg">
-  <button class="emerg-close" onclick="closeEmerg()">close</button>
+  <button class="emerg-close" onclick="closeEmerg()">cerrar</button>
   <div class="emerg-inner">
-    <div class="emerg-timer"><div class="n" id="e-timer">60</div><div class="l">seconds · breathe</div></div>
-    <div class="emerg-step" id="es1" onclick="toggleStep('es1')"><div class="e-num">1</div><div><div class="e-tx">Breathe slowly</div><div class="e-sb">4 in · 4 out · 60 seconds</div></div></div>
-    <div class="emerg-step" id="es2" onclick="toggleStep('es2')"><div class="e-num">2</div><div><div class="e-tx">Leave the location</div><div class="e-sb">Get up, move physically</div></div></div>
-    <div class="emerg-step" id="es3" onclick="toggleStep('es3')"><div class="e-num">3</div><div><div class="e-tx">Cold water on face</div><div class="e-sb">Mammalian dive reflex — resets the nervous system</div></div></div>
-    <div class="emerg-step" id="es4" onclick="toggleStep('es4')"><div class="e-num">4</div><div><div class="e-tx">Physical exertion</div><div class="e-sb">10 push-ups, walk around the block, anything</div></div></div>
-    <div class="emerg-step" id="es5" onclick="toggleStep('es5')"><div class="e-num">5</div><div><div class="e-tx">Log what triggered it</div><div class="e-sb">Data, not shame</div></div></div>
-    <button class="primary-btn" style="margin-top:8px;" onclick="saveEmergSession()">Save · I'm through it</button>
+    <div class="emerg-timer"><div class="n" id="e-timer">60</div><div class="l">segundos · respira</div></div>
+    <div class="emerg-step" id="es1" onclick="toggleStep('es1')"><div class="e-num">1</div><div><div class="e-tx">Respira lento</div><div class="e-sb">4 dentro · 4 fuera · 60 segundos</div></div></div>
+    <div class="emerg-step" id="es2" onclick="toggleStep('es2')"><div class="e-num">2</div><div><div class="e-tx">Sal del lugar</div><div class="e-sb">Levántate, muévete físicamente</div></div></div>
+    <div class="emerg-step" id="es3" onclick="toggleStep('es3')"><div class="e-num">3</div><div><div class="e-tx">Agua fría en la cara</div><div class="e-sb">Reflejo de inmersión mamífero — resetea el sistema nervioso</div></div></div>
+    <div class="emerg-step" id="es4" onclick="toggleStep('es4')"><div class="e-num">4</div><div><div class="e-tx">Esfuerzo físico</div><div class="e-sb">10 lagartijas, caminar la cuadra, lo que sea</div></div></div>
+    <div class="emerg-step" id="es5" onclick="toggleStep('es5')"><div class="e-num">5</div><div><div class="e-tx">Registra qué lo detonó</div><div class="e-sb">Datos, no vergüenza</div></div></div>
+    <button class="primary-btn" style="margin-top:8px;" onclick="saveEmergSession()">Guardar · ya pasó</button>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// ── Supabase ──
 const SUPA_URL='https://svwkqiodblrokvsbtizg.supabase.co';
 const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN2d2txaW9kYmxyb2t2c2J0aXpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTgyNTIsImV4cCI6MjA5NTM5NDI1Mn0.MbwQgtZpJqu2-_jXNdgUFOdUWhCJfYFkGCIOpMSEBqQ';
 const db=supabase.createClient(SUPA_URL,SUPA_KEY);
 let user=null, accountStart=null;
 
-// ── Practices catalog ──
 const PRACTICES=[
-  {cat:'BREATH',sym:'○',klass:'breath',title:'Box breathing',time:'5 min',level:'Beginner',desc:'4-4-4-4. Vagal tone up, urge wave down. The fastest in-the-moment intervention.'},
-  {cat:'BREATH',sym:'~',klass:'breath',title:'Wim Hof rounds',time:'15 min',level:'Intermediate',desc:'30 deep breaths, retention, recovery. Endogenous adrenaline you\'ll feel for hours.'},
-  {cat:'BREATH',sym:'≈',klass:'breath',title:'4-7-8 nightly',time:'3 min',level:'Beginner',desc:'In for 4, hold 7, out for 8. Drops you into sleep. Replaces the nighttime scroll.'},
-  {cat:'CREATE',sym:'✦',klass:'create',title:'Build something with hands',time:'60 min',level:'Open',desc:'Wood, paint, code, soil, dough. Creation rewires the reward circuit toward output.'},
-  {cat:'CREATE',sym:'&',klass:'create',title:'Write 500 words',time:'25 min',level:'Beginner',desc:'Honest, unedited. The page metabolizes whatever the brain wanted to numb.'},
-  {cat:'CREATE',sym:'◆',klass:'create',title:'Make a meal from scratch',time:'45 min',level:'Open',desc:'Chopping, heat, smell, taste. Sensory occupation displaces the urge entirely.'},
-  {cat:'CONNECT',sym:'+',klass:'connect',title:'Call a friend',time:'20 min',level:'Open',desc:'Oxytocin is the antidote, not just the consolation prize. Real voice, no screen.'},
-  {cat:'CONNECT',sym:'♡',klass:'connect',title:'Walk with someone',time:'30 min',level:'Open',desc:'Bilateral motion + presence + sky. Three of the cheapest medicines in existence.'},
-  {cat:'CONNECT',sym:'△',klass:'connect',title:'Hug someone',time:'30 sec',level:'Beginner',desc:'20 seconds minimum. Triggers oxytocin release. Almost cheating it\'s so effective.'},
-  {cat:'BODY',sym:'⏤',klass:'breath',title:'Cold shower',time:'3 min',level:'Beginner',desc:'Norepinephrine spike, dopamine baseline elevation that lasts hours. End cold, always.'},
-  {cat:'BODY',sym:'▲',klass:'create',title:'30 push-ups',time:'2 min',level:'Beginner',desc:'In sets, anywhere. The urge wave breaks against physical effort almost every time.'},
-  {cat:'BODY',sym:'⟁',klass:'connect',title:'Walk barefoot outside',time:'10 min',level:'Beginner',desc:'Grounding, sunlight, motion. Three nervous system inputs in one walk.'}
+  {cat:'RESPIRACIÓN',sym:'○',klass:'breath',title:'Respiración cuadrada',time:'5 min',level:'Básico',desc:'4-4-4-4. Tono vagal arriba, ola de impulso abajo. La intervención más rápida en el momento.'},
+  {cat:'RESPIRACIÓN',sym:'~',klass:'breath',title:'Rondas Wim Hof',time:'15 min',level:'Intermedio',desc:'30 respiraciones profundas, retención, recuperación. Adrenalina endógena que sentirás por horas.'},
+  {cat:'RESPIRACIÓN',sym:'≈',klass:'breath',title:'4-7-8 nocturno',time:'3 min',level:'Básico',desc:'Inhala 4, retén 7, exhala 8. Te lleva al sueño. Reemplaza el scroll nocturno.'},
+  {cat:'CREAR',sym:'✦',klass:'create',title:'Construye con las manos',time:'60 min',level:'Abierto',desc:'Madera, pintura, código, tierra, masa. La creación reescribe el circuito de recompensa hacia el output.'},
+  {cat:'CREAR',sym:'&',klass:'create',title:'Escribe 500 palabras',time:'25 min',level:'Básico',desc:'Honesto, sin editar. La página metaboliza lo que el cerebro quería adormecer.'},
+  {cat:'CREAR',sym:'◆',klass:'create',title:'Cocina desde cero',time:'45 min',level:'Abierto',desc:'Cortar, calor, olor, sabor. La ocupación sensorial desplaza el impulso por completo.'},
+  {cat:'CONECTAR',sym:'+',klass:'connect',title:'Llama a un amigo',time:'20 min',level:'Abierto',desc:'La oxitocina es el antídoto, no solo el premio de consolación. Voz real, sin pantalla.'},
+  {cat:'CONECTAR',sym:'♡',klass:'connect',title:'Camina con alguien',time:'30 min',level:'Abierto',desc:'Movimiento bilateral + presencia + cielo. Tres de las medicinas más baratas que existen.'},
+  {cat:'CONECTAR',sym:'△',klass:'connect',title:'Abraza a alguien',time:'30 seg',level:'Básico',desc:'20 segundos mínimo. Dispara liberación de oxitocina. Es casi trampa de tan efectivo.'},
+  {cat:'CUERPO',sym:'⏤',klass:'breath',title:'Ducha fría',time:'3 min',level:'Básico',desc:'Pico de norepinefrina, elevación de dopamina base que dura horas. Termina frío, siempre.'},
+  {cat:'CUERPO',sym:'▲',klass:'create',title:'30 lagartijas',time:'2 min',level:'Básico',desc:'En sets, donde sea. La ola del impulso se rompe contra el esfuerzo físico casi siempre.'},
+  {cat:'CUERPO',sym:'⟁',klass:'connect',title:'Camina descalzo afuera',time:'10 min',level:'Básico',desc:'Conexión a tierra, sol, movimiento. Tres inputs al sistema nervioso en una caminata.'}
 ];
 
 const QUOTES=[
-  '"The chains of habit are too light to be felt until they are too heavy to be broken."',
-  '"Between stimulus and response there is a space. In that space is our power to choose our response."',
-  '"Discipline equals freedom."',
-  '"You do not rise to the level of your goals. You fall to the level of your systems."',
-  '"He who has a why to live for can bear almost any how."'
+  '"Las cadenas del hábito son demasiado ligeras para ser sentidas hasta que son demasiado pesadas para ser rotas."',
+  '"Entre estímulo y respuesta hay un espacio. En ese espacio está nuestro poder de elegir nuestra respuesta."',
+  '"Disciplina es libertad."',
+  '"No te elevas al nivel de tus metas. Caes al nivel de tus sistemas."',
+  '"El que tiene un porqué para vivir puede soportar casi cualquier cómo."'
 ];
+
+// ── Neural network background ──
+function drawNeural(){
+  const c=document.getElementById('neural-bg'); if(!c) return;
+  const W=1400,H=560,N=70;
+  const pts=[];
+  for(let i=0;i<N;i++) pts.push({x:Math.random()*W,y:Math.random()*H});
+  let s=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;display:block;">`;
+  for(let i=0;i<pts.length;i++){
+    const dists=pts.map((p,j)=>({j,d:Math.hypot(p.x-pts[i].x,p.y-pts[i].y)})).sort((a,b)=>a.d-b.d);
+    for(let k=1;k<=3;k++){
+      const j=dists[k].j;
+      if(j>i){
+        const o=0.04+Math.random()*0.08;
+        s+=`<line x1="${pts[i].x}" y1="${pts[i].y}" x2="${pts[j].x}" y2="${pts[j].y}" stroke="#C084FC" stroke-width="0.5" opacity="${o}"/>`;
+      }
+    }
+  }
+  pts.forEach(p=>{
+    const o=0.3+Math.random()*0.5,r=1.5+Math.random()*2.5;
+    s+=`<circle cx="${p.x}" cy="${p.y}" r="${r}" fill="#C084FC" opacity="${o}"/>`;
+  });
+  s+='</svg>';
+  c.innerHTML=s;
+}
 
 // ── Auth ──
 async function initAuth(){
   const { data:{ session } }=await db.auth.getSession();
-  if(session){ user=session.user; showApp(); }
-  else showAuth();
-  db.auth.onAuthStateChange((_e,s)=>{
-    user=s?.user||null;
-    if(user) showApp(); else showAuth();
-  });
+  if(session){ user=session.user; showApp(); } else showAuth();
+  db.auth.onAuthStateChange((_e,s)=>{ user=s?.user||null; if(user) showApp(); else showAuth(); });
 }
-function showAuth(){
-  document.getElementById('auth').classList.add('active');
-  document.getElementById('app').classList.remove('active');
-}
+function showAuth(){ document.getElementById('auth').classList.add('active'); document.getElementById('app').classList.remove('active'); }
 function showApp(){
   document.getElementById('auth').classList.remove('active');
   document.getElementById('app').classList.add('active');
   accountStart=user?.created_at?new Date(user.created_at):new Date();
   const days=Math.max(1,Math.floor((Date.now()-accountStart)/86400000)+1);
-  document.getElementById('day-meta').textContent='RECOVERY · DAY '+days;
-  document.getElementById('account-email').textContent=user?.email||user?.phone||'Anonymous';
-  loadStats(); loadJournalList(); buildCal(); buildPractices(); buildToday();
+  document.getElementById('day-meta').textContent='RECUPERACIÓN · DÍA '+days;
+  document.getElementById('account-email').textContent=user?.email||user?.phone||'Anónimo';
+  drawNeural();
+  loadStats(); loadJournalList(); buildCal(); buildPractices(); buildToday(); loadBlockedUrls();
 }
 async function oauth(p){ await db.auth.signInWithOAuth({provider:p,options:{redirectTo:window.location.origin}}); }
-
-let emailMode='signin'; // or 'signup'
+let emailMode='signin';
 function showEmailFlow(){ document.getElementById('auth-main').style.display='none'; document.getElementById('email-flow-step').style.display='flex'; }
 function hideEmailFlow(){ document.getElementById('email-flow-step').style.display='none'; document.getElementById('auth-main').style.display='block'; }
 function toggleEmailMode(){
   emailMode=emailMode==='signin'?'signup':'signin';
-  document.getElementById('em-submit').textContent=emailMode==='signin'?'Sign in':'Create account';
-  document.getElementById('em-toggle').textContent=emailMode==='signin'?"Don't have an account? Create one":'Already have an account? Sign in';
+  document.getElementById('em-submit').textContent=emailMode==='signin'?'Entrar':'Crear cuenta';
+  document.getElementById('em-toggle').textContent=emailMode==='signin'?"¿No tienes cuenta? Crear una":'¿Ya tienes cuenta? Entrar';
 }
 async function submitEmail(){
   const email=document.getElementById('em-email').value.trim();
   const password=document.getElementById('em-pass').value;
-  if(!email||!password){ toast('Fill both fields'); return; }
-  if(password.length<6){ toast('Password must be at least 6 characters'); return; }
+  if(!email||!password){ toast('Completa ambos campos'); return; }
+  if(password.length<6){ toast('Contraseña mínima 6 caracteres'); return; }
   if(emailMode==='signup'){
     const { error }=await db.auth.signUp({email,password});
     if(error){ toast('Error: '+error.message); return; }
-    toast('Check your email to confirm');
+    toast('Revisa tu correo para confirmar');
   } else {
     const { error }=await db.auth.signInWithPassword({email,password});
     if(error){ toast('Error: '+error.message); return; }
@@ -845,27 +902,71 @@ async function submitEmail(){
 }
 async function logout(){ await db.auth.signOut(); }
 
-// ── Nav ──
 function nav(p){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.page===p));
   document.querySelectorAll('.page').forEach(s=>s.classList.toggle('active',s.id==='page-'+p));
   if(p==='journal'){ loadJournalList(); buildCal(); }
   if(p==='today') buildToday();
+  if(p==='shield') loadBlockedUrls();
+  if(p==='home') drawNeural();
   if(window.innerWidth<900) document.querySelector('aside.sidebar').classList.remove('open');
 }
 
-// ── Toast ──
 function toast(m){ const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2400); }
 
-// ── Stats ──
+function pickLang(l){
+  if(l!=='es') toast('Solo español por ahora. English & Português coming soon.');
+  document.getElementById('lang-dd').classList.remove('open');
+}
+
 async function loadStats(){
   if(!user) return;
-  const { count:tCount }=await db.from('trigger_logs').select('*',{count:'exact',head:true}).eq('user_id',user.id);
   const { data:lt }=await db.from('trigger_logs').select('created_at').eq('user_id',user.id).order('created_at',{ascending:false}).limit(1);
   let streak=Math.max(1,Math.floor((Date.now()-accountStart)/86400000)+1);
   if(lt&&lt.length){ streak=Math.floor((Date.now()-new Date(lt[0].created_at))/86400000); }
   document.getElementById('streak-num').textContent=streak;
-  document.getElementById('streak-best').textContent='Longest · '+Math.max(streak,41)+' days';
+  document.getElementById('streak-best').textContent='Más larga · '+Math.max(streak,41)+' días';
+}
+
+// ── URL Blocking ──
+async function loadBlockedUrls(){
+  if(!user) return;
+  const items=document.getElementById('blocklist-items');
+  const { data }=await db.from('blocked_urls').select('*').eq('user_id',user.id).order('created_at',{ascending:false});
+  const count=document.getElementById('blocklist-count');
+  count.textContent=(data?.length||0)+' sitios bloqueados';
+  if(!data||!data.length){
+    items.innerHTML='<div class="empty-msg">Aún no has agregado sitios. Empieza con los que sabes que son detonantes.</div>';
+    return;
+  }
+  items.innerHTML=data.map(b=>{
+    const d=new Date(b.created_at).toLocaleDateString('es-CL',{day:'numeric',month:'short'});
+    return `<div class="blocked-item">
+      <div class="ico"><i class="ti ti-ban"></i></div>
+      <div class="url">${b.url}</div>
+      <div class="date">${d}</div>
+      <button class="del" onclick="deleteBlockedUrl('${b.id}')"><i class="ti ti-x"></i></button>
+    </div>`;
+  }).join('');
+}
+
+async function addBlockedUrl(){
+  if(!user) return;
+  const inp=document.getElementById('block-input');
+  let url=inp.value.trim();
+  if(!url){ toast('Ingresa una URL'); return; }
+  url=url.replace(/^https?:\/\//,'').replace(/\/$/,'').toLowerCase();
+  const { error }=await db.from('blocked_urls').insert({url,user_id:user.id});
+  if(error){ toast('Error al agregar'); return; }
+  inp.value='';
+  toast(url+' bloqueado ✓');
+  loadBlockedUrls();
+}
+
+async function deleteBlockedUrl(id){
+  if(!user) return;
+  await db.from('blocked_urls').delete().eq('id',id).eq('user_id',user.id);
+  loadBlockedUrls();
 }
 
 // ── Journal ──
@@ -873,8 +974,8 @@ let selMood='';
 function pickMood(b){ document.querySelectorAll('.mood-chip').forEach(c=>c.classList.remove('sel')); b.classList.add('sel'); selMood=b.textContent; }
 function openCompose(){
   const n=new Date();
-  const dN=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  const mN=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const dN=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const mN=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
   document.getElementById('cd-day').textContent=dN[n.getDay()];
   document.getElementById('cd-num').textContent=n.getDate();
   document.getElementById('cd-my').textContent=mN[n.getMonth()]+' '+n.getFullYear();
@@ -886,20 +987,19 @@ function closeCompose(){ document.getElementById('compose').classList.remove('ac
 async function saveEntry(){
   if(!user) return;
   const body=document.getElementById('c-body').value.trim();
-  if(!body){ toast('Write something first'); return; }
+  if(!body){ toast('Escribe algo primero'); return; }
   await db.from('diary_entries').insert({title:document.getElementById('c-title').value.trim()||null,body,mood:selMood||null,user_id:user.id});
-  toast('Saved'); closeCompose(); loadJournalList(); buildCal();
+  toast('Guardado'); closeCompose(); loadJournalList(); buildCal();
 }
 async function loadJournalList(){
   if(!user) return;
-  const list=document.getElementById('journal-list');
-  if(!list) return;
+  const list=document.getElementById('journal-list'); if(!list) return;
   const { data }=await db.from('diary_entries').select('*').eq('user_id',user.id).order('created_at',{ascending:false}).limit(40);
   const cnt=document.getElementById('journal-count');
-  if(cnt) cnt.textContent=(data?.length||0)+' entries';
-  if(!data||!data.length){ list.innerHTML='<div class="coming-soon" style="margin-top:18px;"><h2>No entries yet</h2><p>Today is a good day to start.</p></div>'; return; }
-  const dN=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  const mN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  if(cnt) cnt.textContent=(data?.length||0)+' entradas';
+  if(!data||!data.length){ list.innerHTML='<div class="coming-soon" style="margin-top:18px;"><h2>Aún no hay entradas</h2><p>Hoy es buen día para empezar.</p></div>'; return; }
+  const dN=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const mN=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
   let html='', lastM='';
   data.forEach(e=>{
     const d=new Date(e.created_at), mk=d.getFullYear()+'-'+d.getMonth();
@@ -913,8 +1013,8 @@ async function loadJournalList(){
 }
 function openDetail(e){
   const d=new Date(e.created_at);
-  const dN=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  const mN=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const dN=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const mN=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
   document.getElementById('d-day').textContent=dN[d.getDay()];
   document.getElementById('d-num').textContent=d.getDate();
   document.getElementById('d-my').textContent=mN[d.getMonth()]+' '+d.getFullYear();
@@ -927,19 +1027,17 @@ function closeDetail(){ document.getElementById('detail').classList.remove('acti
 
 async function buildCal(){
   if(!user) return;
-  const grid=document.getElementById('cal-grid');
-  if(!grid) return;
+  const grid=document.getElementById('cal-grid'); if(!grid) return;
   const n=new Date(), y=n.getFullYear(), m=n.getMonth();
   const first=new Date(y,m,1), last=new Date(y,m+1,0);
-  const monthStart=new Date(y,m,1).toISOString();
-  const monthEnd=new Date(y,m+1,0,23,59,59).toISOString();
-  const { data }=await db.from('diary_entries').select('created_at').eq('user_id',user.id).gte('created_at',monthStart).lte('created_at',monthEnd);
+  const ms=new Date(y,m,1).toISOString();
+  const me=new Date(y,m+1,0,23,59,59).toISOString();
+  const { data }=await db.from('diary_entries').select('created_at').eq('user_id',user.id).gte('created_at',ms).lte('created_at',me);
   const days=new Set((data||[]).map(e=>new Date(e.created_at).getDate()));
-  const mN=['January','February','March','April','May','June','July','August','September','October','November','December'];
-  document.getElementById('cal-month').textContent=mN[m];
-  document.getElementById('cal-year').textContent=y;
-  const dayLabels=['S','M','T','W','T','F','S'];
-  let html=dayLabels.map(d=>`<div class="cal-d-label">${d}</div>`).join('');
+  const mN=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  document.getElementById('cal-month').textContent=mN[m]; document.getElementById('cal-year').textContent=y;
+  const dl=['D','L','M','M','J','V','S'];
+  let html=dl.map(d=>`<div class="cal-d-label">${d}</div>`).join('');
   for(let i=0;i<first.getDay();i++) html+='<div class="cal-day empty"></div>';
   for(let d=1;d<=last.getDate();d++){
     const today=d===n.getDate(), has=days.has(d);
@@ -948,10 +1046,8 @@ async function buildCal(){
   grid.innerHTML=html;
 }
 
-// ── Practices render ──
 function buildPractices(){
-  const grid=document.getElementById('practice-grid');
-  if(!grid) return;
+  const grid=document.getElementById('practice-grid'); if(!grid) return;
   grid.innerHTML=PRACTICES.map((p,i)=>`<div class="practice-card">
     <div class="practice-art"><span class="sym ${p.klass}">${p.sym}</span></div>
     <div class="practice-body">
@@ -961,34 +1057,27 @@ function buildPractices(){
       <div class="practice-desc">${p.desc}</div>
     </div>
     <div class="practice-actions">
-      <button class="chip-btn" onclick="addToToday(${i})">Add to today</button>
-      <button class="start-btn" onclick="startPractice(${i})">Start <i class="ti ti-arrow-right" style="font-size:13px;"></i></button>
+      <button class="chip-btn" onclick="addToToday(${i})">añadir a hoy</button>
+      <button class="start-btn" onclick="startPractice(${i})">Empezar <i class="ti ti-arrow-right" style="font-size:13px;"></i></button>
     </div>
   </div>`).join('');
 }
 let todayPlan=[];
-function addToToday(i){
-  if(todayPlan.find(x=>x.id===i)){ toast('Already on today\'s plan'); return; }
-  todayPlan.push({id:i,done:false,...PRACTICES[i]});
-  toast(PRACTICES[i].title+' added');
-  buildToday();
-}
-function startPractice(i){ toast('Starting: '+PRACTICES[i].title); }
+function addToToday(i){ if(todayPlan.find(x=>x.id===i)){ toast('Ya está en el plan'); return; } todayPlan.push({id:i,done:false,...PRACTICES[i]}); toast(PRACTICES[i].title+' añadido'); buildToday(); }
+function startPractice(i){ toast('Empezando: '+PRACTICES[i].title); }
 
-// ── Today ──
 function buildToday(){
   const n=new Date();
-  const dN=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  const mN=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const dN=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const mN=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
   const tt=document.getElementById('today-date');
-  if(tt) tt.textContent=dN[n.getDay()]+' · '+mN[n.getMonth()]+' '+n.getDate()+', '+n.getFullYear();
+  if(tt) tt.textContent=dN[n.getDay()]+' · '+n.getDate()+' de '+mN[n.getMonth()]+', '+n.getFullYear();
   const qt=document.getElementById('today-quote-text');
   if(qt) qt.textContent=QUOTES[n.getDate()%QUOTES.length];
-  const list=document.getElementById('plan-list');
-  if(!list) return;
-  if(todayPlan.length===0){ list.innerHTML='<div class="coming-soon" style="padding:32px;"><h2 style="font-size:20px;">Empty plan</h2><p style="font-size:13px;">Go to Practices and add 3 things you\'ll do today.</p></div>'; document.getElementById('plan-count').textContent='0 / 0 done'; return; }
+  const list=document.getElementById('plan-list'); if(!list) return;
+  if(todayPlan.length===0){ list.innerHTML='<div class="coming-soon" style="padding:32px;"><h2 style="font-size:20px;">Plan vacío</h2><p style="font-size:13px;">Ve a Prácticas y añade 3 cosas para hacer hoy.</p></div>'; document.getElementById('plan-count').textContent='0 / 0 hecho'; return; }
   const done=todayPlan.filter(p=>p.done).length;
-  document.getElementById('plan-count').textContent=done+' / '+todayPlan.length+' done';
+  document.getElementById('plan-count').textContent=done+' / '+todayPlan.length+' hecho';
   list.innerHTML=todayPlan.map((p,i)=>`<div class="plan-item ${p.done?'done':''}" onclick="togglePlan(${i})">
     <div class="plan-check"></div>
     <div><div class="plan-text">${p.title}</div></div>
@@ -997,7 +1086,6 @@ function buildToday(){
 }
 function togglePlan(i){ todayPlan[i].done=!todayPlan[i].done; buildToday(); }
 
-// ── Emergency ──
 let etInterval=null;
 function openEmerg(){
   document.getElementById('emerg').classList.add('active');
@@ -1011,11 +1099,11 @@ function toggleStep(id){ document.getElementById(id).classList.toggle('done'); }
 async function saveEmergSession(){
   const steps=document.querySelectorAll('.emerg-step.done').length;
   if(user) await db.from('emergency_sessions').insert({steps_completed:steps,user_id:user.id});
-  toast('Saved · you got through it'); closeEmerg();
+  toast('Guardado · lo lograste'); closeEmerg();
 }
 
-// ── Coach (Claude) ──
-const COACH_SYS=`You are a compassionate, precise behavioral change coach for people working on overcoming compulsive pornography use (PMO recovery). Your role: listen without judgment, detect patterns with specific questions, suggest concrete actions. Never moralize. Always reply in the language the user writes in. Be direct, warm, and useful. When someone mentions a relapse, help them extract useful data rather than only comforting them. Maximum 3 paragraphs per reply.`;
+// ── Circle (Claude) ──
+const COACH_SYS=`Eres un coach de cambio conductual compasivo y preciso para personas en recuperación de uso compulsivo de pornografía (PMO). Tu rol: escuchar sin juzgar, detectar patrones con preguntas específicas, sugerir acciones concretas. Nunca moralizes. Responde siempre en español. Sé directo, cálido y útil. Cuando alguien mencione una recaída, ayúdalos a extraer datos útiles en vez de solo consolarlos. Máximo 3 párrafos por respuesta.`;
 let coachHist=[];
 function coachKey(e){ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendCoach(); } }
 async function sendCoach(){
@@ -1032,10 +1120,10 @@ async function sendCoach(){
     });
     const d=await res.json();
     tEl.remove();
-    const reply=d.content?.[0]?.text||'I couldn\'t respond. Try again.';
+    const reply=d.content?.[0]?.text||'No pude responder. Inténtalo de nuevo.';
     coachHist.push({role:'assistant',content:reply});
     addMsg(reply,'bot');
-  }catch(e){ tEl.remove(); addMsg('Connection error.','bot'); }
+  }catch(e){ tEl.remove(); addMsg('Error de conexión.','bot'); }
 }
 function addMsg(text,role){
   const m=document.getElementById('coach-msgs');
@@ -1051,20 +1139,19 @@ function addTyping(){
   m.appendChild(div); m.scrollTop=m.scrollHeight; return div;
 }
 
-// ── Export ──
 async function exportData(){
   if(!user) return;
-  const [d,t,e,r]=await Promise.all([
+  const [d,t,e,r,b]=await Promise.all([
     db.from('diary_entries').select('*').eq('user_id',user.id),
     db.from('trigger_logs').select('*').eq('user_id',user.id),
     db.from('emergency_sessions').select('*').eq('user_id',user.id),
-    db.from('relapse_logs').select('*').eq('user_id',user.id)
+    db.from('relapse_logs').select('*').eq('user_id',user.id),
+    db.from('blocked_urls').select('*').eq('user_id',user.id)
   ]);
-  const blob=new Blob([JSON.stringify({journal:d.data,triggers:t.data,emergency:e.data,relapses:r.data},null,2)],{type:'application/json'});
+  const blob=new Blob([JSON.stringify({diario:d.data,detonantes:t.data,emergencias:e.data,recaidas:r.data,bloqueados:b.data},null,2)],{type:'application/json'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='overcomepmo-export.json'; a.click();
 }
 
-// ── Init ──
 initAuth();
 </script>
 </body>
